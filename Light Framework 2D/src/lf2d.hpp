@@ -15,7 +15,7 @@ namespace lf2d
 		void beginRendering();
 		void endRendering();
 
-		void createWindow(int width, int height, const std::string& title, bool resizable);
+		void createWindow(int width, int height, std::string const& title, bool resizable);
 		bool windowShouldClose();
 
 	private:

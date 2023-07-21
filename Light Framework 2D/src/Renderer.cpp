@@ -1,5 +1,4 @@
 #include "pch.hpp"
-#include "lf2d.hpp"
 
 static vk::Instance instance;
 static vk::DebugUtilsMessengerEXT debugMessenger;
@@ -11,23 +10,5 @@ static uint32_t graphicsFamily, presentFamily;
 
 namespace lf2d
 {
-	Renderer::Renderer()
-	{
-		glfwInit();
-	}
-
-	Renderer::~Renderer()
-	{
-		glfwTerminate();
-	}
-
-	void Renderer::beginRendering()
-	{
-		glfwPollEvents();
-	}
-
-	void Renderer::endRendering()
-	{
-
-	}
+	
 }
