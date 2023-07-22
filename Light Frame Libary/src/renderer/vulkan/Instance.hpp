@@ -35,9 +35,9 @@ namespace vi
 		
 		const vk::ApplicationInfo appInfo {
 			.pApplicationName = appName.c_str(),
-			.applicationVersion = 0,
+			.applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0),
 			.pEngineName = "Light Frame",
-			.engineVersion = 0,
+			.engineVersion = VK_MAKE_API_VERSION(0, 1, 0, 0),
 			.apiVersion = VK_API_VERSION_1_3
 		};
 
@@ -56,6 +56,47 @@ namespace vi
 			spdlog::critical(e.what());
 		}
 
+		return nullptr;
+	}
+
+	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
+	{
+		switch (messageSeverity)
+		{
+		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+			spdlog::warn("Vulkan validation layer:\n{}\n", pCallbackData->pMessage);
+			break;
+		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+			spdlog::error("Vulkan validation layer:\n{}\n", pCallbackData->pMessage);
+			break;
+		default:
+			spdlog::info("Vulkan validation layer:\n{}\n", pCallbackData->pMessage);
+			break;
+		}
+
+		return VK_FALSE;
+	}
+
+	inline vk::DebugUtilsMessengerEXT createDebugUtilsMessenger(vk::Instance instance)
+	{
+#ifndef NDEBUG
+		spdlog::info("Validation layers are enabled!");
+
+		const vk::DebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCI {
+			.messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError | vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,
+			.messageType = vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation | vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance,
+			.pfnUserCallback = debugCallback
+		};
+
+		try
+		{
+			return instance.createDebugUtilsMessengerEXT(debugUtilsMessengerCI);
+		}
+		catch (const vk::SystemError& e)
+		{
+			spdlog::critical(e.what());
+		}
+#endif
 		return nullptr;
 	}
 }

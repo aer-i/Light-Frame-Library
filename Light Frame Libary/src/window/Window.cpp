@@ -27,3 +27,15 @@ void lfWindow::create(int w, int h, std::string const& n, bool resizable)
 	m_glfwWindow = glfwCreateWindow(w, h, n.c_str(), nullptr, nullptr);
 	spdlog::info("Created window with {} px width and {} px height", w, h);
 }
+
+vk::SurfaceKHR lfWindow::createSurface(vk::Instance instance)
+{
+	VkSurfaceKHR cSurface;
+	if (glfwCreateWindowSurface(instance, m_glfwWindow, nullptr, &cSurface) != VK_SUCCESS)
+	{
+		spdlog::critical("Failed to create window surface!");
+		return nullptr;
+	}
+
+	return vk::SurfaceKHR(cSurface);
+}
