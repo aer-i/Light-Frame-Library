@@ -1,10 +1,19 @@
 #include "pch.hpp"
 #include "VulkanRenderer.hpp"
 #include "window/Window.hpp"
+#include "lf2d.hpp"
 
 lfRenderer::~lfRenderer()
 {
 	this->teardown();
+}
+
+void lfRenderer::clearColor(lf2d::Color const& color)
+{
+	m_color[0] = static_cast<float>(color.r) / 255.f;
+	m_color[1] = static_cast<float>(color.g) / 255.f;
+	m_color[2] = static_cast<float>(color.b) / 255.f;
+	m_color[3] = static_cast<float>(color.a) / 255.f;
 }
 
 void lfRenderer::create()
@@ -22,8 +31,8 @@ void lfRenderer::create()
 
 void lfRenderer::beginFrame()
 {
-	vc::Get().device.waitForFences(1, &m_frames[m_imageIndex].fence, true, UINT64_MAX);
-	vc::Get().device.resetFences(1, &m_frames[m_imageIndex].fence);
+	vc::Get().device.waitForFences(1, &m_frames[m_frameIndex].fence, true, UINT64_MAX);
+	vc::Get().device.resetFences(1, &m_frames[m_frameIndex].fence);
 
 	if (m_swapchain.acquireNextImage(m_frames[m_frameIndex].imageAvailable, &m_imageIndex) == vk::Result::eErrorOutOfDateKHR)
 	{
@@ -48,14 +57,14 @@ void lfRenderer::beginFrame()
 		}
 	};
 
-	m_currentFrame->commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eColorAttachmentOutput, {}, nullptr, nullptr, imageMemoryBarrier);
+	m_currentFrame->commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eColorAttachmentOutput, {}, nullptr, nullptr, imageMemoryBarrier);
 
 	vk::RenderingAttachmentInfo colorAttachment {
 		.imageView = m_swapchain.imageViews[m_imageIndex],
 		.imageLayout = vk::ImageLayout::eAttachmentOptimal,
 		.loadOp = vk::AttachmentLoadOp::eClear,
 		.storeOp = vk::AttachmentStoreOp::eStore,
-		.clearValue = { std::array{1.f, 1.f, 1.f, 1.f} }
+		.clearValue = { vk::ClearColorValue{m_color} }
 	};
 
 	m_currentFrame->commandBuffer.beginRendering({

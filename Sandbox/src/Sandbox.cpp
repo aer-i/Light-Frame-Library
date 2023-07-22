@@ -5,6 +5,7 @@ auto main(int argc, char* const argv[]) -> int
 	lf2d::Renderer renderer;
 
 	renderer.createWindow(1280, 720, "Light Frame - Example App", true);
+	renderer.clearColor({ 120, 43, 234, 255 });
 
 	while (!renderer.windowShouldClose())
 	{

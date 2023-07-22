@@ -10,23 +10,27 @@ namespace lf2d
 {
 	int getWindowWidth()
 	{
-		return window.GetWidth();
+		return lfWindow::GetWidth();
 	}
 	int getWindowHeight()
 	{
-		return window.GetHeight();
+		return lfWindow::GetHeight();
 	}
 
 	void Renderer::beginRendering()
 	{
 		window.pollEvents();
 		renderer.beginFrame();
-		
 	}
 
 	void Renderer::endRendering()
 	{
 		renderer.endFrame();
+	}
+
+	void Renderer::clearColor(Color color)
+	{
+		renderer.clearColor(color);
 	}
 
 	void Renderer::createWindow(int width, int height, std::string const& title, bool resizable)
