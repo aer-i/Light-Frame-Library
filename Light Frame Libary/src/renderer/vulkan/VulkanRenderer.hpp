@@ -5,13 +5,21 @@
 class lfRenderer
 {
 public:
+	lfRenderer() = default;
+	~lfRenderer();
+
 	void create()
 	{
-		m_vc.create();
+		vc::Create();
+		m_swapchain.create();
 	}
 
+	void beginFrame();
+	void endFrame();
+
 private:
-	VulkanContext m_vc;
 	VulkanSwapchain m_swapchain;
+
+	void recreateSwapchain();
 };
 

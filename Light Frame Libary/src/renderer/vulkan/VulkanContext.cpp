@@ -6,11 +6,15 @@
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
-VulkanContext::VulkanContext() = default;
-
-VulkanContext::~VulkanContext()
+const vk::ImageView VulkanContext::CreateImageView(vk::Image image, vk::ImageViewType viewType, vk::Format format, vk::ImageAspectFlags aspectFlags)
 {
-	this->teardown();
+	return Get().device.createImageView({
+			.image = image,
+			.viewType = viewType,
+			.format = format,
+			.components = { vk::ComponentSwizzle::eIdentity, vk::ComponentSwizzle::eIdentity, vk::ComponentSwizzle::eIdentity, vk::ComponentSwizzle::eIdentity },
+			.subresourceRange = { {aspectFlags}, 0, 1, 0, viewType == vk::ImageViewType::eCube ? 6u : 1u }
+	});
 }
 
 void VulkanContext::create()

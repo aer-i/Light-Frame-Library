@@ -59,6 +59,7 @@ namespace vi
 		return nullptr;
 	}
 
+#ifndef NDEBUG
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
 	{
 		switch (messageSeverity)
@@ -76,11 +77,12 @@ namespace vi
 
 		return VK_FALSE;
 	}
+#endif
 
 	inline vk::DebugUtilsMessengerEXT createDebugUtilsMessenger(vk::Instance instance)
 	{
 #ifndef NDEBUG
-		spdlog::info("Validation layers are enabled!");
+		spdlog::warn("Validation layers are enabled!");
 
 		const vk::DebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCI {
 			.messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError | vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,

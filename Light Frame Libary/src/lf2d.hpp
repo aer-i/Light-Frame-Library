@@ -1,6 +1,12 @@
 #pragma once
 #include <string>
 
+#if defined(LF_ENABLE_VALIDATION)
+static inline bool validationLayersEnabled = true;
+#else
+static inline bool validationLayersEnabled = false;
+#endif
+
 namespace lf2d
 {
 	int getWindowWidth();

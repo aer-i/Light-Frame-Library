@@ -20,6 +20,7 @@ namespace lf2d
 	void Renderer::beginRendering()
 	{
 		window.pollEvents();
+		
 	}
 
 	void Renderer::endRendering()
