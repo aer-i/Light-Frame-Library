@@ -21,22 +21,25 @@
     <ClInclude Include="src\pch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\vulkan\Instance.hpp">
+    <ClInclude Include="src\renderer\vk\Instance.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\window\Window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\vulkan\VulkanContext.hpp">
+    <ClInclude Include="src\renderer\VulkanContext.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\vulkan\VulkanRenderer.hpp">
+    <ClInclude Include="src\renderer\VulkanRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\vulkan\Device.hpp">
+    <ClInclude Include="src\renderer\vk\Device.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\vulkan\VulkanSwapchain.hpp">
+    <ClInclude Include="src\renderer\VulkanSwapchain.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer\VulkanFrame.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,25 +50,25 @@
     <ClCompile Include="src\lf2d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\vulkan\Instance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\renderer\Renderer.cpp">
+    <ClCompile Include="src\renderer\vk\Instance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\window\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\vulkan\VulkanContext.cpp">
+    <ClCompile Include="src\renderer\VulkanContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\vulkan\VulkanRenderer.cpp">
+    <ClCompile Include="src\renderer\VulkanRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\vulkan\Device.cpp">
+    <ClCompile Include="src\renderer\vk\Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\vulkan\VulkanSwapchain.cpp">
+    <ClCompile Include="src\renderer\VulkanSwapchain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\VulkanFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

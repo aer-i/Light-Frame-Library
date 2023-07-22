@@ -1,12 +1,6 @@
 #pragma once
 #include <string>
 
-#if defined(LF_ENABLE_VALIDATION)
-static inline bool validationLayersEnabled = true;
-#else
-static inline bool validationLayersEnabled = false;
-#endif
-
 namespace lf2d
 {
 	int getWindowWidth();
@@ -25,6 +19,7 @@ namespace lf2d
 		void endRendering();
 
 		void createWindow(int width, int height, std::string const& title, bool resizable);
+		void closeWindow();
 		bool windowShouldClose();
 	};
 }

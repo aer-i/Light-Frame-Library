@@ -9,6 +9,8 @@ public:
 	void teardown();
 	void recreate();
 
+	constexpr operator vk::SwapchainKHR() const { return m_swapchain; }
+	constexpr operator vk::SwapchainKHR*() { return &m_swapchain; }
 	vk::Result acquireNextImage(vk::Semaphore semaphore, uint32_t* imageIndex) const;
 
 	std::vector<vk::Image> images;

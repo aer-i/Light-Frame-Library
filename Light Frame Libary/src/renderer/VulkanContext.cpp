@@ -1,8 +1,8 @@
 #include "pch.hpp"
 #include "VulkanContext.hpp"
 #include "window/Window.hpp"
-#include "Instance.hpp"
-#include "Device.hpp"
+#include "vk/Instance.hpp"
+#include "vk/Device.hpp"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 

@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "lf2d.hpp"
 #include "window/Window.hpp"
-#include "renderer/vulkan/VulkanRenderer.hpp"
+#include "renderer/VulkanRenderer.hpp"
 
 static lfWindow window;
 static lfRenderer renderer;
@@ -20,12 +20,13 @@ namespace lf2d
 	void Renderer::beginRendering()
 	{
 		window.pollEvents();
+		renderer.beginFrame();
 		
 	}
 
 	void Renderer::endRendering()
 	{
-
+		renderer.endFrame();
 	}
 
 	void Renderer::createWindow(int width, int height, std::string const& title, bool resizable)
@@ -36,6 +37,11 @@ namespace lf2d
 			window.create(width, height, title, resizable);
 			renderer.create();
 		});
+	}
+
+	void Renderer::closeWindow()
+	{
+		renderer.waitIdle();
 	}
 
 	bool Renderer::windowShouldClose()
