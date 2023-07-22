@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "VulkanContext.hpp"
+#include "window/Window.hpp"
 #include "Instance.hpp"
 #include "Device.hpp"
 
@@ -12,7 +13,7 @@ VulkanContext::~VulkanContext()
 	this->teardown();
 }
 
-void VulkanContext::create(lfWindow& window)
+void VulkanContext::create()
 {
 #pragma region Dispatcher
 	{
@@ -22,7 +23,7 @@ void VulkanContext::create(lfWindow& window)
 
 #pragma region Instance
 	{
-		instance = vi::createInstance(window.getTitle());
+		instance = vi::createInstance(lfWindow::GetTitle());
 
 		vi::dispatcherLoadInstance(instance);
 	}
@@ -36,7 +37,7 @@ void VulkanContext::create(lfWindow& window)
 
 #pragma region Window Surface
 	{
-		surface = window.createSurface(instance);
+		surface = lfWindow::CreateSurface(instance);
 	}
 #pragma endregion
 
@@ -67,6 +68,14 @@ void VulkanContext::create(lfWindow& window)
 	}
 #pragma endregion
 
+#pragma region Upload Context
+	{
+		uploadContext.cmdPool = device.createCommandPool({.queueFamilyIndex = graphicsFamily});
+		uploadContext.cmdBuffer = device.allocateCommandBuffers({ .commandPool = uploadContext.cmdPool, .level = {}, .commandBufferCount = 1}).front();
+		uploadContext.fence = device.createFence({});
+	}
+#pragma endregion
+
 #pragma region Log
 	{
 		spdlog::info("Created vulkan context");
@@ -76,10 +85,12 @@ void VulkanContext::create(lfWindow& window)
 
 void VulkanContext::teardown()
 {
-	if (device)			device.destroy();
-	if (surface)		instance.destroy(surface);
-	if (debugMessenger) instance.destroy(debugMessenger);
-	if (instance)		instance.destroy();
+	if (uploadContext.fence)	device.destroy(uploadContext.fence);
+	if (uploadContext.cmdPool)	device.destroy(uploadContext.cmdPool);
+	if (device)					device.destroy();
+	if (surface)				instance.destroy(surface);
+	if (debugMessenger)			instance.destroy(debugMessenger);
+	if (instance)				instance.destroy();
 
 	spdlog::info("Destroyed vulkan context");
 }

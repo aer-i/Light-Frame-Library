@@ -9,17 +9,16 @@ namespace lf2d
 	class Renderer
 	{
 	public:
-		Renderer();
-		~Renderer();
+		Renderer() = default;
+		Renderer(const Renderer&) = delete;
+		Renderer(Renderer&&) = delete;
+		Renderer& operator=(const Renderer&) = delete;
+		Renderer& operator=(Renderer&&) = delete;
 
 		void beginRendering();
 		void endRendering();
 
 		void createWindow(int width, int height, std::string const& title, bool resizable);
 		bool windowShouldClose();
-
-	private:
-
-
 	};
 }

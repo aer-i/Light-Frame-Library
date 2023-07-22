@@ -183,12 +183,12 @@
     <ClInclude Include="src\lf2d.hpp" />
     <ClInclude Include="src\window\Window.hpp" />
     <ClInclude Include="src\renderer\vulkan\VulkanContext.hpp" />
+    <ClInclude Include="src\renderer\vulkan\VulkanSwapchain.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\renderer\vulkan\Device.cpp" />
     <ClCompile Include="src\renderer\vulkan\VulkanRenderer.cpp" />
     <ClCompile Include="src\renderer\vulkan\Instance.cpp" />
-    <ClCompile Include="src\engine\Engine.cpp" />
     <ClCompile Include="src\lf2d.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -203,6 +203,7 @@
     <ClCompile Include="src\renderer\Renderer.cpp" />
     <ClCompile Include="src\window\Window.cpp" />
     <ClCompile Include="src\renderer\vulkan\VulkanContext.cpp" />
+    <ClCompile Include="src\renderer\vulkan\VulkanSwapchain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

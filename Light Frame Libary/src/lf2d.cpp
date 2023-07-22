@@ -10,20 +10,11 @@ namespace lf2d
 {
 	int getWindowWidth()
 	{
-		return {};
+		return window.GetWidth();
 	}
 	int getWindowHeight()
 	{
-		return {};
-	}
-
-	Renderer::Renderer()
-	{
-		
-	}
-
-	Renderer::~Renderer()
-	{
+		return window.GetHeight();
 	}
 
 	void Renderer::beginRendering()
@@ -38,8 +29,12 @@ namespace lf2d
 
 	void Renderer::createWindow(int width, int height, std::string const& title, bool resizable)
 	{
-		window.create(width, height, title, resizable);
-		renderer.create(window);
+		static std::once_flag flag;
+		std::call_once(flag, [&]
+		{
+			window.create(width, height, title, resizable);
+			renderer.create();
+		});
 	}
 
 	bool Renderer::windowShouldClose()
