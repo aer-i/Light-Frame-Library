@@ -176,6 +176,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\renderer\vulkan\VulkanRenderer.hpp" />
     <ClInclude Include="src\renderer\vulkan\Instance.h" />
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="src\lf2d.hpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="src\renderer\vulkan\VulkanContext.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\renderer\vulkan\VulkanRenderer.cpp" />
     <ClCompile Include="src\renderer\vulkan\Instance.cpp" />
     <ClCompile Include="src\engine\Engine.cpp" />
     <ClCompile Include="src\lf2d.cpp" />

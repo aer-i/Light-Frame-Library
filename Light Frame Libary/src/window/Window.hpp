@@ -3,13 +3,15 @@
 class lfWindow
 {
 public:
-	lfWindow() = default;
-	~lfWindow() = default;
+	lfWindow();
+	~lfWindow();
 	void create(int, int, std::string const&, bool);
 
 	inline void pollEvents() { glfwPollEvents(); }
 	inline bool shouldClose() { return glfwWindowShouldClose(m_glfwWindow); }
+	inline const std::string& getTitle() const { return m_title; }
 
 private:
 	GLFWwindow* m_glfwWindow = nullptr;
+	std::string m_title;
 };

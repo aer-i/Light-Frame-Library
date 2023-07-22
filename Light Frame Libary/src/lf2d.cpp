@@ -1,8 +1,10 @@
 #include "pch.hpp"
 #include "lf2d.hpp"
 #include "window/Window.hpp"
+#include "renderer/vulkan/VulkanRenderer.hpp"
 
 static lfWindow window;
+static lfRenderer renderer;
 
 namespace lf2d
 {
@@ -17,16 +19,11 @@ namespace lf2d
 
 	Renderer::Renderer()
 	{
-		glfwInit();
-
-		vk::DynamicLoader         dl;
-		PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = dl.getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr");
-		VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
+		
 	}
 
 	Renderer::~Renderer()
 	{
-		glfwTerminate();
 	}
 
 	void Renderer::beginRendering()
@@ -42,6 +39,7 @@ namespace lf2d
 	void Renderer::createWindow(int width, int height, std::string const& title, bool resizable)
 	{
 		window.create(width, height, title, resizable);
+		renderer.create(window);
 	}
 
 	bool Renderer::windowShouldClose()

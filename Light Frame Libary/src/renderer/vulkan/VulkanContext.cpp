@@ -4,12 +4,23 @@
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
-VulkanContext::VulkanContext()
-{
-	instance = vi::createInstance("Geam");
-}
+VulkanContext::VulkanContext() = default;
 
 VulkanContext::~VulkanContext()
 {
-	instance.destroy();
+
+	if (instance) instance.destroy();
+
+	spdlog::info("Destroyed vulkan context");
+}
+
+void VulkanContext::create(lfWindow& window)
+{
+	vi::dispatcherInit();
+
+	instance = vi::createInstance(window.getTitle());
+
+	vi::dispatcherLoadInstance(instance);
+
+	spdlog::info("Created vulkan context");
 }
