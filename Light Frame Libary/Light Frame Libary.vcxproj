@@ -185,6 +185,7 @@
     <ClInclude Include="src\renderer\VulkanContext.hpp" />
     <ClInclude Include="src\renderer\VulkanSwapchain.hpp" />
     <ClInclude Include="src\renderer\VulkanFrame.hpp" />
+    <ClInclude Include="src\renderer\VulkanPipeline.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\renderer\vk\Device.cpp" />
@@ -205,6 +206,7 @@
     <ClCompile Include="src\renderer\VulkanContext.cpp" />
     <ClCompile Include="src\renderer\VulkanSwapchain.cpp" />
     <ClCompile Include="src\renderer\VulkanFrame.cpp" />
+    <ClCompile Include="src\renderer\VulkanPipeline.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

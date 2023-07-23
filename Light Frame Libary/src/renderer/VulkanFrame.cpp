@@ -5,7 +5,7 @@
 void VulkanFrame::create()
 {
 #pragma region Commands
-	commandPool = vc::Get().device.createCommandPool({ .flags = vk::CommandPoolCreateFlagBits::eResetCommandBuffer, .queueFamilyIndex = vc::Get().graphicsFamily });
+	commandPool = vc::Get().device.createCommandPool({ .flags = vk::CommandPoolCreateFlagBits::eTransient | vk::CommandPoolCreateFlagBits::eResetCommandBuffer, .queueFamilyIndex = vc::Get().graphicsFamily });
 	commandBuffer = vc::Get().device.allocateCommandBuffers({ .commandPool = commandPool, .level = {}, .commandBufferCount = 1 }).front();
 #pragma endregion
 

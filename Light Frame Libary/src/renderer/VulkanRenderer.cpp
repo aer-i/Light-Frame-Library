@@ -31,17 +31,19 @@ void lfRenderer::create()
 
 void lfRenderer::beginFrame()
 {
-	vc::Get().device.waitForFences(1, &m_frames[m_frameIndex].fence, true, UINT64_MAX);
-	vc::Get().device.resetFences(1, &m_frames[m_frameIndex].fence);
+	if (vc::Get().device.getFenceStatus(m_frames[m_frameIndex].fence) != vk::Result::eSuccess)
+	{
+		vc::Get().device.waitForFences(1, &m_frames[m_frameIndex].fence, true, UINT64_MAX);
+	}
 
 	if (m_swapchain.acquireNextImage(m_frames[m_frameIndex].imageAvailable, &m_imageIndex) == vk::Result::eErrorOutOfDateKHR)
 	{
 		this->recreateSwapchain();
 	}
 
-	m_currentFrame = &m_frames[m_frameIndex];
+	m_currentCmd = &m_frames[m_frameIndex].commandBuffer;
 
-	m_currentFrame->commandBuffer.begin(vk::CommandBufferBeginInfo{});
+	m_currentCmd->begin({.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
 
 	vk::ImageMemoryBarrier imageMemoryBarrier {
 		.srcAccessMask = vk::AccessFlagBits::eColorAttachmentWrite,
@@ -57,7 +59,7 @@ void lfRenderer::beginFrame()
 		}
 	};
 
-	m_currentFrame->commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eColorAttachmentOutput, {}, nullptr, nullptr, imageMemoryBarrier);
+	m_currentCmd->pipelineBarrier(vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eColorAttachmentOutput, {}, nullptr, nullptr, imageMemoryBarrier);
 
 	vk::RenderingAttachmentInfo colorAttachment {
 		.imageView = m_swapchain.imageViews[m_imageIndex],
@@ -67,7 +69,7 @@ void lfRenderer::beginFrame()
 		.clearValue = { vk::ClearColorValue{m_color} }
 	};
 
-	m_currentFrame->commandBuffer.beginRendering({
+	m_currentCmd->beginRendering({
 		.renderArea = {{0, 0}, m_swapchain.extent},
 		.layerCount = 1,
 		.colorAttachmentCount = 1,
@@ -78,9 +80,7 @@ void lfRenderer::beginFrame()
 
 void lfRenderer::endFrame()
 {
-	m_currentFrame->commandBuffer.endRendering();
-
-	vk::ImageMemoryBarrier imageMemoryBarrier {
+	vk::ImageMemoryBarrier const imageMemoryBarrier {
 		.srcAccessMask = vk::AccessFlagBits::eColorAttachmentWrite,
 		.oldLayout = vk::ImageLayout::eColorAttachmentOptimal,
 		.newLayout = vk::ImageLayout::ePresentSrcKHR,
@@ -94,13 +94,16 @@ void lfRenderer::endFrame()
 		}
 	};
 
-	m_currentFrame->commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eBottomOfPipe, {}, nullptr, nullptr, imageMemoryBarrier);
+	m_currentCmd->endRendering();
+	m_currentCmd->pipelineBarrier(vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eBottomOfPipe, {}, nullptr, nullptr, imageMemoryBarrier);
+	m_currentCmd->end();
 
-	m_currentFrame->commandBuffer.end();
+	vc::Get().device.resetFences(1, &m_frames[m_frameIndex].fence);
 
 	constexpr vk::PipelineStageFlags pipelineStage[]{ vk::PipelineStageFlagBits::eColorAttachmentOutput };
-
-	vk::SubmitInfo submitInfo {
+	
+	vc::Get().graphicsQueue.submit(
+		vk::SubmitInfo{
 			.waitSemaphoreCount = 1,
 			.pWaitSemaphores = &m_frames[m_frameIndex].imageAvailable,
 			.pWaitDstStageMask = pipelineStage,
@@ -108,21 +111,23 @@ void lfRenderer::endFrame()
 			.pCommandBuffers = &m_frames[m_frameIndex].commandBuffer,
 			.signalSemaphoreCount = 1,
 			.pSignalSemaphores = &m_frames[m_frameIndex].renderFinished
-	};
+		},
+		m_frames[m_frameIndex].fence
+	);
 
-	vc::Get().graphicsQueue.submit(1, &submitInfo, m_frames[m_frameIndex].fence);
+	auto result = vc::Get().presentQueue.presentKHR(
+		vk::PresentInfoKHR {
+			.waitSemaphoreCount = 1,
+			.pWaitSemaphores = &m_frames[m_frameIndex].renderFinished,
+			.swapchainCount = 1,
+			.pSwapchains = m_swapchain,
+			.pImageIndices = &m_imageIndex
+	});
 
-	vk::PresentInfoKHR presentInfo {
-		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &m_frames[m_frameIndex].renderFinished,
-		.swapchainCount = 1,
-		.pSwapchains = m_swapchain,
-		.pImageIndices = &m_imageIndex
-	};
-
-	vc::Get().presentQueue.presentKHR(presentInfo);
-
-	//vc::Get().device.waitIdle();
+	if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR)
+	{
+		recreateSwapchain();
+	}
 
 	m_frameIndex = (m_frameIndex + 1) % static_cast<uint32_t>(m_swapchain.images.size());
 }

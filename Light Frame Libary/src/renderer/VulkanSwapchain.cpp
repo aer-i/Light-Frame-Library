@@ -34,7 +34,7 @@ void VulkanSwapchain::createHandle()
 	{
 		m_swapchain = vc::Get().device.createSwapchainKHR({
 			.surface = vc::Get().surface,
-			.minImageCount = std::max(2u, capabilities.minImageCount),
+			.minImageCount = std::clamp(3u, capabilities.minImageCount, capabilities.maxImageCount),
 			.imageFormat = surfaceFormat.format,
 			.imageColorSpace = surfaceFormat.colorSpace,
 			.imageExtent = extent,
@@ -91,7 +91,10 @@ void VulkanSwapchain::teardown()
 
 void VulkanSwapchain::recreate()
 {
+	for (const auto& imageView : imageViews)
+		vc::Get().device.destroy(imageView);
 
+	createHandle();
 }
 
 vk::SurfaceFormatKHR VulkanSwapchain::setFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats)
