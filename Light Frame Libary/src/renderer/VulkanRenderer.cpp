@@ -83,14 +83,13 @@ void lfRenderer::beginFrame()
 
 	m_currentCmd->bindPipeline(vk::PipelineBindPoint::eGraphics, m_defaultPipeline);
 
-	vk::Viewport viewport{0, 0, (float)m_swapchain.extent.width, (float)m_swapchain.extent.height, 0.f, 1.f};
+	vk::Viewport viewport{0, 0, static_cast<float>(m_swapchain.extent.width), static_cast<float>(m_swapchain.extent.height), 0.f, 1.f};
 	vk::Rect2D scissor{.offset = { 0, 0 }, .extent = m_swapchain.extent};
 
 	m_currentCmd->setViewport(0, viewport);
 	m_currentCmd->setScissor(0, scissor);
 
-	m_currentCmd->draw(3, 1, 0, 0); // Magick numbberz
-
+	m_currentCmd->draw(3, 1, 0, 0);
 }
 
 void lfRenderer::endFrame()
@@ -130,7 +129,7 @@ void lfRenderer::endFrame()
 		m_frames[m_frameIndex].fence
 	);
 
-	auto result = vc::Get().presentQueue.presentKHR(
+	auto const result = vc::Get().presentQueue.presentKHR(
 		vk::PresentInfoKHR {
 			.waitSemaphoreCount = 1,
 			.pWaitSemaphores = &m_frames[m_frameIndex].renderFinished,

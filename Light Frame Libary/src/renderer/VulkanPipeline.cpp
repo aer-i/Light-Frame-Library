@@ -36,7 +36,7 @@ void PipelineLayout::teardown()
 
 void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipelineLayout)
 {
-	static constexpr uint32_t vertShaderCode[] = {
+	constexpr uint32_t vertShaderCode[] = {
 		0x07230203,0x00010000,0x0008000b,0x00000039,0x00000000,0x00020011,0x00000001,0x0006000b,
 		0x00000001,0x4c534c47,0x6474732e,0x3035342e,0x00000000,0x0003000e,0x00000000,0x00000001,
 		0x0008000f,0x00000000,0x00000004,0x6e69616d,0x00000000,0x0000001f,0x00000023,0x0000002f,
@@ -86,7 +86,7 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 		0x00000038,0x0000002f,0x00000021,0x0003003e,0x00000038,0x00000036,0x000100fd,0x00010038
 	};
 
-	static constexpr uint32_t fragShaderCode[] = {
+	constexpr uint32_t fragShaderCode[] = {
 		0x07230203,0x00010000,0x0008000b,0x00000018,0x00000000,0x00020011,0x00000001,0x0006000b,
 		0x00000001,0x4c534c47,0x6474732e,0x3035342e,0x00000000,0x0003000e,0x00000000,0x00000001,
 		0x0007000f,0x00000004,0x00000004,0x6e69616d,0x00000000,0x00000009,0x0000000d,0x00030010,
@@ -168,11 +168,17 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 		.pDynamicStates = dynamicStates.data()
 	};
 
+	vk::PipelineRenderingCreateInfo const renderingInfo {
+		.colorAttachmentCount = 1,
+		.pColorAttachmentFormats = &swapchain.format
+	};
+
 	try
 	{
 		m_handle = vc::Get().device.createGraphicsPipeline(
 			nullptr,
 			vk::GraphicsPipelineCreateInfo{
+				.pNext = &renderingInfo,
 				.stageCount = 2,
 				.pStages = shaderStages,
 				.pVertexInputState = &vertexInput,
@@ -192,8 +198,7 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 	}
 
 	vc::Get().device.destroy(fragShaderModule);
-	vc::Get().device.destroy(vertShaderModule);
-	
+	vc::Get().device.destroy(vertShaderModule);	
 }
 
 void Pipeline::teardown()
