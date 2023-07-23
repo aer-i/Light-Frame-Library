@@ -29,77 +29,174 @@ PipelineLayout::PipelineLayout(const std::vector<vk::DescriptorSetLayout>& setLa
 	});
 }
 
-PipelineLayout::~PipelineLayout()
+void PipelineLayout::teardown()
 {
-	
+	if (m_handle) vc::Get().device.destroy(m_handle);
 }
 
-//Why that stupid pipeline IS SO HUGEEEEE
-
-//Someone tell me how to use timeline semaphores pls
-
-void Pipeline::construct(const vi::Swapchain& swapchain, PipelineLayout& pipelineLayout)
+void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipelineLayout)
 {
-	auto vertShaderModule
+	static constexpr uint32_t vertShaderCode[] = {
+		0x07230203,0x00010000,0x0008000b,0x00000039,0x00000000,0x00020011,0x00000001,0x0006000b,
+		0x00000001,0x4c534c47,0x6474732e,0x3035342e,0x00000000,0x0003000e,0x00000000,0x00000001,
+		0x0008000f,0x00000000,0x00000004,0x6e69616d,0x00000000,0x0000001f,0x00000023,0x0000002f,
+		0x00030003,0x00000002,0x000001cc,0x00040005,0x00000004,0x6e69616d,0x00000000,0x00050005,
+		0x0000000c,0x69736f70,0x6e6f6974,0x00000073,0x00040005,0x00000017,0x6f6c6f63,0x00007372,
+		0x00030005,0x0000001d,0x00000000,0x00050006,0x0000001d,0x00000000,0x6f6c6f63,0x00000072,
+		0x00030005,0x0000001f,0x0074754f,0x00060005,0x00000023,0x565f6c67,0x65747265,0x646e4978,
+		0x00007865,0x00060005,0x0000002d,0x505f6c67,0x65567265,0x78657472,0x00000000,0x00060006,
+		0x0000002d,0x00000000,0x505f6c67,0x7469736f,0x006e6f69,0x00070006,0x0000002d,0x00000001,
+		0x505f6c67,0x746e696f,0x657a6953,0x00000000,0x00070006,0x0000002d,0x00000002,0x435f6c67,
+		0x4470696c,0x61747369,0x0065636e,0x00070006,0x0000002d,0x00000003,0x435f6c67,0x446c6c75,
+		0x61747369,0x0065636e,0x00030005,0x0000002f,0x00000000,0x00040047,0x0000001f,0x0000001e,
+		0x00000000,0x00040047,0x00000023,0x0000000b,0x0000002a,0x00050048,0x0000002d,0x00000000,
+		0x0000000b,0x00000000,0x00050048,0x0000002d,0x00000001,0x0000000b,0x00000001,0x00050048,
+		0x0000002d,0x00000002,0x0000000b,0x00000003,0x00050048,0x0000002d,0x00000003,0x0000000b,
+		0x00000004,0x00030047,0x0000002d,0x00000002,0x00020013,0x00000002,0x00030021,0x00000003,
+		0x00000002,0x00030016,0x00000006,0x00000020,0x00040017,0x00000007,0x00000006,0x00000002,
+		0x00040015,0x00000008,0x00000020,0x00000000,0x0004002b,0x00000008,0x00000009,0x00000003,
+		0x0004001c,0x0000000a,0x00000007,0x00000009,0x00040020,0x0000000b,0x00000006,0x0000000a,
+		0x0004003b,0x0000000b,0x0000000c,0x00000006,0x0004002b,0x00000006,0x0000000d,0x00000000,
+		0x0004002b,0x00000006,0x0000000e,0xbf000000,0x0005002c,0x00000007,0x0000000f,0x0000000d,
+		0x0000000e,0x0004002b,0x00000006,0x00000010,0x3f000000,0x0005002c,0x00000007,0x00000011,
+		0x00000010,0x00000010,0x0005002c,0x00000007,0x00000012,0x0000000e,0x00000010,0x0006002c,
+		0x0000000a,0x00000013,0x0000000f,0x00000011,0x00000012,0x00040017,0x00000014,0x00000006,
+		0x00000003,0x0004001c,0x00000015,0x00000014,0x00000009,0x00040020,0x00000016,0x00000006,
+		0x00000015,0x0004003b,0x00000016,0x00000017,0x00000006,0x0004002b,0x00000006,0x00000018,
+		0x3f800000,0x0006002c,0x00000014,0x00000019,0x00000018,0x0000000d,0x0000000d,0x0006002c,
+		0x00000014,0x0000001a,0x0000000d,0x00000018,0x0000000d,0x0006002c,0x00000014,0x0000001b,
+		0x0000000d,0x0000000d,0x00000018,0x0006002c,0x00000015,0x0000001c,0x00000019,0x0000001a,
+		0x0000001b,0x0003001e,0x0000001d,0x00000014,0x00040020,0x0000001e,0x00000003,0x0000001d,
+		0x0004003b,0x0000001e,0x0000001f,0x00000003,0x00040015,0x00000020,0x00000020,0x00000001,
+		0x0004002b,0x00000020,0x00000021,0x00000000,0x00040020,0x00000022,0x00000001,0x00000020,
+		0x0004003b,0x00000022,0x00000023,0x00000001,0x00040020,0x00000025,0x00000006,0x00000014,
+		0x00040020,0x00000028,0x00000003,0x00000014,0x00040017,0x0000002a,0x00000006,0x00000004,
+		0x0004002b,0x00000008,0x0000002b,0x00000001,0x0004001c,0x0000002c,0x00000006,0x0000002b,
+		0x0006001e,0x0000002d,0x0000002a,0x00000006,0x0000002c,0x0000002c,0x00040020,0x0000002e,
+		0x00000003,0x0000002d,0x0004003b,0x0000002e,0x0000002f,0x00000003,0x00040020,0x00000031,
+		0x00000006,0x00000007,0x00040020,0x00000037,0x00000003,0x0000002a,0x00050036,0x00000002,
+		0x00000004,0x00000000,0x00000003,0x000200f8,0x00000005,0x0003003e,0x0000000c,0x00000013,
+		0x0003003e,0x00000017,0x0000001c,0x0004003d,0x00000020,0x00000024,0x00000023,0x00050041,
+		0x00000025,0x00000026,0x00000017,0x00000024,0x0004003d,0x00000014,0x00000027,0x00000026,
+		0x00050041,0x00000028,0x00000029,0x0000001f,0x00000021,0x0003003e,0x00000029,0x00000027,
+		0x0004003d,0x00000020,0x00000030,0x00000023,0x00050041,0x00000031,0x00000032,0x0000000c,
+		0x00000030,0x0004003d,0x00000007,0x00000033,0x00000032,0x00050051,0x00000006,0x00000034,
+		0x00000033,0x00000000,0x00050051,0x00000006,0x00000035,0x00000033,0x00000001,0x00070050,
+		0x0000002a,0x00000036,0x00000034,0x00000035,0x0000000d,0x00000018,0x00050041,0x00000037,
+		0x00000038,0x0000002f,0x00000021,0x0003003e,0x00000038,0x00000036,0x000100fd,0x00010038
+	};
+
+	static constexpr uint32_t fragShaderCode[] = {
+		0x07230203,0x00010000,0x0008000b,0x00000018,0x00000000,0x00020011,0x00000001,0x0006000b,
+		0x00000001,0x4c534c47,0x6474732e,0x3035342e,0x00000000,0x0003000e,0x00000000,0x00000001,
+		0x0007000f,0x00000004,0x00000004,0x6e69616d,0x00000000,0x00000009,0x0000000d,0x00030010,
+		0x00000004,0x00000007,0x00030003,0x00000002,0x000001cc,0x00040005,0x00000004,0x6e69616d,
+		0x00000000,0x00050005,0x00000009,0x4374756f,0x726f6c6f,0x00000000,0x00030005,0x0000000b,
+		0x00000000,0x00050006,0x0000000b,0x00000000,0x6f6c6f63,0x00000072,0x00030005,0x0000000d,
+		0x00006e49,0x00040047,0x00000009,0x0000001e,0x00000000,0x00040047,0x0000000d,0x0000001e,
+		0x00000000,0x00020013,0x00000002,0x00030021,0x00000003,0x00000002,0x00030016,0x00000006,
+		0x00000020,0x00040017,0x00000007,0x00000006,0x00000004,0x00040020,0x00000008,0x00000003,
+		0x00000007,0x0004003b,0x00000008,0x00000009,0x00000003,0x00040017,0x0000000a,0x00000006,
+		0x00000003,0x0003001e,0x0000000b,0x0000000a,0x00040020,0x0000000c,0x00000001,0x0000000b,
+		0x0004003b,0x0000000c,0x0000000d,0x00000001,0x00040015,0x0000000e,0x00000020,0x00000001,
+		0x0004002b,0x0000000e,0x0000000f,0x00000000,0x00040020,0x00000010,0x00000001,0x0000000a,
+		0x0004002b,0x00000006,0x00000013,0x3f800000,0x00050036,0x00000002,0x00000004,0x00000000,
+		0x00000003,0x000200f8,0x00000005,0x00050041,0x00000010,0x00000011,0x0000000d,0x0000000f,
+		0x0004003d,0x0000000a,0x00000012,0x00000011,0x00050051,0x00000006,0x00000014,0x00000012,
+		0x00000000,0x00050051,0x00000006,0x00000015,0x00000012,0x00000001,0x00050051,0x00000006,
+		0x00000016,0x00000012,0x00000002,0x00070050,0x00000007,0x00000017,0x00000014,0x00000015,
+		0x00000016,0x00000013,0x0003003e,0x00000009,0x00000017,0x000100fd,0x00010038
+	};
+
+	auto const vertShaderModule = vc::Get().device.createShaderModule({ .codeSize = sizeof(vertShaderCode), .pCode = vertShaderCode });
+	auto const fragShaderModule = vc::Get().device.createShaderModule({ .codeSize = sizeof(fragShaderCode), .pCode = fragShaderCode });
 
 	const vk::PipelineShaderStageCreateInfo shaderStages[]
 	{
-		{ {}, vk::ShaderStageFlagBits::eVertex, vertShaderModule, "main" },
-		{ {}, vk::ShaderStageFlagBits::eFragment, fragShaderModule, "main" }
+		{ .stage = vk::ShaderStageFlagBits::eVertex, .module = vertShaderModule, .pName = "main" },
+		{ .stage = vk::ShaderStageFlagBits::eFragment, .module = fragShaderModule, .pName = "main" }
 	};
 
-	vk::PipelineInputAssemblyStateCreateInfo inputAssembly	{
+	vk::PipelineVertexInputStateCreateInfo constexpr vertexInput {
+		.vertexBindingDescriptionCount = 0,
+		.pVertexBindingDescriptions = nullptr,
+		.vertexAttributeDescriptionCount = 0,
+		.pVertexAttributeDescriptions = nullptr
+	};
+
+	vk::PipelineInputAssemblyStateCreateInfo constexpr inputAssembly {
 		.topology = vk::PrimitiveTopology::eTriangleList,
 		.primitiveRestartEnable = false
 	};
 
-	vk::PipelineRasterizationStateCreateInfo rasterizer{
-		.depthClampEnable =,
-		.rasterizerDiscardEnable =,
-		.polygonMode =,
-		.cullMode =,
-		.frontFace =,
-		.depthBiasEnable =,
-		.depthBiasConstantFactor =,
-		.depthBiasClamp =,
-		.depthBiasSlopeFactor =,
-		.lineWidth = };
-
-	vk::PipelineMultisampleStateCreateInfo multisampling{};
-
-	vk::PipelineDepthStencilStateCreateInfo  depthStencil{};
-
-	vk::PipelineColorBlendAttachmentState colorBlendAttachment {
-		.blendEnable =,
-			.srcColorBlendFactor =,
-			.dstColorBlendFactor =,
-			.colorBlendOp =,
-			.srcAlphaBlendFactor =,
-			.dstAlphaBlendFactor =,
-			.alphaBlendOp =,
-			.colorWriteMask = };
-
-	vk::PipelineColorBlendStateCreateInfo colorBlending {
-		.sType =,
-			.pNext =,
-			.flags =,
-			.logicOpEnable =,
-			.logicOp =,
-			.attachmentCount =,
-			.pAttachments =,
-			.blendConstants =
+	vk::PipelineViewportStateCreateInfo constexpr viewportState {
+		.viewportCount = 1,
+		.scissorCount = 1
 	};
 
-	constexpr vk::PipelineViewportStateCreateInfo viewportState({ .viewportCount = 1, .scissorCount = 1 });
-	const vk::PipelineVertexInputStateCreateInfo vertexInputInfo({.vertexBindingDescriptionCount = , .pVertexBindingDescriptions = , .vertexAttributeDescriptionCount = , .pVertexAttributeDescriptions = });
-	const std::vector dynamicStates{ vk::DynamicState::eViewport, vk::DynamicState::eScissor };
-	const vk::PipelineDynamicStateCreateInfo dynamicState({}, dynamicStates);
+	vk::PipelineRasterizationStateCreateInfo constexpr rasterizer {
+		.depthClampEnable = false,
+		.rasterizerDiscardEnable = false,
+		.polygonMode = vk::PolygonMode::eFill,
+		.cullMode = vk::CullModeFlagBits::eBack,
+		.frontFace = vk::FrontFace::eClockwise,
+		.depthBiasEnable = false,
+		.lineWidth = 1.f
+	};
 
+	vk::PipelineMultisampleStateCreateInfo constexpr multisampling {
+		.rasterizationSamples = vk::SampleCountFlagBits::e1,
+		.sampleShadingEnable = false
+	};
 
-	m_handle = vc::device().createGraphicsPipeline(nullptr, pipelineCI).value;
+	vk::PipelineColorBlendAttachmentState constexpr colorBlendAttachment {
+		.blendEnable = false,
+		.colorWriteMask = vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA
+	};
+
+	vk::PipelineColorBlendStateCreateInfo constexpr colorBlending {
+		.logicOpEnable = false,
+		.logicOp = vk::LogicOp::eCopy,
+		.attachmentCount = 1,
+		.pAttachments = &colorBlendAttachment
+	};
+
+	std::array<vk::DynamicState, 2> constexpr dynamicStates { vk::DynamicState::eViewport, vk::DynamicState::eScissor};
+
+	vk::PipelineDynamicStateCreateInfo constexpr dynamicState {
+		.dynamicStateCount = 2,
+		.pDynamicStates = dynamicStates.data()
+	};
+
+	try
+	{
+		m_handle = vc::Get().device.createGraphicsPipeline(
+			nullptr,
+			vk::GraphicsPipelineCreateInfo{
+				.stageCount = 2,
+				.pStages = shaderStages,
+				.pVertexInputState = &vertexInput,
+				.pInputAssemblyState = &inputAssembly,
+				.pViewportState = &viewportState,
+				.pRasterizationState = &rasterizer,
+				.pMultisampleState = &multisampling,
+				.pColorBlendState = &colorBlending,
+				.pDynamicState = &dynamicState,
+				.layout = pipelineLayout
+			}
+		).value;
+	}
+	catch (const vk::SystemError& e)
+	{
+		spdlog::critical(e.what());
+	}
+
+	vc::Get().device.destroy(fragShaderModule);
+	vc::Get().device.destroy(vertShaderModule);
+	
 }
 
-Pipeline::~Pipeline()
+void Pipeline::teardown()
 {
-	
+	if (m_handle) vc::Get().device.destroy(m_handle);
 }

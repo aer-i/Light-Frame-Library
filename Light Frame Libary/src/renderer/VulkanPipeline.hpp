@@ -19,7 +19,7 @@ public:
 
 	PipelineLayout() = default;
 	PipelineLayout(const std::vector<vk::DescriptorSetLayout>& setLayouts, const std::vector<vk::PushConstantRange>& pushConstantRanges);
-	~PipelineLayout();
+	void teardown();
 
 	constexpr operator vk::PipelineLayout() const { return m_handle; }
 
@@ -32,7 +32,7 @@ class Pipeline
 public:
 	Pipeline() = default;
 	void construct(const VulkanSwapchain& swapchain, PipelineLayout& pipelineLayout);
-	~Pipeline();
+	void teardown();
 
 	constexpr operator vk::Pipeline() const { return m_handle; }
 

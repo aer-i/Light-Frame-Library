@@ -27,6 +27,11 @@ void lfRenderer::create()
 	{
 		frame.create();
 	}
+
+	m_defaultPipelineLayout = PipelineLayout::Builder()
+		.build();
+
+	m_defaultPipeline.construct(m_swapchain, m_defaultPipelineLayout);
 }
 
 void lfRenderer::beginFrame()
@@ -75,6 +80,16 @@ void lfRenderer::beginFrame()
 		.colorAttachmentCount = 1,
 		.pColorAttachments = &colorAttachment
 	});
+
+	m_currentCmd->bindPipeline(vk::PipelineBindPoint::eGraphics, m_defaultPipeline);
+
+	vk::Viewport viewport{0, 0, (float)m_swapchain.extent.width, (float)m_swapchain.extent.height, 0.f, 1.f};
+	vk::Rect2D scissor{.offset = { 0, 0 }, .extent = m_swapchain.extent};
+
+	m_currentCmd->setViewport(0, viewport);
+	m_currentCmd->setScissor(0, scissor);
+
+	m_currentCmd->draw(3, 1, 0, 0); // Magick numbberz
 
 }
 
@@ -150,6 +165,9 @@ void lfRenderer::recreateSwapchain()
 
 void lfRenderer::teardown()
 {
+	m_defaultPipeline.teardown();
+	m_defaultPipelineLayout.teardown();
+
 	for (auto& frame : m_frames)
 		frame.teardown();
 	m_swapchain.teardown();

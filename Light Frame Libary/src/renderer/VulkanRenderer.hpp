@@ -1,6 +1,7 @@
 #pragma once
 #include "VulkanContext.hpp"
 #include "VulkanSwapchain.hpp"
+#include "VulkanPipeline.hpp"
 #include "VulkanFrame.hpp"
 
 namespace lf2d { struct Color; }
@@ -20,6 +21,8 @@ public:
 
 private:
 	VulkanSwapchain m_swapchain;
+	PipelineLayout m_defaultPipelineLayout;
+	Pipeline m_defaultPipeline;
 	std::vector<VulkanFrame> m_frames;
 	vk::CommandBuffer* m_currentCmd;
 	uint32_t m_imageIndex = 0;
