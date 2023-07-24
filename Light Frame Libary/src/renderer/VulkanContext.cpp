@@ -17,7 +17,7 @@ const vk::ImageView VulkanContext::CreateImageView(vk::Image image, vk::ImageVie
 	});
 }
 
-void VulkanContext::create()
+void VulkanContext::create(bool enableVL)
 {
 #pragma region Dispatcher
 	{
@@ -27,7 +27,7 @@ void VulkanContext::create()
 
 #pragma region Instance
 	{
-		instance = vi::createInstance(lfWindow::GetTitle());
+		instance = vi::createInstance(lfWindow::GetTitle(), enableVL);
 
 		vi::dispatcherLoadInstance(instance);
 	}
@@ -35,7 +35,8 @@ void VulkanContext::create()
 
 #pragma region Debug Messenger
 	{
-		debugMessenger = vi::createDebugUtilsMessenger(instance);
+		if (enableVL)
+			debugMessenger = vi::createDebugUtilsMessenger(instance);
 	}
 #pragma endregion
 
@@ -61,7 +62,7 @@ void VulkanContext::create()
 
 #pragma region Logical Device
 	{
-		auto [tempDevice, tempDeviceFeatures] = vi::createLogicalDevice(gpu, graphicsFamily, presentFamily);
+		auto [tempDevice, tempDeviceFeatures] = vi::createLogicalDevice(gpu, graphicsFamily, presentFamily, enableVL);
 		device = tempDevice;
 		enabledDeviceFeatures = tempDeviceFeatures;
 

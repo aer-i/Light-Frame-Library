@@ -16,9 +16,9 @@ void lfRenderer::clearColor(lf2d::Color const& color)
 	m_color[3] = static_cast<float>(color.a) / 255.f;
 }
 
-void lfRenderer::create()
+void lfRenderer::create(bool enableVL)
 {
-	vc::Create();
+	vc::Create(enableVL);
 	m_swapchain.create();
 
 	m_frames.resize(m_swapchain.images.size());

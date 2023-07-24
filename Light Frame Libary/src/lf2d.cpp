@@ -33,13 +33,13 @@ namespace lf2d
 		renderer.clearColor(color);
 	}
 
-	void Renderer::createWindow(int width, int height, std::string const& title, bool resizable)
+	void Renderer::createWindow(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers)
 	{
 		static std::once_flag flag;
 		std::call_once(flag, [&]
 		{
 			window.create(width, height, title, resizable);
-			renderer.create();
+			renderer.create(enableValidationLayers);
 		});
 	}
 

@@ -8,7 +8,7 @@ public:
 	static const vk::ImageView CreateImageView(vk::Image image, vk::ImageViewType viewType, vk::Format format, vk::ImageAspectFlags aspectFlags);
 
 	static VulkanContext& Get() { static VulkanContext vc; return vc; }
-	static void Create() { Get().create(); }
+	static void Create(bool enableVL) { Get().create(enableVL); }
 	static void Teardown() { Get().teardown(); }
 
 	vk::Instance instance;
@@ -31,7 +31,7 @@ public:
 	vk::PhysicalDeviceFeatures enabledDeviceFeatures;
 
 private:
-	void create();
+	void create(bool);
 	void teardown();
 };
 

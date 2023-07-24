@@ -15,7 +15,7 @@ public:
 	inline void waitIdle() { vc::Get().device.waitIdle(); }
 
 	void clearColor(lf2d::Color const& color);
-	void create();
+	void create(bool);
 	void beginFrame();
 	void endFrame();
 

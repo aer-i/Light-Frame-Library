@@ -63,7 +63,7 @@ namespace vi
 		return std::make_tuple(0u, 0u);
 	}
 
-	inline std::pair<vk::Device, vk::PhysicalDeviceFeatures> createLogicalDevice(vk::PhysicalDevice gpu, uint32_t graphicsFamily, uint32_t presentFamily)
+	inline std::pair<vk::Device, vk::PhysicalDeviceFeatures> createLogicalDevice(vk::PhysicalDevice gpu, uint32_t graphicsFamily, uint32_t presentFamily, bool enableValidation)
 	{
 		std::vector uniqueIndices =
 			graphicsFamily == presentFamily ?
@@ -85,9 +85,8 @@ namespace vi
 		std::vector<const char*> layers;
 		std::vector<const char*> deviceExtensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-#ifndef NDEBUG
+		if (enableValidation)
 			layers.emplace_back("VK_LAYER_KHRONOS_validation");
-#endif
 
 		vk::PhysicalDeviceFeatures enabledFeatures;
 		vk::PhysicalDeviceFeatures deviceFeatures = gpu.getFeatures();

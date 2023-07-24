@@ -6,7 +6,16 @@ auto main(int argc, char* const argv[]) -> int
 	lf2d::Renderer renderer;
 
 	// Initializing lf2d (GLFW, Vulkan, e.t.c)
-	renderer.createWindow(1280, 720, "Light Frame - Example App", true);
+
+#ifndef NDEBUG
+	constexpr bool enableValidationLayers = true;
+#else
+	constexpr bool enableValidationLayers = false;
+#endif
+
+	constexpr bool resizable = true;
+
+	renderer.createWindow(1280, 720, "Light Frame - Example App", resizable, enableValidationLayers);
 
 	// You can clear color just once or every frame (or don't (black is default color))
 	renderer.clearColor(Color_Gray);

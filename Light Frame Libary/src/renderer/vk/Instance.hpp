@@ -19,7 +19,7 @@ namespace vi
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(device);
 	}
 
-	inline vk::Instance createInstance(std::string const& appName)
+	inline vk::Instance createInstance(std::string const& appName, bool enableValidation)
 	{
 
 		uint32_t extensionCount;
@@ -28,10 +28,12 @@ namespace vi
 		std::vector<const char*> extensionNames(extensions, extensions + extensionCount);
 		std::vector<const char*> layerNames;
 
-#ifndef NDEBUG
-		extensionNames.emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-		layerNames.emplace_back("VK_LAYER_KHRONOS_validation");
-#endif
+		if (enableValidation)
+		{
+			extensionNames.emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+			layerNames.emplace_back("VK_LAYER_KHRONOS_validation");
+		}
+
 		layerNames.emplace_back("VK_LAYER_LUNARG_monitor");
 		
 		const vk::ApplicationInfo appInfo {
@@ -59,8 +61,7 @@ namespace vi
 
 		return nullptr;
 	}
-
-#ifndef NDEBUG
+	
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
 	{
 		switch (messageSeverity)
@@ -78,11 +79,9 @@ namespace vi
 
 		return VK_FALSE;
 	}
-#endif
 
 	inline vk::DebugUtilsMessengerEXT createDebugUtilsMessenger(vk::Instance instance)
 	{
-#ifndef NDEBUG
 		spdlog::warn("Validation layers are enabled!");
 
 		const vk::DebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCI {
@@ -99,7 +98,6 @@ namespace vi
 		{
 			spdlog::critical(e.what());
 		}
-#endif
 		return nullptr;
 	}
 }
