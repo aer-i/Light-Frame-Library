@@ -80,6 +80,27 @@ void VulkanContext::create()
 	}
 #pragma endregion
 
+#pragma region Allocator
+	{
+		vk::DynamicLoader dl;
+
+		VmaVulkanFunctions const functions {
+			.vkGetInstanceProcAddr = dl.getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr"),
+			.vkGetDeviceProcAddr = dl.getProcAddress<PFN_vkGetDeviceProcAddr>("vkGetDeviceProcAddr")
+		};
+
+		VmaAllocatorCreateInfo const allocatorCI{
+			.physicalDevice = gpu,
+			.device = device,
+			.pVulkanFunctions = &functions,
+			.instance = instance,
+			.vulkanApiVersion = VK_API_VERSION_1_3
+		};
+
+		vmaCreateAllocator(&allocatorCI, &allocator);
+	}
+#pragma endregion
+
 #pragma region Log
 	{
 		spdlog::info("Created vulkan context");
@@ -89,6 +110,7 @@ void VulkanContext::create()
 
 void VulkanContext::teardown()
 {
+	if (allocator)				vmaDestroyAllocator(allocator);
 	if (uploadContext.fence)	device.destroy(uploadContext.fence);
 	if (uploadContext.cmdPool)	device.destroy(uploadContext.cmdPool);
 	if (device)					device.destroy();
