@@ -66,7 +66,7 @@ void lfRenderer::beginFrame()
 
 	m_currentCmd->begin({.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
 
-	vk::ImageMemoryBarrier imageMemoryBarrier {
+	vk::ImageMemoryBarrier const imageMemoryBarrier {
 		.srcAccessMask = vk::AccessFlagBits::eColorAttachmentWrite,
 		.oldLayout = vk::ImageLayout::eUndefined,
 		.newLayout = vk::ImageLayout::eColorAttachmentOptimal,
@@ -99,17 +99,46 @@ void lfRenderer::beginFrame()
 
 	m_currentCmd->bindPipeline(vk::PipelineBindPoint::eGraphics, m_defaultPipeline);
 
-	vk::Viewport viewport{0, 0, static_cast<float>(m_swapchain.extent.width), static_cast<float>(m_swapchain.extent.height), 0.f, 1.f};
-	vk::Rect2D scissor{.offset = { 0, 0 }, .extent = m_swapchain.extent};
+	vk::Viewport const viewport{0, 0, static_cast<float>(m_swapchain.extent.width), static_cast<float>(m_swapchain.extent.height), 0.f, 1.f};
+	vk::Rect2D const scissor{.offset = { 0, 0 }, .extent = m_swapchain.extent};
 
 	m_currentCmd->setViewport(0, viewport);
 	m_currentCmd->setScissor(0, scissor);
 
 	static std::vector<Vertex> vertices = {
-		{{0.0f, -1.f}},
-		{{1.f, 1.f}},
-		{{-1.f, 1.f}},
+		{{0.0f, -0.1f}},
+		{{0.1f, 0.1f}},
+		{{-0.1f, 0.1f}},
 	};
+
+	if (GetAsyncKeyState('A'))
+	{
+		for (auto& vertex : vertices)
+		{
+			vertex.position.x -= 0.001f;
+		}
+	}
+	if (GetAsyncKeyState('D'))
+	{
+		for (auto& vertex : vertices)
+		{
+			vertex.position.x += 0.001f;
+		}
+	}
+	if (GetAsyncKeyState('W'))
+	{
+		for (auto& vertex : vertices)
+		{
+			vertex.position.y -= 0.001f;
+		}
+	}
+	if (GetAsyncKeyState('S'))
+	{
+		for (auto& vertex : vertices)
+		{
+			vertex.position.y += 0.001f;
+		}
+	}
 
 	memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
 
