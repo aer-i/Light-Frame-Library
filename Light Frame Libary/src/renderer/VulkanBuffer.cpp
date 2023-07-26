@@ -2,12 +2,19 @@
 #include "VulkanBuffer.hpp"
 #include "VulkanContext.hpp"
 
-VulkanBuffer::VulkanBuffer(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage, vk::MemoryPropertyFlags memoryProperty)
-	: size{ bufferSize }
+
+VulkanBuffer::~VulkanBuffer()
+{
+	
+}
+
+void VulkanBuffer::create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage, vk::MemoryPropertyFlags memoryProperty)
 {
 	assert(bufferSize > 0);
 
-	VkBufferCreateInfo bufferCI {
+	this->size = bufferSize;
+
+	VkBufferCreateInfo bufferCI{
 		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 		.size = bufferSize,
 		.usage = bufferUsage
@@ -20,19 +27,16 @@ VulkanBuffer::VulkanBuffer(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferU
 
 	VkBuffer buffer;
 	vmaCreateBuffer(vc::Get().allocator, &bufferCI, &allocationCI, &buffer, &allocation, nullptr);
+
 	m_handle = vk::Buffer(buffer);
 
-	bind();
-}
-
-VulkanBuffer::~VulkanBuffer()
-{
-	
+	map();
 }
 
 void VulkanBuffer::free()
 {
-	
+	this->unmap();
+	if (m_handle) vmaDestroyBuffer(vc::Get().allocator, m_handle, allocation);
 }
 
 vk::DescriptorBufferInfo VulkanBuffer::descriptorInfo(vk::DeviceSize size, vk::DeviceSize offset)
@@ -42,21 +46,18 @@ vk::DescriptorBufferInfo VulkanBuffer::descriptorInfo(vk::DeviceSize size, vk::D
 
 void VulkanBuffer::map(vk::DeviceSize size, vk::DeviceSize offset)
 {
-	
+	vmaMapMemory(vc::Get().allocator, allocation, &mapped);
 }
 
 void VulkanBuffer::unmap()
 {
-	
+	if (mapped)
+		vmaUnmapMemory(vc::Get().allocator, allocation);
 }
 
 void VulkanBuffer::writeToBuffer(void* data, vk::DeviceSize size, vk::DeviceSize offset)
 {
 	
-}
-
-void VulkanBuffer::bind(vk::DeviceSize offset)
-{
 }
 
 void VulkanBuffer::flush(vk::DeviceSize size, vk::DeviceSize offset)

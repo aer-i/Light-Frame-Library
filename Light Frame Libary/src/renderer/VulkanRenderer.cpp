@@ -2,6 +2,7 @@
 #include "VulkanRenderer.hpp"
 #include "window/Window.hpp"
 #include "lf2d.hpp"
+#include "Mesh.hpp"
 
 lfRenderer::~lfRenderer()
 {
@@ -27,6 +28,16 @@ void lfRenderer::create(bool enableVL)
 	{
 		frame.create();
 	}
+
+	const std::vector<Vertex> vertices = {
+		{{0.0f, -0.5f}},
+		{{0.5f, 0.5f}},
+		{{-0.5f, 0.5f}},
+	};
+
+	m_vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vk::MemoryPropertyFlagBits::eDeviceLocal);
+
+	memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
 
 	m_defaultPipelineLayout = PipelineLayout::Builder()
 		.build();
@@ -88,6 +99,9 @@ void lfRenderer::beginFrame()
 
 	m_currentCmd->setViewport(0, viewport);
 	m_currentCmd->setScissor(0, scissor);
+
+	constexpr vk::DeviceSize offsets[]{ 0 };
+	m_currentCmd->bindVertexBuffers(0, 1, m_vertexBuffer, offsets);
 
 	m_currentCmd->draw(3, 1, 0, 0);
 }
@@ -166,6 +180,8 @@ void lfRenderer::teardown()
 {
 	m_defaultPipeline.teardown();
 	m_defaultPipelineLayout.teardown();
+
+	m_vertexBuffer.free();
 
 	for (auto& frame : m_frames)
 		frame.teardown();
