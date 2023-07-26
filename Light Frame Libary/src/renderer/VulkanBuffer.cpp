@@ -8,7 +8,7 @@ VulkanBuffer::~VulkanBuffer()
 	
 }
 
-void VulkanBuffer::create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage, vk::MemoryPropertyFlags memoryProperty)
+void VulkanBuffer::create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage)
 {
 	assert(bufferSize > 0);
 
@@ -22,7 +22,7 @@ void VulkanBuffer::create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUs
 
 	VmaAllocationCreateInfo allocationCI{
 		.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT,
-		.usage = VMA_MEMORY_USAGE_AUTO
+		.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE
 	};
 
 	VkBuffer buffer;

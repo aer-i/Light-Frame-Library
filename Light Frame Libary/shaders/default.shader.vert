@@ -11,6 +11,6 @@ layout(location = 0) in vec2 inPosition;
 
 void main()
 {
-    Out.color = vec3(1.0, 0.0, 0.0);
+    Out.color = vec3(1.0, 1.0, 1.0);
 	gl_Position = vec4(inPosition, 0.0, 1.0);
 }

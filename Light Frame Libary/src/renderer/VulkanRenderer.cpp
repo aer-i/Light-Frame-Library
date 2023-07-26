@@ -4,6 +4,11 @@
 #include "lf2d.hpp"
 #include "Mesh.hpp"
 
+struct CameraPushConstant
+{
+	glm::mat4 MPV;
+};
+
 lfRenderer::~lfRenderer()
 {
 	this->teardown();
@@ -35,7 +40,7 @@ void lfRenderer::create(bool enableVL)
 		{{-0.5f, 0.5f}},
 	};
 
-	m_vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vk::MemoryPropertyFlagBits::eDeviceLocal);
+	m_vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
 
 	memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
 
@@ -99,6 +104,14 @@ void lfRenderer::beginFrame()
 
 	m_currentCmd->setViewport(0, viewport);
 	m_currentCmd->setScissor(0, scissor);
+
+	static std::vector<Vertex> vertices = {
+		{{0.0f, -1.f}},
+		{{1.f, 1.f}},
+		{{-1.f, 1.f}},
+	};
+
+	memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
 
 	constexpr vk::DeviceSize offsets[]{ 0 };
 	m_currentCmd->bindVertexBuffers(0, 1, m_vertexBuffer, offsets);

@@ -5,7 +5,7 @@ class VulkanBuffer
 public:
 	VulkanBuffer() = default;
 	~VulkanBuffer();
-	void create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage, vk::MemoryPropertyFlags memoryProperty);
+	void create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage);
 	void free();
 
 	vk::DescriptorBufferInfo descriptorInfo(vk::DeviceSize size = VK_WHOLE_SIZE, vk::DeviceSize offset = 0);

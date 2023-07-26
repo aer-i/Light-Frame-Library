@@ -12,6 +12,7 @@
 #include <vulkan/vulkan.hpp>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 #include <vma/vk_mem_alloc.h>
 #include <spdlog/spdlog.h>
 #include <map>
