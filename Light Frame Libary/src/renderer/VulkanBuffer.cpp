@@ -52,7 +52,10 @@ void VulkanBuffer::map(vk::DeviceSize size, vk::DeviceSize offset)
 void VulkanBuffer::unmap()
 {
 	if (mapped)
+	{
 		vmaUnmapMemory(vc::Get().allocator, allocation);
+		mapped = nullptr;
+	}
 }
 
 void VulkanBuffer::writeToBuffer(void* data, vk::DeviceSize size, vk::DeviceSize offset)
