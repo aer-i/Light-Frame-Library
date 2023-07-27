@@ -5,9 +5,9 @@ class VulkanSwapchain
 public:
 	VulkanSwapchain() = default;
 
-	void create();
+	void create(bool vsync);
 	void teardown();
-	void recreate();
+	void recreate(bool vsync);
 
 	constexpr operator vk::SwapchainKHR() const { return m_swapchain; }
 	constexpr operator vk::SwapchainKHR*() { return &m_swapchain; }
@@ -22,7 +22,7 @@ private:
 	vk::SwapchainKHR m_swapchain;
 	vk::SwapchainKHR m_oldSwapchain;
 	
-	void createHandle();
+	void createHandle(bool vsync);
 
 	static vk::SurfaceFormatKHR setFormat(const std::vector<vk::SurfaceFormatKHR>&);
 	static vk::PresentModeKHR setPresentMode(const std::vector<vk::PresentModeKHR>&);

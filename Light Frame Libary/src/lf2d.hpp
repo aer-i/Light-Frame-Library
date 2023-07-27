@@ -48,6 +48,7 @@ namespace lf2d
 		void endRendering();
 
 		void clearColor(Color color);
+		void setVsync(bool enabled);
 
 		void createWindow(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers = false);
 		void closeWindow();

@@ -3,9 +3,9 @@
 #include "VulkanContext.hpp"
 #include "window/Window.hpp"
 
-void VulkanSwapchain::create()
+void VulkanSwapchain::create(bool vsync)
 {
-	this->createHandle();
+	this->createHandle(vsync);
 }
 
 vk::Result VulkanSwapchain::acquireNextImage(vk::Semaphore semaphore, uint32_t* imageIndex) const
@@ -13,11 +13,11 @@ vk::Result VulkanSwapchain::acquireNextImage(vk::Semaphore semaphore, uint32_t* 
 	return vc::Get().device.acquireNextImageKHR(m_swapchain, UINT64_MAX, semaphore, nullptr, imageIndex);
 }
 
-void VulkanSwapchain::createHandle()
+void VulkanSwapchain::createHandle(bool vsync)
 {
 	const auto capabilities  = vc::Get().gpu.getSurfaceCapabilitiesKHR(vc::Get().surface);
 	const auto surfaceFormat = this->setFormat(vc::Get().gpu.getSurfaceFormatsKHR(vc::Get().surface));
-	const auto presentMode	 = this->setPresentMode(vc::Get().gpu.getSurfacePresentModesKHR(vc::Get().surface));
+	const auto presentMode	 = vsync ? vk::PresentModeKHR::eFifo : this->setPresentMode(vc::Get().gpu.getSurfacePresentModesKHR(vc::Get().surface));
 	const auto extent		 = this->setExtent(capabilities);
 
 	this->extent = extent;
@@ -89,12 +89,12 @@ void VulkanSwapchain::teardown()
 	}
 }
 
-void VulkanSwapchain::recreate()
+void VulkanSwapchain::recreate(bool vsync)
 {
 	for (const auto& imageView : imageViews)
 		vc::Get().device.destroy(imageView);
 
-	createHandle();
+	createHandle(vsync);
 }
 
 vk::SurfaceFormatKHR VulkanSwapchain::setFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats)
@@ -115,7 +115,7 @@ vk::PresentModeKHR VulkanSwapchain::setPresentMode(const std::vector<vk::Present
 {
 	for (const auto& mode : availableModes)
 	{
-		if (mode == vk::PresentModeKHR::eMailbox)
+		if (mode == vk::PresentModeKHR::eImmediate)
 		{
 			return mode;
 		}
@@ -123,7 +123,7 @@ vk::PresentModeKHR VulkanSwapchain::setPresentMode(const std::vector<vk::Present
 
 	for (const auto& mode : availableModes)
 	{
-		if (mode == vk::PresentModeKHR::eImmediate)
+		if (mode == vk::PresentModeKHR::eMailbox)
 		{
 			return mode;
 		}

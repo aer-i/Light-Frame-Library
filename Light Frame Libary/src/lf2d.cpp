@@ -33,6 +33,11 @@ namespace lf2d
 		renderer.clearColor(color);
 	}
 
+	void Renderer::setVsync(bool enabled)
+	{
+		renderer.setVsync(enabled);
+	}
+
 	void Renderer::createWindow(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers)
 	{
 		static std::once_flag flag;

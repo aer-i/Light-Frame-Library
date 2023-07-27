@@ -22,10 +22,20 @@ void lfRenderer::clearColor(lf2d::Color const& color)
 	m_color[3] = static_cast<float>(color.a) / 255.f;
 }
 
+void lfRenderer::setVsync(bool enabled)
+{
+	vsync = enabled;
+
+	if (vc::Get().device)
+	{
+		recreateSwapchain();
+	}
+}
+
 void lfRenderer::create(bool enableVL)
 {
 	vc::Create(enableVL);
-	m_swapchain.create();
+	m_swapchain.create(vsync);
 
 	m_frames.resize(m_swapchain.images.size());
 
@@ -215,7 +225,7 @@ void lfRenderer::recreateSwapchain()
 	}
 
 	vc::Get().device.waitIdle();
-	m_swapchain.recreate();
+	m_swapchain.recreate(vsync);
 }
 
 void lfRenderer::teardown()

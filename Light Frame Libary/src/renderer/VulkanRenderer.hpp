@@ -16,6 +16,7 @@ public:
 	inline void waitIdle() { vc::Get().device.waitIdle(); }
 
 	void clearColor(lf2d::Color const& color);
+	void setVsync(bool enabled);
 	void create(bool);
 	void beginFrame();
 	void endFrame();
@@ -30,6 +31,7 @@ private:
 	uint32_t m_imageIndex = 0;
 	uint32_t m_frameIndex = 0;
 	std::array<float, 4> m_color = {0.f, 0.f, 0.f, 1.f};
+	bool vsync = true;
 
 	void recreateSwapchain();
 	void teardown();
