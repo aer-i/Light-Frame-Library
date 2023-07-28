@@ -92,6 +92,8 @@ void lfRenderer::beginFrame()
 		}
 	};
 
+	// TODO: Add memory barrier
+
 	m_currentCmd->pipelineBarrier2({ .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
 
 	vk::RenderingAttachmentInfo colorAttachment {
