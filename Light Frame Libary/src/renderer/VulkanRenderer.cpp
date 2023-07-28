@@ -118,7 +118,7 @@ void lfRenderer::beginFrame()
 	static std::vector<Vertex> vertices = {
 		{{0.0f, -0.1f}},
 		{{0.1f, 0.1f}},
-		{{-0.1f, 0.1f}},
+		{{-0.1f, 0.1f}}
 	};
 
 	if (GetAsyncKeyState('A'))
@@ -150,12 +150,38 @@ void lfRenderer::beginFrame()
 		}
 	}
 
-	memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
+	if (GetAsyncKeyState('R'))
+	{
+		vertices.push_back({ {0.0f, -0.1f} });
+		vertices.push_back({ {0.1f, 0.1f} });
+		vertices.push_back({ {-0.1f, 0.1f} });
 
-	constexpr vk::DeviceSize offsets[]{ 0 };
-	m_currentCmd->bindVertexBuffers(0, 1, m_vertexBuffer, offsets);
+		vertices.push_back({ {0.0f, -0.1f + 3} });
+		vertices.push_back({ {0.1f, 0.1f + 3} });
+		vertices.push_back({ {-0.1f, 0.1f + 3} });
 
-	m_currentCmd->draw(3, 1, 0, 0);
+		vertices.push_back({ {0.0f, -0.1f - 3} });
+		vertices.push_back({ {0.1f, 0.1f - 3} });
+		vertices.push_back({ {-0.1f, 0.1f - 3} });
+	}
+
+	if (vertices.size() > 0)
+	{
+		if (vertices.size() > m_vertexBuffer.count || vertices.size() < m_vertexBuffer.count / 2)
+		{
+			m_vertexBuffer.free();
+			m_vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+			m_vertexBuffer.count = static_cast<uint32_t>(vertices.size());
+		}
+
+		memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
+		m_vertexBuffer.flush();
+
+		constexpr vk::DeviceSize offsets[]{ 0 };
+		m_currentCmd->bindVertexBuffers(0, 1, m_vertexBuffer, offsets);
+	}
+
+	m_currentCmd->draw(m_vertexBuffer.count, 1, 0, 0);
 }
 
 void lfRenderer::endFrame()

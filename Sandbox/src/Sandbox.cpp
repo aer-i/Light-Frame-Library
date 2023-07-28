@@ -12,7 +12,7 @@ auto main(int argc, char* const argv[]) -> int
 	constexpr bool enableValidationLayers = false;
 #endif
 	constexpr bool resizable = true;
-	constexpr bool vsync = true;
+	constexpr bool vsync = false;
 
 	// Enabling v-sync for lower power usage and no visible screen tearing
 	renderer.setVsync(vsync);

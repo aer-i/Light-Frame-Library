@@ -9,7 +9,7 @@ public:
 	void free();
 
 	vk::DescriptorBufferInfo descriptorInfo(vk::DeviceSize size = VK_WHOLE_SIZE, vk::DeviceSize offset = 0);
-	void map(vk::DeviceSize size = VK_WHOLE_SIZE, vk::DeviceSize offset = 0);
+	void map();
 	void unmap();
 	void writeToBuffer(void* data, vk::DeviceSize size = VK_WHOLE_SIZE, vk::DeviceSize offset = 0);
 	void flush(vk::DeviceSize size = VK_WHOLE_SIZE, vk::DeviceSize offset = 0);

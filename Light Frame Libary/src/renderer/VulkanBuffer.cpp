@@ -44,7 +44,7 @@ vk::DescriptorBufferInfo VulkanBuffer::descriptorInfo(vk::DeviceSize size, vk::D
 	return { m_handle, offset, size };
 }
 
-void VulkanBuffer::map(vk::DeviceSize size, vk::DeviceSize offset)
+void VulkanBuffer::map()
 {
 	vmaMapMemory(vc::Get().allocator, allocation, &mapped);
 }
@@ -60,10 +60,19 @@ void VulkanBuffer::unmap()
 
 void VulkanBuffer::writeToBuffer(void* data, vk::DeviceSize size, vk::DeviceSize offset)
 {
-	
+	if (size == VK_WHOLE_SIZE)
+	{
+		memcpy(mapped, data, this->size);
+	}
+	else
+	{
+		uint8_t* memOffset = (uint8_t*)mapped;
+		memOffset += offset;
+		memcpy(memOffset, data, size);
+	}
 }
 
 void VulkanBuffer::flush(vk::DeviceSize size, vk::DeviceSize offset)
 {
-	
+	vmaFlushAllocation(vc::Get().allocator, allocation, offset, size);
 }
