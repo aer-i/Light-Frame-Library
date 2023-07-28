@@ -4,7 +4,6 @@ class VulkanBuffer
 {
 public:
 	VulkanBuffer() = default;
-	~VulkanBuffer();
 	void create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage);
 	void free();
 
@@ -19,7 +18,7 @@ public:
 	constexpr operator bool() const { return m_handle ? true : false; }
 
 	void* mapped = nullptr;
-	VmaAllocation allocation;
+	VmaAllocation allocation{};
 	vk::DeviceSize size = 0;
 	uint32_t count = 0;
 

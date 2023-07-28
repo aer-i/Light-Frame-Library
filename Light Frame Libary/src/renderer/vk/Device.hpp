@@ -39,6 +39,14 @@ namespace vi
 		uint32_t i = 0;
 		for (const auto& family : gpu.getQueueFamilyProperties())
 		{
+			if (family.queueFlags & vk::QueueFlagBits::eTransfer)
+			{
+				spdlog::info("Transfer queue family available at index: {}", i);
+			}
+			if (family.queueFlags & vk::QueueFlagBits::eCompute)
+			{
+				spdlog::info("Compute queue family available at index: {}", i);
+			}
 			if (family.queueFlags & vk::QueueFlagBits::eGraphics)
 			{
 				graphics = i;

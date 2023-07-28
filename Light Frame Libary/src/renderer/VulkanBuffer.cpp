@@ -2,12 +2,6 @@
 #include "VulkanBuffer.hpp"
 #include "VulkanContext.hpp"
 
-
-VulkanBuffer::~VulkanBuffer()
-{
-	
-}
-
 void VulkanBuffer::create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage)
 {
 	assert(bufferSize > 0);
@@ -39,6 +33,7 @@ void VulkanBuffer::free()
 {
 	this->unmap();
 	if (m_handle) vmaDestroyBuffer(vc::Get().allocator, m_handle, allocation);
+	m_handle = nullptr;
 }
 
 vk::DescriptorBufferInfo VulkanBuffer::descriptorInfo(vk::DeviceSize size, vk::DeviceSize offset)

@@ -51,6 +51,7 @@ void lfRenderer::create(bool enableVL)
 	};
 
 	m_vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+	m_vertexBuffer.count = static_cast<uint32_t>(vertices.size());
 
 	memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
 
@@ -78,21 +79,19 @@ void lfRenderer::beginFrame()
 	
 	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
 		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
-			.srcAccessMask = vk::AccessFlagBits2::eColorAttachmentWrite,
-			.dstStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
-			.oldLayout = vk::ImageLayout::eUndefined,
-			.newLayout = vk::ImageLayout::eColorAttachmentOptimal,
-			.image = m_swapchain.images[m_imageIndex],
-			.subresourceRange = {
-					.aspectMask = vk::ImageAspectFlagBits::eColor,
-					.baseMipLevel = 0,
-					.levelCount = 1,
-					.baseArrayLayer = 0,
-					.layerCount = 1
+		.srcAccessMask = vk::AccessFlagBits2::eColorAttachmentWrite,
+		.dstStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
+		.oldLayout = vk::ImageLayout::eUndefined,
+		.newLayout = vk::ImageLayout::eAttachmentOptimal,
+		.image = m_swapchain.images[m_imageIndex],
+		.subresourceRange = {
+			.aspectMask = vk::ImageAspectFlagBits::eColor,
+			.baseMipLevel = 0,
+			.levelCount = 1,
+			.baseArrayLayer = 0,
+			.layerCount = 1
 		}
 	};
-
-	// TODO: Add memory barrier
 
 	m_currentCmd->pipelineBarrier2({ .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
 
@@ -159,19 +158,11 @@ void lfRenderer::beginFrame()
 		vertices.push_back({ {0.0f, -0.1f} });
 		vertices.push_back({ {0.1f, 0.1f} });
 		vertices.push_back({ {-0.1f, 0.1f} });
-
-		vertices.push_back({ {0.0f, -0.1f + 3} });
-		vertices.push_back({ {0.1f, 0.1f + 3} });
-		vertices.push_back({ {-0.1f, 0.1f + 3} });
-
-		vertices.push_back({ {0.0f, -0.1f - 3} });
-		vertices.push_back({ {0.1f, 0.1f - 3} });
-		vertices.push_back({ {-0.1f, 0.1f - 3} });
 	}
 
-	if (vertices.size() > 0)
+	if (!vertices.empty())
 	{
-		if (vertices.size() > m_vertexBuffer.count || vertices.size() < m_vertexBuffer.count / 2)
+		if (vertices.size() > m_vertexBuffer.count || vertices.size() < m_vertexBuffer.count / 2 )
 		{
 			m_vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
 			m_vertexBuffer.count = static_cast<uint32_t>(vertices.size());
@@ -183,7 +174,6 @@ void lfRenderer::beginFrame()
 		m_currentCmd->bindVertexBuffers(0, 1, m_vertexBuffer, offsets);
 		m_currentCmd->draw(m_vertexBuffer.count, 1, 0, 0);
 	}
-
 }
 
 void lfRenderer::endFrame()
@@ -191,21 +181,27 @@ void lfRenderer::endFrame()
 	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
 		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
 		.srcAccessMask = vk::AccessFlagBits2::eColorAttachmentWrite,
-		.dstStageMask = vk::PipelineStageFlagBits2::eBottomOfPipe,
 		.oldLayout = vk::ImageLayout::eColorAttachmentOptimal,
 		.newLayout = vk::ImageLayout::ePresentSrcKHR,
 		.image = m_swapchain.images[m_imageIndex],
 		.subresourceRange = {
-				.aspectMask = vk::ImageAspectFlagBits::eColor,
-				.baseMipLevel = 0,
-				.levelCount = 1,
-				.baseArrayLayer = 0,
-				.layerCount = 1
+			.aspectMask = vk::ImageAspectFlagBits::eColor,
+			.baseMipLevel = 0,
+			.levelCount = 1,
+			.baseArrayLayer = 0,
+			.layerCount = 1
 		}
 	};
 
+	vk::MemoryBarrier2 memoryBarrier {
+		.srcStageMask = vk::PipelineStageFlagBits2::eTransfer,
+			.srcAccessMask = vk::AccessFlagBits2::eMemoryRead,
+			.dstStageMask = vk::PipelineStageFlagBits2::eVertexAttributeInput,
+			.dstAccessMask = vk::AccessFlagBits2::eMemoryWrite
+	};
+
 	m_currentCmd->endRendering();
-	m_currentCmd->pipelineBarrier2({ .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
+	m_currentCmd->pipelineBarrier2({.memoryBarrierCount = 1, .pMemoryBarriers = &memoryBarrier, .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
 	m_currentCmd->end();
 
 	vc::Get().device.resetFences(1, &m_frames[m_frameIndex].fence);
