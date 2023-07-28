@@ -12,6 +12,8 @@ void VulkanBuffer::create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUs
 {
 	assert(bufferSize > 0);
 
+	free();
+
 	this->size = bufferSize;
 
 	VkBufferCreateInfo bufferCI{

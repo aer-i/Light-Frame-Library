@@ -75,22 +75,24 @@ void lfRenderer::beginFrame()
 	m_currentCmd = &m_frames[m_frameIndex].commandBuffer;
 
 	m_currentCmd->begin({.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
-
-	vk::ImageMemoryBarrier const imageMemoryBarrier {
-		.srcAccessMask = vk::AccessFlagBits::eColorAttachmentWrite,
-		.oldLayout = vk::ImageLayout::eUndefined,
-		.newLayout = vk::ImageLayout::eColorAttachmentOptimal,
-		.image = m_swapchain.images[m_imageIndex],
-		.subresourceRange = {
-				.aspectMask = vk::ImageAspectFlagBits::eColor,
-				.baseMipLevel = 0,
-				.levelCount = 1,
-				.baseArrayLayer = 0,
-				.layerCount = 1
+	
+	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
+		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
+			.srcAccessMask = vk::AccessFlagBits2::eColorAttachmentWrite,
+			.dstStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
+			.oldLayout = vk::ImageLayout::eUndefined,
+			.newLayout = vk::ImageLayout::eColorAttachmentOptimal,
+			.image = m_swapchain.images[m_imageIndex],
+			.subresourceRange = {
+					.aspectMask = vk::ImageAspectFlagBits::eColor,
+					.baseMipLevel = 0,
+					.levelCount = 1,
+					.baseArrayLayer = 0,
+					.layerCount = 1
 		}
 	};
 
-	m_currentCmd->pipelineBarrier(vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eColorAttachmentOutput, {}, nullptr, nullptr, imageMemoryBarrier);
+	m_currentCmd->pipelineBarrier2({ .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
 
 	vk::RenderingAttachmentInfo colorAttachment {
 		.imageView = m_swapchain.imageViews[m_imageIndex],
@@ -169,25 +171,25 @@ void lfRenderer::beginFrame()
 	{
 		if (vertices.size() > m_vertexBuffer.count || vertices.size() < m_vertexBuffer.count / 2)
 		{
-			m_vertexBuffer.free();
 			m_vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
 			m_vertexBuffer.count = static_cast<uint32_t>(vertices.size());
 		}
 
 		memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
-		m_vertexBuffer.flush();
 
 		constexpr vk::DeviceSize offsets[]{ 0 };
 		m_currentCmd->bindVertexBuffers(0, 1, m_vertexBuffer, offsets);
+		m_currentCmd->draw(m_vertexBuffer.count, 1, 0, 0);
 	}
 
-	m_currentCmd->draw(m_vertexBuffer.count, 1, 0, 0);
 }
 
 void lfRenderer::endFrame()
 {
-	vk::ImageMemoryBarrier const imageMemoryBarrier {
-		.srcAccessMask = vk::AccessFlagBits::eColorAttachmentWrite,
+	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
+		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
+		.srcAccessMask = vk::AccessFlagBits2::eColorAttachmentWrite,
+		.dstStageMask = vk::PipelineStageFlagBits2::eBottomOfPipe,
 		.oldLayout = vk::ImageLayout::eColorAttachmentOptimal,
 		.newLayout = vk::ImageLayout::ePresentSrcKHR,
 		.image = m_swapchain.images[m_imageIndex],
@@ -201,7 +203,7 @@ void lfRenderer::endFrame()
 	};
 
 	m_currentCmd->endRendering();
-	m_currentCmd->pipelineBarrier(vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eBottomOfPipe, {}, nullptr, nullptr, imageMemoryBarrier);
+	m_currentCmd->pipelineBarrier2({ .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
 	m_currentCmd->end();
 
 	vc::Get().device.resetFences(1, &m_frames[m_frameIndex].fence);
