@@ -193,15 +193,8 @@ void lfRenderer::endFrame()
 		}
 	};
 
-	vk::MemoryBarrier2 memoryBarrier {
-		.srcStageMask = vk::PipelineStageFlagBits2::eTransfer,
-			.srcAccessMask = vk::AccessFlagBits2::eMemoryRead,
-			.dstStageMask = vk::PipelineStageFlagBits2::eVertexAttributeInput,
-			.dstAccessMask = vk::AccessFlagBits2::eMemoryWrite
-	};
-
 	m_currentCmd->endRendering();
-	m_currentCmd->pipelineBarrier2({.memoryBarrierCount = 1, .pMemoryBarriers = &memoryBarrier, .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
+	m_currentCmd->pipelineBarrier2({.imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
 	m_currentCmd->end();
 
 	vc::Get().device.resetFences(1, &m_frames[m_frameIndex].fence);
