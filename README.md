@@ -1,6 +1,6 @@
 ⚠️Unfinished⚠️
 
-You can't even render a single square for now. :]
+You can't even render a single quad for now. :]
 Don't use that because it's terrible.
 
 Simple C++ libary for window creation, input handling, rendering via Vulkan.
