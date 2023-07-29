@@ -23,10 +23,14 @@ void lfRenderer::clearColor(lf2d::Color color)
 
 void lfRenderer::setVsync(bool enabled)
 {
-	if (vc::Get().device && m_vsync != enabled)
+	if (m_vsync != enabled)
 	{
 		m_vsync = enabled;
-		recreateSwapchain();
+
+		if (vc::Get().device)
+		{
+			recreateSwapchain();
+		}
 	}
 }
 
@@ -114,27 +118,26 @@ void lfRenderer::beginFrame()
 	
 }
 
-void lfRenderer::endFrame()
+void lfRenderer::endFrame(Mesh& mesh, lf2d::Camera const& camera)
 {
-	if (!m_vertices.empty())
-	{
-		if (m_vertices.size() > frame->vertexBuffer.count)
-		{
-			frame->vertexBuffer.create(sizeof(Vertex) * m_vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-		}
 
-		frame->vertexBuffer.count = static_cast<uint32_t>(m_vertices.size());
-		memcpy(frame->vertexBuffer.mapped, m_vertices.data(), frame->vertexBuffer.size);
-		m_vertices.clear();
+	glm::mat4 const projection	= glm::ortho(0, 1, 0, 1, -1, 1);
+	glm::mat4 const	view		= glm::inverse(
+		glm::translate(
+			glm::mat4(1.f),
+			{ (camera.position.x - camera.offset.x) / lfWindow::GetWidth(), (camera.position.y - camera.offset.y) / lfWindow::GetHeight(), 0.f })
+		* glm::rotate(
+			glm::mat4(1.f),
+			camera.rotation,
+			{ 0, 0, 1 }));
 
-		CameraPushConstant cameraConstant{};
+	CameraPushConstant const cameraConstant {
+		.projView = projection * view
+	};
 		
-		frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);
+	frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);
 
-		constexpr vk::DeviceSize offsets[]{ 0 };
-		frame->commandBuffer.bindVertexBuffers(0, 1, frame->vertexBuffer, offsets);
-		frame->commandBuffer.draw(frame->vertexBuffer.count, 1, 0, 0);
-	}
+	mesh.render(frame->commandBuffer, frame->vertexBuffer);
 
 	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
 		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,

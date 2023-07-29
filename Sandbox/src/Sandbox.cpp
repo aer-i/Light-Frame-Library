@@ -6,9 +6,15 @@ auto main(int argc, char* const argv[]) -> int
 	// Basically main lf2d class that takes responsibility for window and renderer
 	lf2d::Renderer renderer;
 
+	// Main camera
+	lf2d::Camera camera;
+
 #ifndef NDEBUG
+	// You can enable validation layers if you want
+	// Vulkan SDK required
 	constexpr bool enableValidationLayers = true;
 #else
+	// Disable validation layers in release mode for better performance
 	constexpr bool enableValidationLayers = false;
 #endif
 	constexpr bool resizable = true;
@@ -25,11 +31,16 @@ auto main(int argc, char* const argv[]) -> int
 	// true is returned when window is closed
 	while (!renderer.windowShouldClose()) // Main loop. Executing every frame
 	{
+		camera.position = lf2d::vec2{ 0.f, 0.f };
+		// Setting this camera offset causes objects at position {0, 0} to be rendered in the center of the screen instead of in the top left corner
+		camera.offset = { lf2d::getWindowWidth() / 2.f, lf2d::getWindowHeight() / 2.f };
+
 		renderer.beginRendering();
 		{
-			renderer.renderRect(0, 0, lf2d::getWindowWidth() / 2, lf2d::getWindowHeight() / 2, Color_Maroon);
+			// Add quad to render queue 
+			renderer.renderRect(0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, Color_Maroon);
 		}
-		renderer.endRendering();
+		renderer.endRendering(camera);
 	}
 	// Exit main loop
 

@@ -5,6 +5,7 @@
 
 static lfWindow window;
 static lfRenderer renderer;
+static Mesh mesh;
 
 namespace lf2d
 {
@@ -23,24 +24,24 @@ namespace lf2d
 		renderer.beginFrame();
 	}
 
-	void Renderer::endRendering()
+	void Renderer::endRendering(Camera const& camera)
 	{
-		renderer.endFrame();
+		renderer.endFrame(mesh, camera);
 	}
 
 	void Renderer::renderRect(int x, int y, int width, int height, Color color)
 	{
-		renderer.renderRect(x, y, width, height, color);
+		mesh.addRect({(float)x, (float)y, (float)width, (float)height}, color);
 	}
 
 	void Renderer::renderRectV(vec2 position, vec2 size, Color color)
 	{
-
+		mesh.addRect({position.x, position.y, size.x, size.y}, color);
 	}
 
 	void Renderer::renderRectR(const Rect& rect, Color color)
 	{
-
+		mesh.addRect(rect, color);
 	}
 
 	void Renderer::clearColor(Color color)

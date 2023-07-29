@@ -58,8 +58,8 @@ namespace lf2d
 
 	struct Camera
 	{
-		vec2 position, offset;
-		float zoom, rotation;
+		vec2 position{}, offset{};
+		float zoom{}, rotation{};
 	};
 	
 	class Renderer
@@ -72,7 +72,7 @@ namespace lf2d
 		Renderer& operator=(Renderer&&) = delete;
 
 		void beginRendering();
-		void endRendering();
+		void endRendering(Camera const& camera);
 
 		void renderRect(int x, int y, int width, int height, Color color);
 		void renderRectV(vec2 position, vec2 size, Color color);
