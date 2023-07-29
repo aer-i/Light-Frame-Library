@@ -3,7 +3,6 @@
 #include "VulkanSwapchain.hpp"
 #include "VulkanPipeline.hpp"
 #include "VulkanFrame.hpp"
-#include "VulkanBuffer.hpp"
 
 namespace lf2d { struct Color; }
 
@@ -25,9 +24,7 @@ private:
 	VulkanSwapchain m_swapchain;
 	PipelineLayout m_defaultPipelineLayout;
 	Pipeline m_defaultPipeline;
-	VulkanBuffer m_vertexBuffer;
 	std::vector<VulkanFrame> m_frames;
-	vk::CommandBuffer* m_currentCmd;
 	uint32_t m_imageIndex = 0;
 	uint32_t m_frameIndex = 0;
 	std::array<float, 4> m_color = {0.f, 0.f, 0.f, 1.f};

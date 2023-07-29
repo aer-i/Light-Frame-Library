@@ -18,6 +18,7 @@ void VulkanFrame::create()
 
 void VulkanFrame::teardown()
 {
+	if (vertexBuffer)	vertexBuffer.free();
 	if (fence)			vc::Get().device.destroy(fence);
 	if (renderFinished) vc::Get().device.destroy(renderFinished);
 	if (imageAvailable) vc::Get().device.destroy(imageAvailable);

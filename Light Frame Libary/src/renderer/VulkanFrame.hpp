@@ -1,4 +1,5 @@
 #pragma once
+#include "VulkanBuffer.hpp"
 
 struct VulkanFrame
 {
@@ -10,5 +11,6 @@ struct VulkanFrame
 	vk::Semaphore imageAvailable;
 	vk::Semaphore renderFinished;
 	vk::Fence fence;
+	VulkanBuffer vertexBuffer;
 };
 

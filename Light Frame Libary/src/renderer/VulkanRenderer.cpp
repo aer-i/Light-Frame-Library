@@ -6,7 +6,7 @@
 
 struct CameraPushConstant
 {
-	glm::mat4 MPV;
+	glm::mat4 projView;
 };
 
 lfRenderer::~lfRenderer()
@@ -44,38 +44,30 @@ void lfRenderer::create(bool enableVL)
 		frame.create();
 	}
 
-	const std::vector<Vertex> vertices = {
-		{{0.0f, -0.5f}},
-		{{0.5f, 0.5f}},
-		{{-0.5f, 0.5f}},
-	};
-
-	m_vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-	m_vertexBuffer.count = static_cast<uint32_t>(vertices.size());
-
-	memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
-
 	m_defaultPipelineLayout = PipelineLayout::Builder()
+		.addPushConstantRange({.stageFlags = vk::ShaderStageFlagBits::eVertex, .size = sizeof(CameraPushConstant)})
 		.build();
 
 	m_defaultPipeline.construct(m_swapchain, m_defaultPipelineLayout);
 }
 
+static VulkanFrame* frame = nullptr;
+
 void lfRenderer::beginFrame()
 {
-	if (vc::Get().device.getFenceStatus(m_frames[m_frameIndex].fence) != vk::Result::eSuccess)
+	frame = &m_frames[m_frameIndex];
+
+	if (vc::Get().device.getFenceStatus(frame->fence) != vk::Result::eSuccess)
 	{
-		vc::Get().device.waitForFences(1, &m_frames[m_frameIndex].fence, true, UINT64_MAX);
+		vc::Get().device.waitForFences(1, &frame->fence, true, UINT64_MAX);
 	}
 
-	if (m_swapchain.acquireNextImage(m_frames[m_frameIndex].imageAvailable, &m_imageIndex) == vk::Result::eErrorOutOfDateKHR)
+	if (m_swapchain.acquireNextImage(frame->imageAvailable, &m_imageIndex) == vk::Result::eErrorOutOfDateKHR)
 	{
 		this->recreateSwapchain();
 	}
 
-	m_currentCmd = &m_frames[m_frameIndex].commandBuffer;
-
-	m_currentCmd->begin({.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
+	frame->commandBuffer.begin({.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
 	
 	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
 		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
@@ -93,7 +85,7 @@ void lfRenderer::beginFrame()
 		}
 	};
 
-	m_currentCmd->pipelineBarrier2({ .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
+	frame->commandBuffer.pipelineBarrier2({ .imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
 
 	vk::RenderingAttachmentInfo colorAttachment {
 		.imageView = m_swapchain.imageViews[m_imageIndex],
@@ -103,20 +95,20 @@ void lfRenderer::beginFrame()
 		.clearValue = { vk::ClearColorValue{m_color} }
 	};
 
-	m_currentCmd->beginRendering({
+	frame->commandBuffer.beginRendering({
 		.renderArea = {{0, 0}, m_swapchain.extent},
 		.layerCount = 1,
 		.colorAttachmentCount = 1,
 		.pColorAttachments = &colorAttachment
 	});
 
-	m_currentCmd->bindPipeline(vk::PipelineBindPoint::eGraphics, m_defaultPipeline);
+	frame->commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_defaultPipeline);
 
 	vk::Viewport const viewport{0, 0, static_cast<float>(m_swapchain.extent.width), static_cast<float>(m_swapchain.extent.height), 0.f, 1.f};
 	vk::Rect2D const scissor{.offset = { 0, 0 }, .extent = m_swapchain.extent};
 
-	m_currentCmd->setViewport(0, viewport);
-	m_currentCmd->setScissor(0, scissor);
+	frame->commandBuffer.setViewport(0, viewport);
+	frame->commandBuffer.setScissor(0, scissor);
 
 	static std::vector<Vertex> vertices = {
 		{{0.0f, -0.1f}},
@@ -124,55 +116,41 @@ void lfRenderer::beginFrame()
 		{{-0.1f, 0.1f}}
 	};
 
-	if (GetAsyncKeyState('A'))
-	{
-		for (auto& vertex : vertices)
-		{
-			vertex.position.x -= 0.001f;
-		}
-	}
-	if (GetAsyncKeyState('D'))
-	{
-		for (auto& vertex : vertices)
-		{
-			vertex.position.x += 0.001f;
-		}
-	}
-	if (GetAsyncKeyState('W'))
-	{
-		for (auto& vertex : vertices)
-		{
-			vertex.position.y -= 0.001f;
-		}
-	}
-	if (GetAsyncKeyState('S'))
-	{
-		for (auto& vertex : vertices)
-		{
-			vertex.position.y += 0.001f;
-		}
-	}
-
-	if (GetAsyncKeyState('R'))
-	{
-		vertices.push_back({ {0.0f, -0.1f} });
-		vertices.push_back({ {0.1f, 0.1f} });
-		vertices.push_back({ {-0.1f, 0.1f} });
-	}
-
 	if (!vertices.empty())
 	{
-		if (vertices.size() > m_vertexBuffer.count || vertices.size() < m_vertexBuffer.count / 2 )
+		if (vertices.size() > frame->vertexBuffer.count || vertices.size() < frame->vertexBuffer.count / 2 )
 		{
-			m_vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-			m_vertexBuffer.count = static_cast<uint32_t>(vertices.size());
+			frame->vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+			frame->vertexBuffer.count = static_cast<uint32_t>(vertices.size());
 		}
 
-		memcpy(m_vertexBuffer.mapped, vertices.data(), m_vertexBuffer.size);
+		memcpy(frame->vertexBuffer.mapped, vertices.data(), frame->vertexBuffer.size);
+
+
+		static glm::vec3 position{};
+
+		if (GetAsyncKeyState('W'))
+		{
+			position.y += 0.001f;
+		}
+		if (GetAsyncKeyState('S'))
+		{
+			position.y -= 0.001f;
+		}
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.f), position) * glm::rotate(glm::mat4(1.f), glm::radians(0.f), glm::vec3(0, 0, 1));
+
+		glm::mat4 view = glm::inverse(transform);
+		glm::mat4 projection = glm::ortho(0, 1, 0, 1, -1, 1);
+
+		CameraPushConstant cameraConstant{};
+		cameraConstant.projView = projection * view;
+
+		frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);
 
 		constexpr vk::DeviceSize offsets[]{ 0 };
-		m_currentCmd->bindVertexBuffers(0, 1, m_vertexBuffer, offsets);
-		m_currentCmd->draw(m_vertexBuffer.count, 1, 0, 0);
+		frame->commandBuffer.bindVertexBuffers(0, 1, frame->vertexBuffer, offsets);
+		frame->commandBuffer.draw(frame->vertexBuffer.count, 1, 0, 0);
 	}
 }
 
@@ -193,31 +171,31 @@ void lfRenderer::endFrame()
 		}
 	};
 
-	m_currentCmd->endRendering();
-	m_currentCmd->pipelineBarrier2({.imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
-	m_currentCmd->end();
+	frame->commandBuffer.endRendering();
+	frame->commandBuffer.pipelineBarrier2({.imageMemoryBarrierCount = 1, .pImageMemoryBarriers = &imageMemoryBarrier });
+	frame->commandBuffer.end();
 
-	vc::Get().device.resetFences(1, &m_frames[m_frameIndex].fence);
+	vc::Get().device.resetFences(1, &frame->fence);
 
 	constexpr vk::PipelineStageFlags pipelineStage[]{ vk::PipelineStageFlagBits::eColorAttachmentOutput };
 	
 	vc::Get().graphicsQueue.submit(
 		vk::SubmitInfo{
 			.waitSemaphoreCount = 1,
-			.pWaitSemaphores = &m_frames[m_frameIndex].imageAvailable,
+			.pWaitSemaphores = &frame->imageAvailable,
 			.pWaitDstStageMask = pipelineStage,
 			.commandBufferCount = 1,
-			.pCommandBuffers = &m_frames[m_frameIndex].commandBuffer,
+			.pCommandBuffers = &frame->commandBuffer,
 			.signalSemaphoreCount = 1,
-			.pSignalSemaphores = &m_frames[m_frameIndex].renderFinished
+			.pSignalSemaphores = &frame->renderFinished
 		},
-		m_frames[m_frameIndex].fence
+		frame->fence
 	);
 
 	auto const result = vc::Get().presentQueue.presentKHR(
 		vk::PresentInfoKHR {
 			.waitSemaphoreCount = 1,
-			.pWaitSemaphores = &m_frames[m_frameIndex].renderFinished,
+			.pWaitSemaphores = &frame->renderFinished,
 			.swapchainCount = 1,
 			.pSwapchains = m_swapchain,
 			.pImageIndices = &m_imageIndex
@@ -251,8 +229,6 @@ void lfRenderer::teardown()
 {
 	m_defaultPipeline.teardown();
 	m_defaultPipelineLayout.teardown();
-
-	m_vertexBuffer.free();
 
 	for (auto& frame : m_frames)
 		frame.teardown();
