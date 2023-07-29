@@ -8,6 +8,7 @@ layout(location = 0) out struct
 } Out;
 
 layout(location = 0) in vec2 inPosition;
+layout(location = 1) in vec3 inColor;
 
 layout(push_constant) uniform CameraMatrix
 {
@@ -16,6 +17,6 @@ layout(push_constant) uniform CameraMatrix
 
 void main()
 {
-    Out.color = vec3(1.0, 1.0, 1.0);
+    Out.color = inColor;
 	gl_Position = camera.projView * vec4(inPosition, 0.0, 1.0);
 }

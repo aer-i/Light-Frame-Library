@@ -53,18 +53,27 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 		.inputRate = vk::VertexInputRate::eVertex
 	};
 
-	vk::VertexInputAttributeDescription constexpr attributeDescription {
+	vk::VertexInputAttributeDescription constexpr posAttributeDescription {
 		.location = 0,
 		.binding = 0,
 		.format = vk::Format::eR32G32Sfloat,
 		.offset = offsetof(Vertex, position)
 	};
 
+	vk::VertexInputAttributeDescription constexpr colorAttributeDescription {
+		.location = 1,
+		.binding = 0,
+		.format = vk::Format::eR32G32B32Sfloat,
+		.offset = offsetof(Vertex, color)
+	};
+
+	vk::VertexInputAttributeDescription constexpr attributeDescriptions[]{ posAttributeDescription, colorAttributeDescription };
+
 	vk::PipelineVertexInputStateCreateInfo constexpr vertexInput {
 		.vertexBindingDescriptionCount = 1,
 		.pVertexBindingDescriptions = &bindingDescription,
-		.vertexAttributeDescriptionCount = 1,
-		.pVertexAttributeDescriptions = &attributeDescription
+		.vertexAttributeDescriptionCount = 2,
+		.pVertexAttributeDescriptions = attributeDescriptions
 	};
 
 	vk::PipelineInputAssemblyStateCreateInfo constexpr inputAssembly {

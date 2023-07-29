@@ -26,7 +26,7 @@ auto main(int argc, char* const argv[]) -> int
 	renderer.createWindow(1280, 720, "Light Frame - Example App", resizable, enableValidationLayers);
 
 	// You can clear color just once or every frame (or don't (black is default color))
-	renderer.clearColor(Color_Teal);
+	renderer.clearColor(Color_Silver);
 
 	// true is returned when window is closed
 	while (!renderer.windowShouldClose()) // Main loop. Executing every frame
@@ -39,6 +39,7 @@ auto main(int argc, char* const argv[]) -> int
 		{
 			// Add quad to render queue 
 			renderer.renderRect(0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, Color_Maroon);
+			renderer.renderRect(-100 /*pos X in px*/, -100 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, Color_Lime);
 		}
 		renderer.endRendering(camera);
 	}
