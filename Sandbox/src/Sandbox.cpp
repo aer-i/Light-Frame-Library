@@ -27,7 +27,7 @@ auto main(int argc, char* const argv[]) -> int
 	{
 		renderer.beginRendering();
 		{
-			
+			renderer.renderRect(0, 0, lf2d::getWindowWidth() / 2, lf2d::getWindowHeight() / 2, Color_Maroon);
 		}
 		renderer.endRendering();
 	}

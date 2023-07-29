@@ -1,7 +1,9 @@
 #pragma once
+#include "lf2d.hpp"
 
-typedef struct Vertex
+struct Vertex
 {
-	glm::vec2 position;
-} Vertex;
+	lf2d::vec2 position;
+	lf2d::vec3 color;
+};
 

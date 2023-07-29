@@ -2,7 +2,6 @@
 #include "VulkanRenderer.hpp"
 #include "window/Window.hpp"
 #include "lf2d.hpp"
-#include "Mesh.hpp"
 
 struct CameraPushConstant
 {
@@ -14,7 +13,7 @@ lfRenderer::~lfRenderer()
 	this->teardown();
 }
 
-void lfRenderer::clearColor(lf2d::Color const& color)
+void lfRenderer::clearColor(lf2d::Color color)
 {
 	m_color[0] = static_cast<float>(color.r) / 255.f;
 	m_color[1] = static_cast<float>(color.g) / 255.f;
@@ -24,10 +23,9 @@ void lfRenderer::clearColor(lf2d::Color const& color)
 
 void lfRenderer::setVsync(bool enabled)
 {
-	vsync = enabled;
-
-	if (vc::Get().device)
+	if (vc::Get().device && m_vsync != enabled)
 	{
+		m_vsync = enabled;
 		recreateSwapchain();
 	}
 }
@@ -35,7 +33,7 @@ void lfRenderer::setVsync(bool enabled)
 void lfRenderer::create(bool enableVL)
 {
 	vc::Create(enableVL);
-	m_swapchain.create(vsync);
+	m_swapchain.create(m_vsync);
 
 	m_frames.resize(m_swapchain.images.size());
 
@@ -58,7 +56,7 @@ void lfRenderer::beginFrame()
 	auto width = lfWindow::GetWidth();
 	auto height = lfWindow::GetHeight();
 
-	frame = &m_frames[m_frameIndex];
+	frame = &m_frames[m_currentFrame];
 
 	if (vc::Get().device.getFenceStatus(frame->fence) != vk::Result::eSuccess)
 	{
@@ -112,64 +110,32 @@ void lfRenderer::beginFrame()
 
 	frame->commandBuffer.setViewport(0, viewport);
 	frame->commandBuffer.setScissor(0, scissor);
+
 	
-	lf2d::Rect rect;
+}
 
-	rect.x = 0.f / width;
-	rect.y = 0.f / height;
-	rect.width = 100.f / width;
-	rect.height = 100.f / height;
-
-	std::vector<Vertex> vertices = {
-		{{ rect.x, rect.y }},
-		{{ rect.x + rect.width, rect.y}},
-		{{ rect.x, rect.y + rect.height}}
-	};
-
-	if (!vertices.empty())
+void lfRenderer::endFrame()
+{
+	if (!m_vertices.empty())
 	{
-		if (vertices.size() > frame->vertexBuffer.count || vertices.size() < frame->vertexBuffer.count / 2 )
+		if (m_vertices.size() > frame->vertexBuffer.count)
 		{
-			frame->vertexBuffer.create(sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-			frame->vertexBuffer.count = static_cast<uint32_t>(vertices.size());
+			frame->vertexBuffer.create(sizeof(Vertex) * m_vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
 		}
 
-		memcpy(frame->vertexBuffer.mapped, vertices.data(), frame->vertexBuffer.size);
-
-
-		static glm::vec3 position{};
-		static glm::vec3 offset{};
-
-		offset.x = (width / 2.f) / width;
-		offset.y = (height / 2.f) / height;
-
-		if (GetAsyncKeyState('W'))
-		{
-			position.y += 0.001f;
-		}
-		if (GetAsyncKeyState('S'))
-		{
-			position.y -= 0.001f;
-		}
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.f), position - offset) * glm::rotate(glm::mat4(1.f), glm::radians(0.f), glm::vec3(0, 0, 1));
-
-		glm::mat4 view = glm::inverse(transform);
-		glm::mat4 projection = glm::ortho(0, 1, 0, 1, -1, 1);
+		frame->vertexBuffer.count = static_cast<uint32_t>(m_vertices.size());
+		memcpy(frame->vertexBuffer.mapped, m_vertices.data(), frame->vertexBuffer.size);
+		m_vertices.clear();
 
 		CameraPushConstant cameraConstant{};
-		cameraConstant.projView = projection * view;
-
+		
 		frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);
 
 		constexpr vk::DeviceSize offsets[]{ 0 };
 		frame->commandBuffer.bindVertexBuffers(0, 1, frame->vertexBuffer, offsets);
 		frame->commandBuffer.draw(frame->vertexBuffer.count, 1, 0, 0);
 	}
-}
 
-void lfRenderer::endFrame()
-{
 	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
 		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
 		.srcAccessMask = vk::AccessFlagBits2::eColorAttachmentWrite,
@@ -220,7 +186,7 @@ void lfRenderer::endFrame()
 		recreateSwapchain();
 	}
 
-	m_frameIndex = (m_frameIndex + 1) % static_cast<uint32_t>(m_swapchain.images.size());
+	m_currentFrame = (m_currentFrame + 1) % 2;
 }
 
 void lfRenderer::recreateSwapchain()
@@ -236,7 +202,7 @@ void lfRenderer::recreateSwapchain()
 	}
 
 	vc::Get().device.waitIdle();
-	m_swapchain.recreate(vsync);
+	m_swapchain.recreate(m_vsync);
 }
 
 void lfRenderer::teardown()

@@ -214,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\renderer\shaders.u32" />
+    <None Include="src\renderer\VulkanRenderer.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

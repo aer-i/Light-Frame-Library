@@ -28,6 +28,21 @@ namespace lf2d
 		renderer.endFrame();
 	}
 
+	void Renderer::renderRect(int x, int y, int width, int height, Color color)
+	{
+		renderer.renderRect(x, y, width, height, color);
+	}
+
+	void Renderer::renderRectV(vec2 position, vec2 size, Color color)
+	{
+
+	}
+
+	void Renderer::renderRectR(const Rect& rect, Color color)
+	{
+
+	}
+
 	void Renderer::clearColor(Color color)
 	{
 		renderer.clearColor(color);

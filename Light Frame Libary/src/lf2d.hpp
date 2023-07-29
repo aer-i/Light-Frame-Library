@@ -23,17 +23,6 @@ namespace lf2d
 	int getWindowWidth();
 	int getWindowHeight();
 
-	struct Color
-	{
-		Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-			: r{r}, g{g}, b{b}, a{a} {}
-
-		constexpr Color()
-			: r{ 0 }, g{ 0 }, b{ 0 }, a{ 0 } {}
-
-		uint8_t r, g, b, a;
-	};
-
 	struct vec2
 	{
 		float x, y;
@@ -54,6 +43,19 @@ namespace lf2d
 		float x, y, width, height;
 	};
 
+	struct Color
+	{
+		Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+			: r{r}, g{g}, b{b}, a{a} {}
+
+		constexpr Color()
+			: r{ 0 }, g{ 0 }, b{ 0 }, a{ 0 } {}
+
+		vec3 normalizedVec3() { return { r / 255.f, g / 255.f, b / 255.f }; }
+
+		uint8_t r, g, b, a;
+	};
+
 	struct Camera
 	{
 		vec2 position, offset;
@@ -71,6 +73,10 @@ namespace lf2d
 
 		void beginRendering();
 		void endRendering();
+
+		void renderRect(int x, int y, int width, int height, Color color);
+		void renderRectV(vec2 position, vec2 size, Color color);
+		void renderRectR(const Rect& rect, Color color);
 
 		void clearColor(Color color);
 		void setVsync(bool enabled);
