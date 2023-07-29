@@ -55,6 +55,9 @@ static VulkanFrame* frame = nullptr;
 
 void lfRenderer::beginFrame()
 {
+	auto width = lfWindow::GetWidth();
+	auto height = lfWindow::GetHeight();
+
 	frame = &m_frames[m_frameIndex];
 
 	if (vc::Get().device.getFenceStatus(frame->fence) != vk::Result::eSuccess)
@@ -109,11 +112,18 @@ void lfRenderer::beginFrame()
 
 	frame->commandBuffer.setViewport(0, viewport);
 	frame->commandBuffer.setScissor(0, scissor);
+	
+	lf2d::Rect rect;
 
-	static std::vector<Vertex> vertices = {
-		{{0.0f, -0.1f}},
-		{{0.1f, 0.1f}},
-		{{-0.1f, 0.1f}}
+	rect.x = 0.f / width;
+	rect.y = 0.f / height;
+	rect.width = 100.f / width;
+	rect.height = 100.f / height;
+
+	std::vector<Vertex> vertices = {
+		{{ rect.x, rect.y }},
+		{{ rect.x + rect.width, rect.y}},
+		{{ rect.x, rect.y + rect.height}}
 	};
 
 	if (!vertices.empty())
@@ -128,6 +138,10 @@ void lfRenderer::beginFrame()
 
 
 		static glm::vec3 position{};
+		static glm::vec3 offset{};
+
+		offset.x = (width / 2.f) / width;
+		offset.y = (height / 2.f) / height;
 
 		if (GetAsyncKeyState('W'))
 		{
@@ -138,7 +152,7 @@ void lfRenderer::beginFrame()
 			position.y -= 0.001f;
 		}
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.f), position) * glm::rotate(glm::mat4(1.f), glm::radians(0.f), glm::vec3(0, 0, 1));
+		glm::mat4 transform = glm::translate(glm::mat4(1.f), position - offset) * glm::rotate(glm::mat4(1.f), glm::radians(0.f), glm::vec3(0, 0, 1));
 
 		glm::mat4 view = glm::inverse(transform);
 		glm::mat4 projection = glm::ortho(0, 1, 0, 1, -1, 1);

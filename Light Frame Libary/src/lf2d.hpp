@@ -1,21 +1,6 @@
 #pragma once
 #include <string>
 
-namespace lf2d
-{
-	int getWindowWidth();
-	int getWindowHeight();
-
-	struct Color
-	{
-		Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-			: r{r}, g{g}, b{b}, a{a} {}
-
-		constexpr Color()
-			: r{ 0 }, g{ 0 }, b{ 0 }, a{ 0 } {}
-
-		uint8_t r, g, b, a;
-
 #define Color_Black		{   0,   0,   0, 255 }
 #define Color_White		{ 255, 255, 255, 255 }
 #define Color_Red		{ 255,   0,   0, 255 }
@@ -33,6 +18,46 @@ namespace lf2d
 #define Color_Teal		{   0, 128, 128, 255 }
 #define Color_Navy		{   0,   0, 128, 255 }
 
+namespace lf2d
+{
+	int getWindowWidth();
+	int getWindowHeight();
+
+	struct Color
+	{
+		Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+			: r{r}, g{g}, b{b}, a{a} {}
+
+		constexpr Color()
+			: r{ 0 }, g{ 0 }, b{ 0 }, a{ 0 } {}
+
+		uint8_t r, g, b, a;
+	};
+
+	struct vec2
+	{
+		float x, y;
+	};
+
+	struct vec3
+	{
+		float x, y, z;
+	};
+
+	struct vec4
+	{
+		float x, y, z, w;
+	};
+
+	struct Rect
+	{
+		float x, y, width, height;
+	};
+
+	struct Camera
+	{
+		vec2 position, offset;
+		float zoom, rotation;
 	};
 	
 	class Renderer
