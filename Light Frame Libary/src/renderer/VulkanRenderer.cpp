@@ -55,8 +55,9 @@ void lfRenderer::create(bool enableVL)
 
 static VulkanFrame* frame = nullptr;
 
-void lfRenderer::beginFrame()
+void lfRenderer::beginFrame(lf2d::Camera* camera)
 {
+	m_currentCamera = camera;
 	auto width = lfWindow::GetWidth();
 	auto height = lfWindow::GetHeight();
 
@@ -121,21 +122,19 @@ void lfRenderer::beginFrame()
 	frame->commandBuffer.setScissor(0, scissor);
 }
 
-void lfRenderer::endFrame(Mesh& mesh, lf2d::Camera const& camera)
+void lfRenderer::endFrame(Mesh& mesh)
 {
-
-	static glm::mat4 const projection	= glm::ortho(0, 1, 0, 1, -1, 1);
-	glm::mat4 const	view		= glm::inverse(
-		glm::translate(
-			glm::mat4(1.f),
-			{ (camera.position.x - camera.offset.x) / lfWindow::GetWidth(), (camera.position.y - camera.offset.y) / lfWindow::GetHeight(), 0.f })
-		* glm::rotate(
-			glm::mat4(1.f),
-			camera.rotation,
-			{ 0, 0, 1 }));
+	static glm::mat4 const projection = glm::ortho(0, 1, 0, 1, -1, 1);
 
 	CameraPushConstant const cameraConstant {
-		.projView = projection * view
+		.projView = projection * glm::inverse(
+		glm::translate(
+			glm::mat4(1.f),
+			{ (m_currentCamera->position.x - m_currentCamera->offset.x) / lfWindow::GetWidth(), (m_currentCamera->position.y - m_currentCamera->offset.y) / lfWindow::GetHeight(), 0.f })
+		* glm::rotate(
+			glm::mat4(1.f),
+			m_currentCamera->rotation,
+			{ 0, 0, 1 }))
 	};
 		
 	frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);

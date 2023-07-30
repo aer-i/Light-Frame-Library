@@ -1,4 +1,5 @@
 #include <lf2d.hpp>
+#include <Windows.h>
 
 auto main(int argc, char* const argv[]) -> int
 {
@@ -35,7 +36,24 @@ auto main(int argc, char* const argv[]) -> int
 		// Setting this camera offset causes objects at position {0, 0} to be rendered in the center of the screen instead of in the top left corner
 		camera.offset = { lf2d::getWindowWidth() / 2.f, lf2d::getWindowHeight() / 2.f };
 
-		renderer.beginRendering();
+		if (GetAsyncKeyState('D'))
+		{
+			camera.position.x += 0.1f;
+		}
+		if (GetAsyncKeyState('A'))
+		{
+			camera.position.x -= 0.1f;
+		}
+		if (GetAsyncKeyState('W'))
+		{
+			camera.position.y -= 0.1f;
+		}
+		if (GetAsyncKeyState('S'))
+		{
+			camera.position.y += 0.1f;
+		}
+
+		renderer.beginRendering(camera);
 		{
 
 			// Add quad to render queue
@@ -44,7 +62,7 @@ auto main(int argc, char* const argv[]) -> int
 			renderer.renderRectGradient({ -100, 0, 100, 100 }, Color_Blue, Color_Aqua, Color_Magenta, Color_Red);
 			renderer.renderRectGradientH({ 0, -100, 100, 100 }, Color_Olive, Color_Yellow);
 		}
-		renderer.endRendering(camera);
+		renderer.endRendering();
 	}
 	// Exit main loop
 

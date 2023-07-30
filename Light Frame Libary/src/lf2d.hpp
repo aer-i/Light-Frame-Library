@@ -73,8 +73,8 @@ namespace lf2d
 		Renderer& operator=(const Renderer&) = delete;
 		Renderer& operator=(Renderer&&) = delete;
 
-		void beginRendering();
-		void endRendering(Camera const& camera);
+		void beginRendering(Camera& camera);
+		void endRendering();
 		
 		void renderRect(const Rect& rect, Color color);
 		void renderRectGradientV(const Rect& rect, Color color1, Color color2);

@@ -18,8 +18,8 @@ public:
 	void setVsync(bool enabled);
 
 	void create(bool);
-	void beginFrame();
-	void endFrame(Mesh& mesh, lf2d::Camera const& camera);
+	void beginFrame(lf2d::Camera* camera);
+	void endFrame(Mesh& mesh);
 
 private:
 	VulkanSwapchain m_swapchain;
@@ -29,6 +29,7 @@ private:
 	uint32_t m_currentFrame = 0;
 	std::vector<VulkanFrame> m_frames;
 	std::array<float, 4> m_color = {0.f, 0.f, 0.f, 1.f};
+	lf2d::Camera* m_currentCamera;
 	float m_deltaTime = 0.f;
 	bool m_vsync = true;
 

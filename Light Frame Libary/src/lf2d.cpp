@@ -28,15 +28,16 @@ namespace lf2d
 		return glfwGetTime();
 	}
 
-	void Renderer::beginRendering()
+	void Renderer::beginRendering(Camera& camera)
 	{
 		window.pollEvents();
-		renderer.beginFrame();
+		renderer.beginFrame(&camera);
+		mesh.setCamera(&camera);
 	}
 
-	void Renderer::endRendering(Camera const& camera)
+	void Renderer::endRendering()
 	{
-		renderer.endFrame(mesh, camera);
+		renderer.endFrame(mesh);
 	}
 
 	void Renderer::renderRect(const Rect& rect, Color color)
