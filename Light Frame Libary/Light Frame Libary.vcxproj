@@ -176,6 +176,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\InputController.hpp" />
     <ClInclude Include="src\renderer\Mesh.hpp" />
     <ClInclude Include="src\renderer\vk\Device.hpp" />
     <ClInclude Include="src\renderer\VulkanRenderer.hpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="src\renderer\VulkanBuffer.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\InputController.cpp" />
     <ClCompile Include="src\renderer\Mesh.cpp" />
     <ClCompile Include="src\renderer\vk\Device.cpp" />
     <ClCompile Include="src\renderer\VulkanRenderer.cpp" />

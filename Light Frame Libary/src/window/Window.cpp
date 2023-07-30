@@ -34,6 +34,8 @@ void lfWindow::create(int w, int h, std::string const& n, bool resizable)
 
 	s_glfwWindow = glfwCreateWindow(w, h, n.c_str(), nullptr, nullptr);
 
+	InputController::SetCallback(s_glfwWindow);
+
 	lfWindow::s_width = w;
 	lfWindow::s_height = h;
 	lfWindow::s_title = n;
@@ -46,10 +48,6 @@ void lfWindow::create(int w, int h, std::string const& n, bool resizable)
 	{
 		spdlog::critical("Failed to create window!");
 	}
-
-	glfwSetWindowUserPointer(s_glfwWindow, this);
-	glfwSetFramebufferSizeCallback(s_glfwWindow, framebufferResizeCallback);
-	
 }
 
 vk::SurfaceKHR lfWindow::CreateSurface(vk::Instance instance)
@@ -62,10 +60,4 @@ vk::SurfaceKHR lfWindow::CreateSurface(vk::Instance instance)
 	}
 
 	return vk::SurfaceKHR(cSurface);
-}
-
-void lfWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height)
-{
-	lfWindow::s_width= width;
-	lfWindow::s_height = height;
 }

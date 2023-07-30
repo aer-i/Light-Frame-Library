@@ -28,7 +28,7 @@ auto main(int argc, char* const argv[]) -> int
 	renderer.createWindow(1280, 720, "Light Frame - Example App", resizable, enableValidationLayers);
 
 	// You can clear color just once or every frame (or don't (black is default color))
-	renderer.clearColor(Color_Silver);
+	renderer.clearColor(Color_Gray);
 
 	// true is returned when window is closed
 	while (!renderer.windowShouldClose()) // Main loop. Executing every frame
@@ -44,7 +44,7 @@ auto main(int argc, char* const argv[]) -> int
 		{
 			camera.position.x -= 300.f * lf2d::getDeltaTime();
 		}
-		if (GetAsyncKeyState('W'))
+		if (GetAsyncKeyState('W') || lf2d::isKeyDown(82))
 		{
 			camera.position.y -= 300.f * lf2d::getDeltaTime();
 		}

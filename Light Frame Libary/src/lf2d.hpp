@@ -20,11 +20,6 @@
 
 namespace lf2d
 {
-	int getWindowWidth();
-	int getWindowHeight();
-	float getDeltaTime();
-	double getTime();
-
 	struct vec2
 	{
 		float x, y;
@@ -63,6 +58,14 @@ namespace lf2d
 		vec2 position{}, offset{};
 		float zoom{}, rotation{};
 	};
+
+	int getWindowWidth();
+	int getWindowHeight();
+	float getDeltaTime();
+	double getTime();
+
+	bool isKeyPressed(int key);
+	bool isKeyDown(int key);
 	
 	class Renderer
 	{

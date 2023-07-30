@@ -2,6 +2,7 @@
 #include "lf2d.hpp"
 #include "window/Window.hpp"
 #include "renderer/VulkanRenderer.hpp"
+#include "engine/InputController.hpp"
 
 static lfWindow window;
 static lfRenderer renderer;
@@ -27,6 +28,16 @@ namespace lf2d
 	double getTime()
 	{
 		return glfwGetTime();
+	}
+
+	bool isKeyPressed(int key)
+	{
+		return InputController::IsKeyPressed(key);
+	}
+
+	bool isKeyDown(int key)
+	{
+		return InputController::IsKeyDown(key);
 	}
 
 	void Renderer::beginRendering(Camera& camera)
