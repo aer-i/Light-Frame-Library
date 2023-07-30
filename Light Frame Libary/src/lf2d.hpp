@@ -22,7 +22,7 @@ namespace lf2d
 {
 	int getWindowWidth();
 	int getWindowHeight();
-	double getTime();
+	float getDeltaTime();
 
 	struct vec2
 	{

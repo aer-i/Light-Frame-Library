@@ -12,6 +12,7 @@ public:
 	~lfRenderer();
 
 	inline void waitIdle() { vc::Get().device.waitIdle(); }
+	inline float getDeltaTime() const { return m_deltaTime; }
 
 	void clearColor(lf2d::Color color);
 	void setVsync(bool enabled);
@@ -28,6 +29,7 @@ private:
 	uint32_t m_currentFrame = 0;
 	std::vector<VulkanFrame> m_frames;
 	std::array<float, 4> m_color = {0.f, 0.f, 0.f, 1.f};
+	float m_deltaTime = 0.f;
 	bool m_vsync = true;
 
 	void recreateSwapchain();
