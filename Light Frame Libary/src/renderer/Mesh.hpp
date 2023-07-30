@@ -5,8 +5,9 @@
 struct Vertex
 {
 	Vertex() = default;
-	Vertex(lf2d::vec2 const& position, lf2d::vec3 const& color);
+	Vertex(lf2d::vec2 position, lf2d::vec3 color);
 	Vertex(const Vertex& other);
+	Vertex(Vertex&& other);
 
 	lf2d::vec2 position;
 	lf2d::vec3 color;

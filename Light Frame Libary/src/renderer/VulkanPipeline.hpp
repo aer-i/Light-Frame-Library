@@ -37,6 +37,6 @@ public:
 	constexpr operator vk::Pipeline() const { return m_handle; }
 
 private:
-	vk::Pipeline m_handle = nullptr;
+	vk::Pipeline m_handle;
 };
 

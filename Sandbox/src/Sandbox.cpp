@@ -37,9 +37,8 @@ auto main(int argc, char* const argv[]) -> int
 
 		renderer.beginRendering();
 		{
-			// Add quad to render queue
 
-			// TODO: Fix performance issues
+			// Add quad to render queue
 			renderer.renderRect(0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, Color_Maroon);
 			renderer.renderRect(-100 /*pos X in px*/, -100 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, Color_Lime);
 			renderer.renderRectGradientF({ -100, 0, 100, 100 }, Color_Blue, Color_Aqua, Color_Magenta, Color_Red);
