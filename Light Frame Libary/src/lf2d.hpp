@@ -23,6 +23,7 @@ namespace lf2d
 	int getWindowWidth();
 	int getWindowHeight();
 	float getDeltaTime();
+	double getTime();
 
 	struct vec2
 	{
@@ -78,6 +79,9 @@ namespace lf2d
 		void renderRect(int x, int y, int width, int height, Color color);
 		void renderRectV(vec2 position, vec2 size, Color color);
 		void renderRectR(const Rect& rect, Color color);
+		void renderRectGradientV(const Rect& rect, Color color1, Color color2);
+		void renderRectGradientH(const Rect& rect, Color color1, Color color2);
+		void renderRectGradientF(const Rect& rect, Color color1, Color color2, Color color3, Color color4);
 
 		void clearColor(Color color);
 		void setVsync(bool enabled);

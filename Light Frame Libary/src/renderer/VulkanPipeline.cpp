@@ -90,7 +90,7 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 		.depthClampEnable = false,
 		.rasterizerDiscardEnable = false,
 		.polygonMode = vk::PolygonMode::eFill,
-		.cullMode = vk::CullModeFlagBits::eNone,
+		.cullMode = vk::CullModeFlagBits::eBack,
 		.frontFace = vk::FrontFace::eClockwise,
 		.depthBiasEnable = false,
 		.lineWidth = 1.f

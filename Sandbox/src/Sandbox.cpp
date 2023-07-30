@@ -1,5 +1,4 @@
 #include <lf2d.hpp>
-#include <cmath>
 
 auto main(int argc, char* const argv[]) -> int
 {
@@ -9,6 +8,7 @@ auto main(int argc, char* const argv[]) -> int
 
 	// Main camera
 	lf2d::Camera camera;
+	camera.position = lf2d::vec2{ 0.f, 0.f };
 
 #ifndef NDEBUG
 	// You can enable validation layers if you want
@@ -32,15 +32,18 @@ auto main(int argc, char* const argv[]) -> int
 	// true is returned when window is closed
 	while (!renderer.windowShouldClose()) // Main loop. Executing every frame
 	{
-		camera.position = lf2d::vec2{ 0.f, 0.f };
 		// Setting this camera offset causes objects at position {0, 0} to be rendered in the center of the screen instead of in the top left corner
 		camera.offset = { lf2d::getWindowWidth() / 2.f, lf2d::getWindowHeight() / 2.f };
 
 		renderer.beginRendering();
 		{
-			// Add quad to render queue 
+			// Add quad to render queue
+
+			// TODO: Fix performance issues
 			renderer.renderRect(0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, Color_Maroon);
-			renderer.renderRect(-100 /*pos X in px*/, -100 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, {std::sin(lf2d::getTime())});
+			renderer.renderRect(-100 /*pos X in px*/, -100 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, Color_Lime);
+			renderer.renderRectGradientF({ -100, 0, 100, 100 }, Color_Blue, Color_Aqua, Color_Magenta, Color_Red);
+			renderer.renderRectGradientH({ 0, -100, 100, 100 }, Color_Olive, Color_Yellow);
 		}
 		renderer.endRendering(camera);
 	}
