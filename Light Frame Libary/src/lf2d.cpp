@@ -18,6 +18,11 @@ namespace lf2d
 		return lfWindow::GetHeight();
 	}
 
+	float getDeltaTime()
+	{
+		return renderer.getDeltaTime();
+	}
+
 	void Renderer::beginRendering()
 	{
 		window.pollEvents();
@@ -31,7 +36,7 @@ namespace lf2d
 
 	void Renderer::renderRect(int x, int y, int width, int height, Color color)
 	{
-		mesh.addRect({(float)x, (float)y, (float)width, (float)height}, color);
+		mesh.addRect({static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), static_cast<float>(height)}, color);
 	}
 
 	void Renderer::renderRectV(vec2 position, vec2 size, Color color)

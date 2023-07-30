@@ -62,6 +62,11 @@ void lfRenderer::beginFrame()
 
 	frame = &m_frames[m_currentFrame];
 
+	static double lastTime = glfwGetTime();
+
+	m_deltaTime = static_cast<float>(glfwGetTime() - lastTime);
+	lastTime = glfwGetTime();
+
 	if (vc::Get().device.getFenceStatus(frame->fence) != vk::Result::eSuccess)
 	{
 		vc::Get().device.waitForFences(1, &frame->fence, true, UINT64_MAX);
@@ -114,14 +119,12 @@ void lfRenderer::beginFrame()
 
 	frame->commandBuffer.setViewport(0, viewport);
 	frame->commandBuffer.setScissor(0, scissor);
-
-	
 }
 
 void lfRenderer::endFrame(Mesh& mesh, lf2d::Camera const& camera)
 {
 
-	glm::mat4 const projection	= glm::ortho(0, 1, 0, 1, -1, 1);
+	static glm::mat4 const projection	= glm::ortho(0, 1, 0, 1, -1, 1);
 	glm::mat4 const	view		= glm::inverse(
 		glm::translate(
 			glm::mat4(1.f),
@@ -189,7 +192,7 @@ void lfRenderer::endFrame(Mesh& mesh, lf2d::Camera const& camera)
 		recreateSwapchain();
 	}
 
-	m_currentFrame = (m_currentFrame + 1) % 2;
+	m_currentFrame = (m_currentFrame + 1) % 3;
 }
 
 void lfRenderer::recreateSwapchain()
