@@ -18,6 +18,11 @@ namespace lf2d
 		return lfWindow::GetHeight();
 	}
 
+	double getTime()
+	{
+		return glfwGetTime();
+	}
+
 	void Renderer::beginRendering()
 	{
 		window.pollEvents();

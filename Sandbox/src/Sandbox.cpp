@@ -1,4 +1,5 @@
 #include <lf2d.hpp>
+#include <cmath>
 
 auto main(int argc, char* const argv[]) -> int
 {
@@ -39,7 +40,7 @@ auto main(int argc, char* const argv[]) -> int
 		{
 			// Add quad to render queue 
 			renderer.renderRect(0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, Color_Maroon);
-			renderer.renderRect(-100 /*pos X in px*/, -100 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, Color_Lime);
+			renderer.renderRect(-100 /*pos X in px*/, -100 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/, {std::sin(lf2d::getTime())});
 		}
 		renderer.endRendering(camera);
 	}
