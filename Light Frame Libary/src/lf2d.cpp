@@ -39,17 +39,7 @@ namespace lf2d
 		renderer.endFrame(mesh, camera);
 	}
 
-	void Renderer::renderRect(int x, int y, int width, int height, Color color)
-	{
-		mesh.addRect({static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), static_cast<float>(height)}, color);
-	}
-
-	void Renderer::renderRectV(vec2 position, vec2 size, Color color)
-	{
-		mesh.addRect({position.x, position.y, size.x, size.y}, color);
-	}
-
-	void Renderer::renderRectR(const Rect& rect, Color color)
+	void Renderer::renderRect(const Rect& rect, Color color)
 	{
 		mesh.addRect(rect, color);
 	}
@@ -64,7 +54,7 @@ namespace lf2d
 		mesh.addRectGradient(rect, color1, color1, color2, color2);
 	}
 
-	void Renderer::renderRectGradientF(const Rect& rect, Color color1, Color color2, Color color3, Color color4)
+	void Renderer::renderRectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4)
 	{
 		mesh.addRectGradient(rect, color1, color2, color3, color4);
 	}

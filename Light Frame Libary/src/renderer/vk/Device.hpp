@@ -1,4 +1,5 @@
 #pragma once
+#include "renderer/VulkanContext.hpp"
 
 namespace vi
 {
@@ -26,14 +27,14 @@ namespace vi
 			gpus.insert(std::make_pair(score, gpu));
 		}
 
-		spdlog::info("Selected physical device: {} with a score of {}", gpus.rbegin()->second.getProperties().deviceName, gpus.rbegin()->first);
-		spdlog::info("Physical device type: {}", vk::to_string(gpus.rbegin()->second.getProperties().deviceType));
+		vc::Get().deviceProperties = gpus.rbegin()->second.getProperties();
+		spdlog::info("Selected physical device: {} with a score of {}", vc::Get().deviceProperties.deviceName, gpus.rbegin()->first);
+		spdlog::info("Physical device type: {}", vk::to_string(vc::Get().deviceProperties.deviceType));
 		return gpus.rbegin()->second;
 	}
 
 	inline std::tuple<uint32_t, uint32_t> selectQueueFamilies(vk::PhysicalDevice gpu, vk::SurfaceKHR surface)
 	{
-		// TODO: Add compute queue family
 		uint32_t graphics = UINT32_MAX, present = UINT32_MAX;
 
 		uint32_t i = 0;
