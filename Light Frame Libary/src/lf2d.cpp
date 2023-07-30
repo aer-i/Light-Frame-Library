@@ -6,6 +6,7 @@
 static lfWindow window;
 static lfRenderer renderer;
 static Mesh mesh;
+static bool shouldClose = false;
 
 namespace lf2d
 {
@@ -31,6 +32,7 @@ namespace lf2d
 	void Renderer::beginRendering(Camera& camera)
 	{
 		window.pollEvents();
+		shouldClose = window.shouldClose();
 		renderer.beginFrame(&camera);
 		mesh.setCamera(&camera);
 	}
@@ -38,6 +40,11 @@ namespace lf2d
 	void Renderer::endRendering()
 	{
 		renderer.endFrame(mesh);
+
+		if (shouldClose)
+		{
+			renderer.waitIdle();
+		}
 	}
 
 	void Renderer::renderRect(const Rect& rect, Color color)
@@ -80,13 +87,8 @@ namespace lf2d
 		});
 	}
 
-	void Renderer::closeWindow()
-	{
-		renderer.waitIdle();
-	}
-
 	bool Renderer::windowShouldClose()
 	{
-		return window.shouldClose();
+		return shouldClose;
 	}
 }

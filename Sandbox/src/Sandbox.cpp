@@ -38,19 +38,19 @@ auto main(int argc, char* const argv[]) -> int
 
 		if (GetAsyncKeyState('D'))
 		{
-			camera.position.x += 0.1f;
+			camera.position.x += 300.f * lf2d::getDeltaTime();
 		}
 		if (GetAsyncKeyState('A'))
 		{
-			camera.position.x -= 0.1f;
+			camera.position.x -= 300.f * lf2d::getDeltaTime();
 		}
 		if (GetAsyncKeyState('W'))
 		{
-			camera.position.y -= 0.1f;
+			camera.position.y -= 300.f * lf2d::getDeltaTime();
 		}
 		if (GetAsyncKeyState('S'))
 		{
-			camera.position.y += 0.1f;
+			camera.position.y += 300.f * lf2d::getDeltaTime();
 		}
 
 		renderer.beginRendering(camera);
@@ -65,8 +65,4 @@ auto main(int argc, char* const argv[]) -> int
 		renderer.endRendering();
 	}
 	// Exit main loop
-
-	// Need to call this at the end, otherwise Vulkan objects won't be destroyed
-	// TODO: Delete that function :3
-	renderer.closeWindow();
 }

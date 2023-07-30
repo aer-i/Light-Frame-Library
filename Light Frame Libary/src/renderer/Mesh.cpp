@@ -58,7 +58,7 @@ void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
 
 	m_totalObjectCount++;
 
-	int w = lf2d::getWindowWidth(), h = lf2d::getWindowHeight();
+	float w = static_cast<float>(lf2d::getWindowWidth()), h = static_cast<float>(lf2d::getWindowHeight());
 
 	if (   rect.x + rect.width  > m_currentCamera->position.x - m_currentCamera->offset.x
 		&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w

@@ -85,7 +85,6 @@ namespace lf2d
 		void setVsync(bool enabled);
 
 		void createWindow(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers = false);
-		void closeWindow();
 		bool windowShouldClose();
 	};
 }
