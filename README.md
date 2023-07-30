@@ -10,6 +10,7 @@ Maybe I will add CMake support in future.🧢
 features:
 - rendering quads :)
 - 2d camera
+- quad frustum culling
 
 TODO:
 - add index buffer
