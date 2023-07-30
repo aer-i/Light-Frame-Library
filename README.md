@@ -15,7 +15,6 @@ TODO:
 - add index buffer
 - add textures
 - add text rendering
-- add frustum culling
 - improve camera
 - add input handling
 - add ImGui support
