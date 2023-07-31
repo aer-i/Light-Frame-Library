@@ -1,22 +1,37 @@
 #pragma once
 #include <string>
 
-#define Color_Black		{   0,   0,   0, 255 }
-#define Color_White		{ 255, 255, 255, 255 }
-#define Color_Red		{ 255,   0,   0, 255 }
-#define Color_Lime		{   0, 255,   0, 255 }
-#define Color_Blue		{   0,   0, 255, 255 }
-#define Color_Yellow	{ 255, 255,   0, 255 }
-#define Color_Aqua		{   0, 255, 255, 255 }
-#define Color_Magenta	{ 255,   0, 255, 255 }
-#define Color_Silver	{ 192, 192, 192, 255 }
-#define Color_Gray		{ 128, 128, 128, 255 }
-#define Color_Maroon	{ 128,   0,   0, 255 }
-#define Color_Olive		{ 128, 128,   0, 255 }
-#define Color_Green		{   0, 128,   0, 255 }
-#define Color_Purple	{ 128,   0, 128, 255 }
-#define Color_Teal		{   0, 128, 128, 255 }
-#define Color_Navy		{   0,   0, 128, 255 }
+#define Color_Transparent {   0,   0,   0,   0 }
+#define Color_Black		  {   0,   0,   0, 255 }
+#define Color_White		  { 255, 255, 255, 255 }
+#define Color_Lime		  {   0, 255,   0, 255 }
+#define Color_Yellow	  { 255, 255,   0, 255 }
+#define Color_Aqua		  {   0, 255, 255, 255 }
+#define Color_Magenta	  { 255,   0, 255, 255 }
+#define Color_Silver	  { 192, 192, 192, 255 }
+#define Color_Maroon	  { 128,   0,   0, 255 }
+#define Color_Olive		  { 128, 128,   0, 255 }
+#define Color_Teal		  {   0, 128, 128, 255 }
+#define Color_Navy		  {   0,   0, 128, 255 }
+#define Color_LightGray   { 200, 200, 200, 255 }
+#define Color_Gray        { 130, 130, 130, 255 }
+#define Color_DarkGray    {  80,  80,  80, 255 }
+#define Color_Gold        { 255, 203,   0, 255 }  
+#define Color_Orange      { 255, 161,   0, 255 }  
+#define Color_Pink        { 255, 109, 194, 255 }
+#define Color_Red         { 230,  41,  55, 255 }  
+#define Color_MAROON      { 190,  33,  55, 255 }  
+#define Color_Green       {   0, 228,  48, 255 }   
+#define Color_DarkGreen   {   0, 117,  44, 255 }   
+#define Color_LightBlue   { 102, 191, 255, 255 }
+#define Color_Blue        {   0, 121, 241, 255 }  
+#define Color_DarkBlue    {   0,  82, 172, 255 }   
+#define Color_Purple      { 200, 122, 255, 255 }
+#define Color_Violet      { 135,  60, 190, 255 } 
+#define Color_DarkPurple  { 112,  31, 126, 255 } 
+#define Color_Beige       { 211, 176, 131, 255 }
+#define Color_Brown       { 127, 106,  79, 255 } 
+#define Color_DarkBrown   {  76,  63,  47, 255 }       
 
 namespace lf2d
 {

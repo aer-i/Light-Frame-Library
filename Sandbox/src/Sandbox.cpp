@@ -27,7 +27,7 @@ auto main(int argc, char* const argv[]) -> int
 	renderer.createWindow(1280, 720, "Light Frame - Example App", resizable, enableValidationLayers);
 
 	// You can clear color just once or every frame (or don't (black is default color))
-	renderer.clearColor(Color_Gray);
+	renderer.clearColor(Color_Blue);
 
 	// true is returned when window is closed
 	while (!renderer.windowShouldClose()) // Main loop. Executing every frame

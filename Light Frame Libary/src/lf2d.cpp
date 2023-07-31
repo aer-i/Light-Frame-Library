@@ -75,17 +75,17 @@ namespace lf2d
 
 	void Renderer::renderRectGradientV(const Rect& rect, Color color1, Color color2)
 	{
-		mesh.addRectGradient(rect, color1, color2, color1, color2);
+		mesh.addRectGradient(rect, color1, color1, color2, color2);
 	}
 
 	void Renderer::renderRectGradientH(const Rect& rect, Color color1, Color color2)
 	{
-		mesh.addRectGradient(rect, color1, color1, color2, color2);
+		mesh.addRectGradient(rect, color1, color2, color1, color2);
 	}
 
 	void Renderer::renderRectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4)
 	{
-		mesh.addRectGradient(rect, color1, color2, color3, color4);
+		mesh.addRectGradient(rect, color1, color4, color2, color3);
 	}
 
 	void Renderer::clearColor(Color color)
