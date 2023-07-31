@@ -124,7 +124,7 @@ void lfRenderer::beginFrame(lf2d::Camera* camera)
 
 void lfRenderer::endFrame(Mesh& mesh)
 {
-	static glm::mat4 const projection = glm::ortho(0, 1, 0, 1, -1, 1);
+	glm::mat4 const projection = glm::ortho(0.f, 1.f, 0.f, 1.f, -1.f, 1.f);
 
 	CameraPushConstant const cameraConstant {
 		.projView = projection * glm::inverse(
