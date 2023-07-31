@@ -7,7 +7,7 @@ public:
 
 	static bool IsKeyPressed(int key);
 	static bool IsKeyDown(int key);
-	static bool IsKeyUp(int key);
+	static bool IsKeyReleased(int key);
 
 	static void UpdateKeys();
 

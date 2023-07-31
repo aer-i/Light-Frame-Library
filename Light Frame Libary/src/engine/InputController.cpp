@@ -22,7 +22,7 @@ bool InputController::IsKeyDown(int key)
 	return s_keys[key];
 }
 
-bool InputController::IsKeyUp(int key)
+bool InputController::IsKeyReleased(int key)
 {
 	if (key < 0 || key >= GLFW_KEY_LAST)
 		return false;

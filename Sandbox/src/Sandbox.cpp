@@ -1,5 +1,4 @@
 #include <lf2d.hpp>
-#include <Windows.h>
 
 auto main(int argc, char* const argv[]) -> int
 {
@@ -36,19 +35,19 @@ auto main(int argc, char* const argv[]) -> int
 		// Setting this camera offset causes objects at position {0, 0} to be rendered in the center of the screen instead of in the top left corner
 		camera.offset = { lf2d::getWindowWidth() / 2.f, lf2d::getWindowHeight() / 2.f };
 
-		if (GetAsyncKeyState('D'))
+		if (lf2d::isKeyDown(lf2d::Key::D))
 		{
 			camera.position.x += 300.f * lf2d::getDeltaTime();
 		}
-		if (GetAsyncKeyState('A'))
+		if (lf2d::isKeyDown(lf2d::Key::A))
 		{
 			camera.position.x -= 300.f * lf2d::getDeltaTime();
 		}
-		if (GetAsyncKeyState('W') || lf2d::isKeyDown(82))
+		if (lf2d::isKeyDown(lf2d::Key::W))
 		{
 			camera.position.y -= 300.f * lf2d::getDeltaTime();
 		}
-		if (GetAsyncKeyState('S'))
+		if (lf2d::isKeyDown(lf2d::Key::S))
 		{
 			camera.position.y += 300.f * lf2d::getDeltaTime();
 		}

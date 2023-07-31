@@ -9,7 +9,7 @@ public:
 	void create(int, int, std::string const&, bool);
 	static vk::SurfaceKHR CreateSurface(vk::Instance instance);
 
-	inline void pollEvents() { glfwPollEvents(); InputController::UpdateKeys(); }
+	inline void pollEvents() { InputController::UpdateKeys(); glfwPollEvents(); }
 	inline bool shouldClose() { return glfwWindowShouldClose(s_glfwWindow); }
 	static inline int GetWidth() { return s_width; }
 	static inline int GetHeight() { return s_height; }

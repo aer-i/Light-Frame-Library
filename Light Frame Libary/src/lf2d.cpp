@@ -40,6 +40,16 @@ namespace lf2d
 		return InputController::IsKeyDown(key);
 	}
 
+	bool isKeyReleased(int key)
+	{
+		return InputController::IsKeyReleased(key);
+	}
+
+	bool isKeyUp(int key)
+	{
+		return !InputController::IsKeyDown(key);
+	}
+
 	void Renderer::beginRendering(Camera& camera)
 	{
 		window.pollEvents();
