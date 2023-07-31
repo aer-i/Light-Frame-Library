@@ -60,6 +60,8 @@ void InputController::framebufferResizeCallback(GLFWwindow* window, int width, i
 
 void InputController::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	if (key == GLFW_KEY_UNKNOWN) return;
+
 	if (action == GLFW_PRESS)
 	{
 		s_keys[key] = true;
