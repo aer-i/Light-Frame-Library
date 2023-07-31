@@ -12,5 +12,6 @@ struct VulkanFrame
 	vk::Semaphore renderFinished;
 	vk::Fence fence;
 	VulkanBuffer vertexBuffer;
+	VulkanBuffer indexBuffer;
 };
 

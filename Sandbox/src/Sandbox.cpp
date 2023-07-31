@@ -21,7 +21,7 @@ auto main(int argc, char* const argv[]) -> int
 	constexpr bool enableValidationLayers = false;
 #endif
 	constexpr bool resizable = true;
-	constexpr bool vsync = false;
+	constexpr bool vsync = true;
 
 	// Enabling v-sync for lower power usage and no visible screen tearing
 	renderer.setVsync(vsync);
@@ -38,13 +38,10 @@ auto main(int argc, char* const argv[]) -> int
 		camera.offset = { lf2d::getWindowWidth() / 2.f, lf2d::getWindowHeight() / 2.f };
 
 		if (lf2d::isKeyDown(lf2d::Key::E))
-		{
-			camera.zoom += 1.f * lf2d::getDeltaTime();
-		}
+			camera.zoom = std::max(0.5f, camera.zoom - 1.f * lf2d::getDeltaTime());
+
 		if (lf2d::isKeyDown(lf2d::Key::Q))
-		{
-			camera.zoom -= 1.f * lf2d::getDeltaTime();
-		}
+			camera.zoom = std::min(1.5f, camera.zoom + 1.f * lf2d::getDeltaTime());
 
 		if (lf2d::isKeyDown(lf2d::Key::D))
 			camera.position.x += 300.f * lf2d::getDeltaTime();
@@ -60,8 +57,9 @@ auto main(int argc, char* const argv[]) -> int
 
 		renderer.beginRendering(camera);
 		{
+			// TODO: Fix frustum culling. Maybe index buffer is the problem
+
 			// Add quad to render queue
-			renderer.renderRectGradientV({ -1920, -1080, 1920 * 2, 1080 * 2 }, Color_Olive, Color_Navy);
 			renderer.renderRect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, Color_Maroon);
 			renderer.renderRectGradientV({ -100, -100, 100, 100 }, Color_Black, Color_White);
 			// TODO: Fix colors for gradient

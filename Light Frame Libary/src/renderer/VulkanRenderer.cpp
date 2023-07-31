@@ -139,7 +139,7 @@ void lfRenderer::endFrame(Mesh& mesh)
 		
 	frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);
 
-	mesh.render(frame->commandBuffer, frame->vertexBuffer);
+	mesh.render(frame->commandBuffer, frame->vertexBuffer, frame->indexBuffer);
 
 	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
 		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
