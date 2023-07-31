@@ -14,7 +14,6 @@ features:
 - keyboard input handling
 
 TODO:
-- add index buffer
 - add textures
 - add text rendering
 - improve camera
