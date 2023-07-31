@@ -7,7 +7,6 @@ auto main(int argc, char* const argv[]) -> int
 	lf2d::Renderer renderer;
 
 	// Main camera
-	// TODO: Fix camera zoom
 	lf2d::Camera camera;
 	camera.position = lf2d::vec2{ 0.f, 0.f };
 	camera.rotation = 0.f;
@@ -38,6 +37,15 @@ auto main(int argc, char* const argv[]) -> int
 		// Setting this camera offset causes objects at position {0, 0} to be rendered in the center of the screen instead of in the top left corner
 		camera.offset = { lf2d::getWindowWidth() / 2.f, lf2d::getWindowHeight() / 2.f };
 
+		if (lf2d::isKeyDown(lf2d::Key::E))
+		{
+			camera.zoom += 1.f * lf2d::getDeltaTime();
+		}
+		if (lf2d::isKeyDown(lf2d::Key::Q))
+		{
+			camera.zoom -= 1.f * lf2d::getDeltaTime();
+		}
+
 		if (lf2d::isKeyDown(lf2d::Key::D))
 			camera.position.x += 300.f * lf2d::getDeltaTime();
 
@@ -53,12 +61,13 @@ auto main(int argc, char* const argv[]) -> int
 		renderer.beginRendering(camera);
 		{
 			// Add quad to render queue
+			renderer.renderRectGradientV({ -1920, -1080, 1920 * 2, 1080 * 2 }, Color_Olive, Color_Navy);
 			renderer.renderRect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, Color_Maroon);
 			renderer.renderRectGradientV({ -100, -100, 100, 100 }, Color_Black, Color_White);
 			// TODO: Fix colors for gradient
 			renderer.renderRectGradient({ -100, 0, 100, 100 }, Color_Blue, Color_Aqua, Color_Magenta, Color_Red);
 			renderer.renderRectGradientH({ 0, -100, 100, 100 }, Color_Olive, Color_Yellow);
-			renderer.renderRectGradientV({ -1920, 1080, 1920, 1080 }, Color_Brown, Color_Navy);
+
 		}
 		renderer.endRendering();
 	}

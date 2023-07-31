@@ -21,6 +21,9 @@ Vertex::Vertex(Vertex&& other)
 
 void Mesh::render(vk::CommandBuffer commandBuffer, VulkanBuffer& vertexBuffer)
 {
+	m_totalObjectCount = 0;
+	m_renderedObjectCount = 0;
+
 	if (!m_vertices.empty())
 	{
 		uint32_t const vertexCount = static_cast<uint32_t>(m_vertices.size());
@@ -33,9 +36,6 @@ void Mesh::render(vk::CommandBuffer commandBuffer, VulkanBuffer& vertexBuffer)
 		vertexBuffer.writeToBuffer(m_vertices.data());
 		vertexBuffer.count = vertexCount;
 		m_vertices.clear();
-
-		m_totalObjectCount = 0;
-		m_renderedObjecCount = 0;
 
 		constexpr vk::DeviceSize offsets[]{ 0 };
 		commandBuffer.bindVertexBuffers(0, 1, vertexBuffer, offsets);
@@ -60,20 +60,21 @@ void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
 
 	float w = static_cast<float>(lf2d::getWindowWidth()), h = static_cast<float>(lf2d::getWindowHeight());
 
-	if (   rect.x + rect.width  > m_currentCamera->position.x - m_currentCamera->offset.x
-		&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w
-		&& rect.y + rect.height > m_currentCamera->position.y - m_currentCamera->offset.y
-		&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h)
+	// Little frustum culling
+	if (   rect.x + rect.width  > (m_currentCamera->position.x - m_currentCamera->offset.x) + (-w / m_currentCamera->zoom + w)
+		&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w / m_currentCamera->zoom
+		&& rect.y + rect.height > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
+		&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
 	{
-		m_vertices.push_back({ { rect.x / w,				rect.y  / h}, color.normalizedVec3() });
-		m_vertices.push_back({ {(rect.x + rect.width) / w,	rect.y  / h}, color.normalizedVec3() });
+		m_vertices.push_back({ { rect.x / w,				rect.y / h}, color.normalizedVec3() });
+		m_vertices.push_back({ {(rect.x + rect.width) / w,	rect.y / h}, color.normalizedVec3() });
 		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color.normalizedVec3() });
 
 		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color.normalizedVec3() });
-		m_vertices.push_back({ {(rect.x + rect.width) / w,  rect.y  / h}, color.normalizedVec3() });
+		m_vertices.push_back({ {(rect.x + rect.width) / w,  rect.y / h}, color.normalizedVec3() });
 		m_vertices.push_back({ {(rect.x + rect.width) / w, (rect.y + rect.height) / h}, color.normalizedVec3() });
 
-		m_renderedObjecCount++;
+		m_renderedObjectCount++;
 		return;
 	}
 }
@@ -88,12 +89,13 @@ void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Col
 
 	m_totalObjectCount++;
 
-	int w = lf2d::getWindowWidth(), h = lf2d::getWindowHeight();
+	float w = static_cast<float>(lf2d::getWindowWidth()), h = static_cast<float>(lf2d::getWindowHeight());
 
-	if (   rect.x + rect.width  > m_currentCamera->position.x - m_currentCamera->offset.x
-		&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w
-		&& rect.y + rect.height > m_currentCamera->position.y - m_currentCamera->offset.y
-		&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h)
+	// Little frustum culling
+	if (   rect.x + rect.width  > (m_currentCamera->position.x - m_currentCamera->offset.x) + (-w / m_currentCamera->zoom + w)
+		&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w / m_currentCamera->zoom
+		&& rect.y + rect.height > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
+		&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
 	{
 		m_vertices.push_back({ { rect.x / w,				rect.y  / h}, color1.normalizedVec3() });
 		m_vertices.push_back({ {(rect.x + rect.width) / w,	rect.y  / h}, color2.normalizedVec3() });
@@ -103,7 +105,7 @@ void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Col
 		m_vertices.push_back({ {(rect.x + rect.width) / w,  rect.y  / h}, color2.normalizedVec3() });
 		m_vertices.push_back({ {(rect.x + rect.width) / w, (rect.y + rect.height) / h}, color4.normalizedVec3() });
 
-		m_renderedObjecCount++;
+		m_renderedObjectCount++;
 		return;
 	}
 }
