@@ -11,6 +11,7 @@ bool InputController::s_buttonsPressed[GLFW_MOUSE_BUTTON_LAST] = { false };
 bool InputController::s_buttonsReleased[GLFW_MOUSE_BUTTON_LAST] = { false };
 
 double InputController::s_mouseX = 0.0, InputController::s_mouseY = 0.0;
+double InputController::s_scrollOffsetY = 0.0;
 
 bool InputController::IsKeyPressed(int key)
 {
@@ -62,6 +63,8 @@ bool InputController::IsButtonReleased(int button)
 
 void InputController::Update()
 {
+	s_scrollOffsetY = 0;
+
 	for (int i = 0; i < GLFW_KEY_LAST; i++)
 	{
 		s_keysPressed[i] = false;
@@ -88,6 +91,7 @@ void InputController::setCallback(GLFWwindow* window)
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetMouseButtonCallback(window, mouseCallback);
 	glfwSetCursorPosCallback(window, cursorCallback);
+	glfwSetScrollCallback(window, scrollCallback);
 }
 
 void InputController::framebufferResizeCallback(GLFWwindow* window, int width, int height)
@@ -130,4 +134,9 @@ void InputController::cursorCallback(GLFWwindow* window, double xpos, double ypo
 {
 	s_mouseX = xpos;
 	s_mouseY = ypos;
+}
+
+void InputController::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	s_scrollOffsetY = yoffset;
 }

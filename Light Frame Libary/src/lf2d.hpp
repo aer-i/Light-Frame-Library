@@ -59,6 +59,8 @@ namespace lf2d
 
 	double getCursorPosX();
 	double getCursorPosY();
+
+	double getMouseWheelOffset();
 	
 	class Renderer
 	{

@@ -80,6 +80,11 @@ namespace lf2d
 		return InputController::GetCursorPosY();
 	}
 
+	double getMouseWheelOffset()
+	{
+		return InputController::GetMouseWheelOffset();
+	}
+
 	void Renderer::beginRendering(Camera& camera)
 	{
 		window.pollEvents();

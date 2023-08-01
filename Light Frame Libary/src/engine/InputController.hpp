@@ -15,6 +15,7 @@ public:
 
 	static inline double GetCursorPosX() { return s_mouseX; }
 	static inline double GetCursorPosY() { return s_mouseY; }
+	static inline double GetMouseWheelOffset() { return s_scrollOffsetY; }
 
 	static void Update();
 
@@ -36,11 +37,13 @@ private:
 	static bool s_buttonsReleased[GLFW_MOUSE_BUTTON_LAST];
 
 	static double s_mouseX, s_mouseY;
+	static double s_scrollOffsetY;
 
 private:
 	static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouseCallback(GLFWwindow* window, int button, int action, int mods);
 	static void cursorCallback(GLFWwindow* window, double xpos, double ypos);
+	static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 };
 
