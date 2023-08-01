@@ -50,6 +50,26 @@ namespace lf2d
 		return !InputController::IsKeyDown(key);
 	}
 
+	bool isButtonPressed(int button)
+	{
+		return InputController::IsButtonPressed(button);
+	}
+
+	bool isButtonDown(int button)
+	{
+		return InputController::IsButtonDown(button);
+	}
+
+	bool isButtonReleased(int button)
+	{
+		return InputController::IsButtonReleased(button);
+	}
+
+	bool isButtonUp(int button)
+	{
+		return !InputController::IsButtonDown(button);
+	}
+
 	void Renderer::beginRendering(Camera& camera)
 	{
 		window.pollEvents();
@@ -63,9 +83,7 @@ namespace lf2d
 		renderer.endFrame(mesh);
 
 		if (shouldClose)
-		{
 			renderer.waitIdle();
-		}
 	}
 
 	void Renderer::renderRect(const Rect& rect, Color color)
