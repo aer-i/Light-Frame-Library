@@ -56,6 +56,9 @@ namespace lf2d
 	bool isButtonDown(int button);
 	bool isButtonReleased(int button);
 	bool isButtonUp(int button);
+
+	double getCursorPosX();
+	double getCursorPosY();
 	
 	class Renderer
 	{

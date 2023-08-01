@@ -13,6 +13,9 @@ public:
 	static bool IsButtonDown(int button);
 	static bool IsButtonReleased(int button);
 
+	static inline double GetCursorPosX() { return s_mouseX; }
+	static inline double GetCursorPosY() { return s_mouseY; }
+
 	static void Update();
 
 private:

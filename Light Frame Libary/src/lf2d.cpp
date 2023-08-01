@@ -70,6 +70,16 @@ namespace lf2d
 		return !InputController::IsButtonDown(button);
 	}
 
+	double getCursorPosX()
+	{
+		return InputController::GetCursorPosX();
+	}
+
+	double getCursorPosY()
+	{
+		return InputController::GetCursorPosY();
+	}
+
 	void Renderer::beginRendering(Camera& camera)
 	{
 		window.pollEvents();
