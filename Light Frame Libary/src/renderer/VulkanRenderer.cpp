@@ -144,7 +144,7 @@ void lfRenderer::endFrame(Mesh& mesh)
 	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
 		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
 		.srcAccessMask = vk::AccessFlagBits2::eColorAttachmentWrite,
-		.oldLayout = vk::ImageLayout::eColorAttachmentOptimal,
+		.oldLayout = vk::ImageLayout::eAttachmentOptimal,
 		.newLayout = vk::ImageLayout::ePresentSrcKHR,
 		.image = m_swapchain.images[m_imageIndex],
 		.subresourceRange = {

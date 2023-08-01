@@ -74,16 +74,16 @@ void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
 	{
 		m_vertices.push_back({ { rect.x / w,				rect.y / h}, color.normalized() });
 		m_vertices.push_back({ {(rect.x + rect.width) / w,	rect.y / h}, color.normalized() });
-		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color.normalized() });
 		m_vertices.push_back({ {(rect.x + rect.width) / w, (rect.y + rect.height) / h}, color.normalized() });
+		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color.normalized() });
 
 		m_indices.emplace_back(m_renderedObjectCount * 4	);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
 
-		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
-		m_indices.emplace_back(m_renderedObjectCount * 4 + 3);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
+		m_indices.emplace_back(m_renderedObjectCount * 4 + 3);
+		m_indices.emplace_back(m_renderedObjectCount * 4	);
 
 		m_renderedObjectCount++;
 	}
@@ -108,16 +108,16 @@ void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Col
 	{
 		m_vertices.push_back({ { rect.x / w,				rect.y  / h}, color1.normalized() });
 		m_vertices.push_back({ {(rect.x + rect.width) / w,	rect.y  / h}, color2.normalized() });
-		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color3.normalized() });
 		m_vertices.push_back({ {(rect.x + rect.width) / w, (rect.y + rect.height) / h}, color4.normalized() });
+		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color3.normalized() });
 
 		m_indices.emplace_back(m_renderedObjectCount * 4	);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
 
-		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
-		m_indices.emplace_back(m_renderedObjectCount * 4 + 3);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
+		m_indices.emplace_back(m_renderedObjectCount * 4 + 3);
+		m_indices.emplace_back(m_renderedObjectCount * 4	);
 
 		m_renderedObjectCount++;
 	}
