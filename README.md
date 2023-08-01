@@ -17,7 +17,6 @@ TODO:
 - add textures
 - add text rendering
 - improve camera
-- add input handling
 - add ImGui support
 - add multithreaded command buffers generation
 - overload vectors
