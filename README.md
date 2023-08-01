@@ -11,7 +11,7 @@ features:
 - rendering quads :)
 - 2d camera
 - quad frustum culling
-- keyboard input handling
+- keyboard & mouse input handling
 
 TODO:
 - add textures
