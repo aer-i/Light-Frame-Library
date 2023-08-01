@@ -63,7 +63,7 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 	vk::VertexInputAttributeDescription constexpr colorAttributeDescription {
 		.location = 1,
 		.binding = 0,
-		.format = vk::Format::eR32G32B32Sfloat,
+		.format = vk::Format::eR32G32B32A32Sfloat,
 		.offset = offsetof(Vertex, color)
 	};
 
@@ -102,15 +102,22 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 	};
 
 	vk::PipelineColorBlendAttachmentState constexpr colorBlendAttachment {
-		.blendEnable = false,
-		.colorWriteMask = vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA
+		.blendEnable = true,
+		.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha,
+		.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha,
+		.colorBlendOp = vk::BlendOp::eAdd,
+		.srcAlphaBlendFactor = vk::BlendFactor::eOne,
+		.dstAlphaBlendFactor = vk::BlendFactor::eZero,
+		.alphaBlendOp = vk::BlendOp::eAdd,
+		.colorWriteMask = vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA,
 	};
 
 	vk::PipelineColorBlendStateCreateInfo constexpr colorBlending {
 		.logicOpEnable = false,
 		.logicOp = vk::LogicOp::eCopy,
 		.attachmentCount = 1,
-		.pAttachments = &colorBlendAttachment
+		.pAttachments = &colorBlendAttachment,
+		.blendConstants = std::array{1.f, 1.f, 1.f, 1.f}
 	};
 
 	std::array<vk::DynamicState, 2> constexpr dynamicStates { vk::DynamicState::eViewport, vk::DynamicState::eScissor};

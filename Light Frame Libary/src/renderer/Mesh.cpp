@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "Mesh.hpp"
 
-Vertex::Vertex(lf2d::vec2 position, lf2d::vec3 color)
+Vertex::Vertex(lf2d::vec2 position, lf2d::vec4 color)
 {
 	this->position = position;
 	this->color = color;
@@ -72,12 +72,12 @@ void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
 		&& rect.y + rect.height > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
 		&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
 	{
-		m_vertices.push_back({ { rect.x / w,				rect.y / h}, color.normalizedVec3() });
-		m_vertices.push_back({ {(rect.x + rect.width) / w,	rect.y / h}, color.normalizedVec3() });
-		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color.normalizedVec3() });
-		m_vertices.push_back({ {(rect.x + rect.width) / w, (rect.y + rect.height) / h}, color.normalizedVec3() });
+		m_vertices.push_back({ { rect.x / w,				rect.y / h}, color.normalized() });
+		m_vertices.push_back({ {(rect.x + rect.width) / w,	rect.y / h}, color.normalized() });
+		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color.normalized() });
+		m_vertices.push_back({ {(rect.x + rect.width) / w, (rect.y + rect.height) / h}, color.normalized() });
 
-		m_indices.emplace_back(m_renderedObjectCount * 4	 );
+		m_indices.emplace_back(m_renderedObjectCount * 4	);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
 
@@ -106,12 +106,12 @@ void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Col
 		&& rect.y + rect.height > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
 		&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
 	{
-		m_vertices.push_back({ { rect.x / w,				rect.y  / h}, color1.normalizedVec3() });
-		m_vertices.push_back({ {(rect.x + rect.width) / w,	rect.y  / h}, color2.normalizedVec3() });
-		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color3.normalizedVec3() });
-		m_vertices.push_back({ {(rect.x + rect.width) / w, (rect.y + rect.height) / h}, color4.normalizedVec3() });
+		m_vertices.push_back({ { rect.x / w,				rect.y  / h}, color1.normalized() });
+		m_vertices.push_back({ {(rect.x + rect.width) / w,	rect.y  / h}, color2.normalized() });
+		m_vertices.push_back({ { rect.x / w, (rect.height + rect.y) / h}, color3.normalized() });
+		m_vertices.push_back({ {(rect.x + rect.width) / w, (rect.y + rect.height) / h}, color4.normalized() });
 
-		m_indices.emplace_back(m_renderedObjectCount * 4	 );
+		m_indices.emplace_back(m_renderedObjectCount * 4	);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
 

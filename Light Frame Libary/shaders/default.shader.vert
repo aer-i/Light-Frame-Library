@@ -4,11 +4,11 @@
 
 layout(location = 0) out struct
 {
-	vec3 color;
+	vec4 color;
 } Out;
 
 layout(location = 0) in vec2 inPosition;
-layout(location = 1) in vec3 inColor;
+layout(location = 1) in vec4 inColor;
 
 layout(push_constant) uniform CameraMatrix
 {

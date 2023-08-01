@@ -191,7 +191,7 @@ void lfRenderer::endFrame(Mesh& mesh)
 		recreateSwapchain();
 	}
 
-	m_currentFrame = (m_currentFrame + 1) % 3;
+	m_currentFrame = (m_currentFrame + 1) % 2;
 }
 
 void lfRenderer::recreateSwapchain()

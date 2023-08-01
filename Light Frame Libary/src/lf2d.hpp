@@ -31,7 +31,7 @@ namespace lf2d
 		constexpr Color()
 			: r{ 0 }, g{ 0 }, b{ 0 }, a{ 0 } {}
 
-		vec3 normalizedVec3() { return { r / 255.f, g / 255.f, b / 255.f }; }
+		vec4 normalized() { return { r / 255.f, g / 255.f, b / 255.f, a / 255.f }; }
 
 		uint8_t r, g, b, a;
 	};
