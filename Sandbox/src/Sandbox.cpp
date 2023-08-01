@@ -57,8 +57,6 @@ auto main(int argc, char* const argv[]) -> int
 
 		renderer.beginRendering(camera);
 		{
-			// TODO: Fix frustum culling. Maybe index buffer is the problem
-
 			// Add quad to render queue
 			renderer.renderRect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, Color_Maroon);
 			renderer.renderRectGradientV({ -100, -100, 100, 100 }, Color_Black, Color_White);
