@@ -6,6 +6,175 @@ namespace lf2d
 	struct vec2
 	{
 		float x, y;
+
+		vec2() = default;
+
+		inline constexpr vec2(float x, float y)
+			: x{ x }, y{ y } {}
+
+		inline constexpr vec2(float scalar)
+			: x{ scalar }, y{ scalar } {}
+
+		template<typename A, typename B>
+		inline constexpr vec2(A x, B y)
+			: x{ static_cast<float>(x) }, y{ static_cast<float>(y) } {}
+
+		template<typename T>
+		inline constexpr vec2(T scalar)
+			: x{ static_cast<float>(scalar) }, y{ static_cast<float>(scalar) } {}
+
+		inline constexpr vec2(vec2 const& v)
+			: x{ v.x }, y{ v.y } {}
+
+		inline constexpr vec2(vec2&& v)
+			: x{ v.x }, y{ v.y } {}
+
+		vec2& operator=(vec2 const&) = default;
+		vec2& operator=(vec2&& v) = default;
+
+		inline constexpr vec2& operator+=(vec2 const& v)
+		{
+			x += v.x;
+			y += v.y;
+			return *this;
+		}
+
+		inline constexpr vec2& operator+=(float scalar)
+		{
+			x += scalar;
+			y += scalar;
+			return *this;
+		}
+
+		template<typename T>
+		inline constexpr vec2& operator+=(T scalar)
+		{
+			x += static_cast<float>(scalar);
+			y += static_cast<float>(scalar);
+			return *this;
+		}
+
+		inline constexpr vec2& operator-=(vec2 const& v)
+		{
+			x -= v.x;
+			y -= v.y;
+			return *this;
+		}
+
+		inline constexpr vec2& operator-=(float scalar)
+		{
+			x -= scalar;
+			y -= scalar;
+			return *this;
+		}
+
+		template<typename T>
+		inline constexpr vec2& operator-=(T scalar)
+		{
+			x -= static_cast<float>(scalar);
+			y -= static_cast<float>(scalar);
+			return *this;
+		}
+
+		inline constexpr vec2& operator*=(vec2 const& v)
+		{
+			x *= v.x;
+			y *= v.y;
+			return *this;
+		}
+
+		inline constexpr vec2& operator*=(float scalar)
+		{
+			x *= scalar;
+			y *= scalar;
+			return *this;
+		}
+
+		template<typename T>
+		inline constexpr vec2& operator*=(T scalar)
+		{
+			x *= static_cast<float>(scalar);
+			y *= static_cast<float>(scalar);
+			return *this;
+		}
+
+		inline constexpr vec2& operator/=(vec2 const& v)
+		{
+			x /= v.x;
+			y /= v.y;
+			return *this;
+		}
+
+		inline constexpr vec2& operator/=(float scalar)
+		{
+			x /= scalar;
+			y /= scalar;
+			return *this;
+		}
+
+		template<typename T>
+		inline constexpr vec2& operator/=(T scalar)
+		{
+			x /= static_cast<float>(scalar);
+			y /= static_cast<float>(scalar);
+			return *this;
+		}
+
+		inline vec2& operator%=(vec2 const& v)
+		{
+			x = fmod(x, v.x);
+			y = fmod(y, v.y);
+			return *this;
+		}
+
+		inline vec2& operator%=(float scalar)
+		{
+			x = fmod(x, scalar);
+			y = fmod(y, scalar);
+			return *this;
+		}
+
+		template<typename T>
+		inline constexpr vec2& operator%=(T scalar)
+		{
+			x = fmod(x, static_cast<float>(scalar));
+			y = fmod(y, static_cast<float>(scalar));
+			return *this;
+		}
+
+		inline constexpr vec2 operator+(vec2 const& v)
+		{
+			return v;
+		}
+
+		inline constexpr vec2 operator-(vec2 const& v)
+		{
+			return vec2(-v.x, -v.y);
+		}
+
+		constexpr friend bool operator==(vec2 const& lhs, vec2 const& rhs)
+		{
+			return (lhs.x == rhs.x) && (lhs.y == rhs.y);
+		}
+
+		constexpr friend bool operator!=(vec2 const& lhs, vec2 const& rhs)
+		{
+			return !(lhs == rhs);
+		}
+
+		inline constexpr vec2& operator++()
+		{
+			++x;
+			++y;
+			return *this;
+		}
+
+		inline constexpr vec2& operator--()
+		{
+			--x;
+			--y;
+			return *this;
+		}
 	};
 
 	struct vec3
