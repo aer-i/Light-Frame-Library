@@ -176,6 +176,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\Math.hpp" />
     <ClInclude Include="src\engine\InputController.hpp" />
     <ClInclude Include="src\renderer\Mesh.hpp" />
     <ClInclude Include="src\renderer\vk\Device.hpp" />

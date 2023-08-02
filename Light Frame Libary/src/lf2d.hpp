@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <cassert>
 
 namespace lf2d
 {
@@ -152,12 +153,12 @@ namespace lf2d
 			return vec2(-v.x, -v.y);
 		}
 
-		constexpr friend bool operator==(vec2 const& lhs, vec2 const& rhs)
+		inline constexpr friend bool operator==(vec2 const& lhs, vec2 const& rhs)
 		{
-			return (lhs.x == rhs.x) && (lhs.y == rhs.y);
+			return ((lhs.x - rhs.x) < std::numeric_limits<float>::epsilon()) && ((lhs.y - rhs.y) < std::numeric_limits<float>::epsilon());
 		}
 
-		constexpr friend bool operator!=(vec2 const& lhs, vec2 const& rhs)
+		inline constexpr friend bool operator!=(vec2 const& lhs, vec2 const& rhs)
 		{
 			return !(lhs == rhs);
 		}
@@ -185,6 +186,26 @@ namespace lf2d
 	struct vec4
 	{
 		float x, y, z, w;
+
+		inline constexpr float operator[](int i)
+		{
+			assert(i >= 0 && i < 4);
+
+			switch (i)
+			{
+			case 0:
+				return x;
+			case 1:
+				return y;
+			case 2:
+				return z;
+			case 3:
+				return w;
+			default: 
+				return 0;
+			}
+
+		}
 	};
 
 	struct Rect
