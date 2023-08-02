@@ -37,7 +37,7 @@ auto main(int argc, char* const argv[]) -> int
 		// Setting this camera offset causes objects at position {0, 0} to be rendered in the center of the screen instead of in the top left corner
 		camera.offset = { lf2d::getWindowWidth() / 2.f, lf2d::getWindowHeight() / 2.f };
 
-		camera.zoom = std::max(0.5f, std::min(3.f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
+		camera.zoom = std::max(0.5f, std::min(1.5f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
 
 		if (lf2d::isKeyDown(lf2d::Key::D))
 			camera.position.x += 300.f * lf2d::getDeltaTime();

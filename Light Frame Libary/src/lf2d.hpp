@@ -229,7 +229,7 @@ namespace lf2d
 	struct Camera
 	{
 		vec2 position{}, offset{};
-		float zoom{1.f}, rotation{};
+		float zoom{1.f};
 	};
 
 	int getWindowWidth();

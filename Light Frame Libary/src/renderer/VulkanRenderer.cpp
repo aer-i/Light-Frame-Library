@@ -130,11 +130,7 @@ void lfRenderer::endFrame(Mesh& mesh)
 		.projView = projection * glm::inverse(
 		glm::translate(
 			glm::mat4(1.f),
-			{ (m_currentCamera->position.x - m_currentCamera->offset.x) / lfWindow::GetWidth(), (m_currentCamera->position.y - m_currentCamera->offset.y) / lfWindow::GetHeight(), 0.f })
-		* glm::rotate(
-			glm::mat4(1.f),
-			m_currentCamera->rotation,
-			{ 0, 0, 1 }))
+			{ (m_currentCamera->position.x - m_currentCamera->offset.x) / lfWindow::GetWidth(), (m_currentCamera->position.y - m_currentCamera->offset.y) / lfWindow::GetHeight(), 0.f }))
 	};
 		
 	frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);
