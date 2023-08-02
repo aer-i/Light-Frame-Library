@@ -384,7 +384,7 @@ namespace lf2d
 			};
 		}
 
-		iinline constexpr vec3 operator+(vec3 const& v)
+		inline constexpr vec3 operator+(vec3 const& v)
 		{
 			return vec3(x + v.x, y + v.y, z + v.z);
 		}
