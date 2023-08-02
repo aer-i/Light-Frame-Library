@@ -145,9 +145,21 @@ namespace lf2d
 			return vec2(x + v.x , y + v.y);
 		}
 
+		template<typename T>
+		inline constexpr vec2 operator+(T scalar)
+		{
+			return vec2(x + static_cast<float>(scalar), y + static_cast<float>(scalar));
+		}
+
 		inline constexpr vec2 operator-(vec2 const& v)
 		{
 			return vec2(x - v.x, y - v.y);
+		}
+
+		template<typename T>
+		inline constexpr vec2 operator-(T scalar)
+		{
+			return vec2(x - static_cast<float>(scalar), y - static_cast<float>(scalar));
 		}
 
 		inline constexpr vec2 operator*(vec2 const& v)
@@ -372,14 +384,26 @@ namespace lf2d
 			};
 		}
 
-		inline constexpr vec3 operator+(vec3 const& v)
+		iinline constexpr vec3 operator+(vec3 const& v)
 		{
 			return vec3(x + v.x, y + v.y, z + v.z);
+		}
+
+		template<typename T>
+		inline constexpr vec3 operator+(T scalar)
+		{
+			return vec3(x + static_cast<float>(scalar), y + static_cast<float>(scalar), z + static_cast<float>(scalar));
 		}
 
 		inline constexpr vec3 operator-(vec3 const& v)
 		{
 			return vec3(x - v.x, y - v.y, z - v.z);
+		}
+
+		template<typename T>
+		inline constexpr vec3 operator-(T scalar)
+		{
+			return vec3(x - static_cast<float>(scalar), y - static_cast<float>(scalar), z - static_cast<float>(scalar));
 		}
 
 		inline constexpr vec3 operator*(vec3 const& v)
@@ -627,9 +651,21 @@ namespace lf2d
 			return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
 		}
 
+		template<typename T>
+		inline constexpr vec4 operator+(T scalar)
+		{
+			return vec4(x + static_cast<float>(scalar), y + static_cast<float>(scalar), z + static_cast<float>(scalar), w + static_cast<float>(scalar));
+		}
+
 		inline constexpr vec4 operator-(vec4 const& v)
 		{
 			return vec4(x - v.x, y - v.y, z - v.z, w - v.w);
+		}
+
+		template<typename T>
+		inline constexpr vec4 operator-(T scalar)
+		{
+			return vec4(x - static_cast<float>(scalar), y - static_cast<float>(scalar), z - static_cast<float>(scalar), w - static_cast<float>(scalar));
 		}
 
 		inline constexpr vec4 operator*(vec4 const& v)
