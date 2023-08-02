@@ -61,5 +61,4 @@ auto main(int argc, char* const argv[]) -> int
 		renderer.endRendering();
 	}
 	// Exit main loop
-
 }

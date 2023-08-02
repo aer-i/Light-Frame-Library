@@ -6,7 +6,7 @@ namespace lf2d
 {
 	struct vec2
 	{
-		float x, y;
+		float x = 0, y = 0;
 
 		inline constexpr float operator[](int i)
 		{
@@ -236,7 +236,7 @@ namespace lf2d
 
 	struct vec3
 	{
-		float x, y, z;
+		float x = 0, y = 0, z = 0;
 
 		inline constexpr float operator[](int i)
 		{
@@ -483,7 +483,7 @@ namespace lf2d
 
 	struct vec4
 	{
-		float x, y, z, w;
+		float x = 0, y = 0, z = 0, w = 0;
 
 		inline constexpr float operator[](int i)
 		{
