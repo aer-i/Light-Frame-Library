@@ -19,5 +19,4 @@ TODO:
 - improve camera
 - add ImGui support
 - add multithreaded command buffers generation
-- overload vectors
 - everything to be honest
