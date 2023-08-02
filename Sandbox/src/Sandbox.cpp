@@ -9,7 +9,6 @@ auto main(int argc, char* const argv[]) -> int
 	// Main camera
 	lf2d::Camera camera;
 	camera.position = lf2d::vec2{ 0.f, 0.f };
-	camera.rotation = 0.f;
 	camera.zoom = 1.0f;
 
 #ifndef NDEBUG
