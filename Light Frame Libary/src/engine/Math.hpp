@@ -45,12 +45,6 @@ namespace lfMath
 		//result[3] = m[0] * v[0] + m[1]
 	}
 
-	template<typename T>
-	constexpr mat4 rotate(mat4 const& m, T angle, lf2d::vec3 const& v)
-	{
-		
-	}
-
 	constexpr mat4 inverse()
 	{
 		//

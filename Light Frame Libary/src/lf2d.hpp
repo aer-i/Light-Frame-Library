@@ -145,22 +145,54 @@ namespace lf2d
 
 		inline constexpr vec2 operator+(vec2 const& v)
 		{
-			return v;
+			return vec2(x + v.x , y + v.y);
 		}
 
 		inline constexpr vec2 operator-(vec2 const& v)
 		{
-			return vec2(-v.x, -v.y);
+			return vec2(x - v.x, y - v.y);
 		}
 
-		inline constexpr friend bool operator==(vec2 const& lhs, vec2 const& rhs)
+		inline constexpr vec2 operator*(vec2 const& v)
 		{
-			return ((lhs.x - rhs.x) < std::numeric_limits<float>::epsilon()) && ((lhs.y - rhs.y) < std::numeric_limits<float>::epsilon());
+			return vec2(x * v.x, y * v.y);
 		}
 
-		inline constexpr friend bool operator!=(vec2 const& lhs, vec2 const& rhs)
+		template<typename T>
+		inline constexpr vec2 operator*(T scalar)
 		{
-			return !(lhs == rhs);
+			return vec2(scalar * x, scalar * y);
+		}
+
+		inline constexpr vec2 operator/(vec2 const& v)
+		{
+			return vec2(x / v.x, y / v.y);
+		}
+
+		template<typename T>
+		inline constexpr vec2 operator/(T scalar)
+		{
+			return vec2(x / scalar, y / scalar);
+		}
+
+		inline constexpr bool operator==(vec2 const& v)
+		{
+			return ((x - v.x) < std::numeric_limits<float>::epsilon()) && ((y - v.y) < std::numeric_limits<float>::epsilon());
+		}
+
+		inline constexpr bool operator!=(vec2 const& v)
+		{
+			return !(*this == v);
+		}
+
+		inline constexpr vec2 operator-()
+		{
+			return { -x, -y };
+		}
+
+		inline constexpr vec2 operator+()
+		{
+			return { x, y };
 		}
 
 		inline constexpr vec2& operator++()
