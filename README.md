@@ -14,6 +14,7 @@ features:
 - keyboard & mouse input handling
 
 TODO:
+- fix vectors ;_;
 - add textures
 - add text rendering
 - improve camera
