@@ -8,743 +8,296 @@ namespace lf2d
 	{
 		float x = 0, y = 0;
 
-		inline constexpr float operator[](int i)
-		{
-			assert(i >= 0 && i < 2);
-
-			switch (i)
-			{
-			case 0:
-				return x;
-			case 1:
-				return y;
-			default:
-				return 0;
-			}
-		}
-
 		vec2() = default;
 
-		inline constexpr vec2(float x, float y)
-			: x{ x }, y{ y } {}
-
-		inline constexpr vec2(float scalar)
-			: x{ scalar }, y{ scalar } {}
+		inline constexpr float operator[](int i);
 
 		template<typename A, typename B>
-		inline constexpr vec2(A x, B y)
-			: x{ static_cast<float>(x) }, y{ static_cast<float>(y) } {}
+		inline constexpr vec2(A x, B y);
+		inline constexpr vec2(float x, float y);
 
 		template<typename T>
-		inline constexpr vec2(T scalar)
-			: x{ static_cast<float>(scalar) }, y{ static_cast<float>(scalar) } {}
+		inline constexpr vec2(T scalar);
+		inline constexpr vec2(float scalar);
 
-		inline constexpr vec2(vec2 const& v)
-			: x{ v.x }, y{ v.y } {}
-
-		inline constexpr vec2(vec2&& v)
-			: x{ v.x }, y{ v.y } {}
+		inline constexpr vec2(vec2 const& v);
+		inline constexpr vec2(vec2&& v);
 
 		vec2& operator=(vec2 const&) = default;
 		vec2& operator=(vec2&& v) = default;
 
-		inline constexpr vec2& operator+=(vec2 const& v)
-		{
-			x += v.x;
-			y += v.y;
-			return *this;
-		}
+		template<typename T>
+		inline constexpr vec2& operator+=(T scalar);
+		inline constexpr vec2& operator+=(vec2 const& v);
+
 
 		template<typename T>
-		inline constexpr vec2& operator+=(T scalar)
-		{
-			x += static_cast<float>(scalar);
-			y += static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec2& operator-=(T scalar);
+		inline constexpr vec2& operator-=(vec2 const& v);
 
-		inline constexpr vec2& operator-=(vec2 const& v)
-		{
-			x -= v.x;
-			y -= v.y;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec2& operator-=(T scalar)
-		{
-			x -= static_cast<float>(scalar);
-			y -= static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec2& operator*=(T scalar);
+		inline constexpr vec2& operator*=(vec2 const& v);
 
-		inline constexpr vec2& operator*=(vec2 const& v)
-		{
-			x *= v.x;
-			y *= v.y;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec2& operator*=(T scalar)
-		{
-			x *= static_cast<float>(scalar);
-			y *= static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec2& operator/=(T scalar);
+		inline constexpr vec2& operator/=(vec2 const& v);
 
-		inline constexpr vec2& operator/=(vec2 const& v)
-		{
-			x /= v.x;
-			y /= v.y;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec2& operator/=(T scalar)
-		{
-			x /= static_cast<float>(scalar);
-			y /= static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec2& operator%=(T scalar);
+		inline vec2& operator%=(vec2 const& v);
 
-		inline vec2& operator%=(vec2 const& v)
-		{
-			x = fmod(x, v.x);
-			y = fmod(y, v.y);
-			return *this;
-		}
 
-		template<typename T>
-		inline constexpr vec2& operator%=(T scalar)
-		{
-			x = fmod(x, static_cast<float>(scalar));
-			y = fmod(y, static_cast<float>(scalar));
-			return *this;
-		}
+		inline constexpr vec2& operator++();
+		inline constexpr vec2 operator++(int);
 
-		template<typename T>
-		inline constexpr vec2 operator%(T scalar)
-		{
-			return {
-				fmod(x, static_cast<float>(scalar)),
-				fmod(y, static_cast<float>(scalar))
-			};
-		}
 
-		inline vec2 operator%(vec2 const& v)
-		{
-			return {
-				fmod(x, v.x),
-				fmod(y, v.y)
-			};
-		}
-
-		inline constexpr vec2 operator+(vec2 const& v)
-		{
-			return vec2(x + v.x , y + v.y);
-		}
-
-		template<typename T>
-		inline constexpr vec2 operator+(T scalar)
-		{
-			return vec2(x + static_cast<float>(scalar), y + static_cast<float>(scalar));
-		}
-
-		inline constexpr vec2 operator-(vec2 const& v)
-		{
-			return vec2(x - v.x, y - v.y);
-		}
-
-		template<typename T>
-		inline constexpr vec2 operator-(T scalar)
-		{
-			return vec2(x - static_cast<float>(scalar), y - static_cast<float>(scalar));
-		}
-
-		inline constexpr vec2 operator*(vec2 const& v)
-		{
-			return vec2(x * v.x, y * v.y);
-		}
-
-		template<typename T>
-		inline constexpr vec2 operator*(T scalar)
-		{
-			return vec2(scalar * x, scalar * y);
-		}
-
-		inline constexpr vec2 operator/(vec2 const& v)
-		{
-			return vec2(x / v.x, y / v.y);
-		}
-
-		template<typename T>
-		inline constexpr vec2 operator/(T scalar)
-		{
-			return vec2(x / scalar, y / scalar);
-		}
-
-		inline constexpr bool operator==(vec2 const& v) const
-		{
-			return ((x - v.x) < std::numeric_limits<float>::epsilon())
-				&& ((y - v.y) < std::numeric_limits<float>::epsilon());
-		}
-
-		inline constexpr bool operator!=(vec2 const& v)
-		{
-			return !(*this == v);
-		}
-
-		inline constexpr vec2 operator-()
-		{
-			return { -x, -y };
-		}
-
-		inline constexpr vec2 operator+()
-		{
-			return { x, y };
-		}
-
-		inline constexpr vec2& operator++()
-		{
-			++x;
-			++y;
-			return *this;
-		}
-
-		inline constexpr vec2 operator++(int)
-		{
-			vec2 result{ *this };
-			++*this;
-			return result;
-		}
-
-		inline constexpr vec2& operator--()
-		{
-			--x;
-			--y;
-			return *this;
-		}
-
-		inline constexpr vec2 operator--(int)
-		{
-			vec2 result{ *this };
-			--*this;
-			return result;
-		}
+		inline constexpr vec2& operator--();
+		inline constexpr vec2 operator--(int);
 	};
+
+	inline constexpr vec2 operator+(vec2 const& v);
+	inline constexpr vec2 operator-(vec2 const& v);
+
+
+	inline constexpr vec2 operator+(vec2 const& lhs, vec2 const& rhs);
+	template<typename T>
+	inline constexpr vec2 operator+(vec2 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec2 operator+(T scalar, vec2 const& v);
+
+
+	inline constexpr vec2 operator-(vec2 const& lhs, vec2 const& rhs);
+	template<typename T>
+	inline constexpr vec2 operator-(vec2 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec2 operator-(T scalar, vec2 const& v);
+
+
+	inline constexpr vec2 operator*(vec2 const& lhs, vec2 const& rhs);
+	template<typename T>
+	inline constexpr vec2 operator*(vec2 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec2 operator*(T scalar, vec2 const& v);
+
+
+	inline constexpr vec2 operator/(vec2 const& lhs, vec2 const& rhs);
+	template<typename T>
+	inline constexpr vec2 operator/(vec2 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec2 operator/(T scalar, vec2 const& v);
+
+
+	inline constexpr vec2 operator%(vec2 const& lhs, vec2 const& rhs);
+	template<typename T>
+	inline constexpr vec2 operator%(vec2 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec2 operator%(T scalar, vec2 const& v);
+
+
+	inline constexpr bool operator==(vec2 const& lhs, vec2 const& rhs);
+	inline constexpr bool operator!=(vec2 const& lhs, vec2 const& rhs);
 
 	struct vec3
 	{
 		float x = 0, y = 0, z = 0;
 
-		inline constexpr float operator[](int i)
-		{
-			assert(i >= 0 && i < 3);
-
-			switch (i)
-			{
-			case 0:
-				return x;
-			case 1:
-				return y;
-			case 2:
-				return z;
-			default:
-				return 0;
-			}
-		}
 
 		vec3() = default;
 
-		inline constexpr vec3(float x, float y, float z)
-			: x{ x }, y{ y }, z{ z } {}
-
-		inline constexpr vec3(float scalar)
-			: x{ scalar }, y{ scalar }, z{ scalar } {}
-
-		template<typename T>
-		inline constexpr vec3(T scalar)
-			: x{ static_cast<float>(scalar) }, y{ static_cast<float>(scalar) }, z{ static_cast<float>(scalar) } {}
+		inline constexpr float operator[](int i);
 
 		template<typename A, typename B, typename C>
-		inline constexpr vec3(A x, B y, C z)
-			: x{ static_cast<float>(x) }, y{ static_cast<float>(y) }, z{ static_cast<float>(z) } {}
+		inline constexpr vec3(A x, B y, C z);
+		inline constexpr vec3(float x, float y, float z);
 
-		inline constexpr vec3(vec3 const& v)
-			: x{ v.x }, y{ v.y }, z{ v.z } {}
+		template<typename T>
+		inline constexpr vec3(T scalar);
+		inline constexpr vec3(float scalar);
 
-		inline constexpr vec3(vec3&& v)
-			: x{ v.x }, y{ v.y }, z{ v.z } {}
+		inline constexpr vec3(vec3 const& v);
+		inline constexpr vec3(vec3&& v);
 
 		vec3& operator=(vec3 const&) = default;
 		vec3& operator=(vec3&& v) = default;
 
-		inline constexpr vec3& operator+=(vec3 const& v)
-		{
-			x += v.x;
-			y += v.y;
-			z += v.z;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec3& operator+=(T scalar)
-		{
-			x += static_cast<float>(scalar);
-			y += static_cast<float>(scalar);
-			z += static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec3& operator+=(T scalar);
+		inline constexpr vec3& operator+=(vec3 const& v);
 
-		inline constexpr vec3& operator-=(vec3 const& v)
-		{
-			x -= v.x;
-			y -= v.y;
-			z -= v.z;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec3& operator-=(T scalar)
-		{
-			x -= static_cast<float>(scalar);
-			y -= static_cast<float>(scalar);
-			z -= static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec3& operator-=(T scalar);
+		inline constexpr vec3& operator-=(vec3 const& v);
 
-		inline constexpr vec3& operator*=(vec3 const& v)
-		{
-			x *= v.x;
-			y *= v.y;
-			z *= v.z;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec3& operator*=(T scalar)
-		{
-			x *= static_cast<float>(scalar);
-			y *= static_cast<float>(scalar);
-			z *= static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec3& operator*=(T scalar);
+		inline constexpr vec3& operator*=(vec3 const& v);
 
-		inline constexpr vec3& operator/=(vec3 const& v)
-		{
-			x /= v.x;
-			y /= v.y;
-			z /= v.z;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec3& operator/=(T scalar)
-		{
-			x /= static_cast<float>(scalar);
-			y /= static_cast<float>(scalar);
-			z /= static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec3& operator/=(T scalar);
+		inline constexpr vec3& operator/=(vec3 const& v);
 
-		inline vec3& operator%=(vec3 const& v)
-		{
-			x = fmod(x, v.x);
-			y = fmod(y, v.y);
-			z = fmod(z, v.z);
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec3& operator%=(T scalar)
-		{
-			x = fmod(x, static_cast<float>(scalar));
-			y = fmod(y, static_cast<float>(scalar));
-			z = fmod(z, static_cast<float>(scalar));
-			return *this;
-		}
+		inline constexpr vec3& operator%=(T scalar);
+		inline vec3& operator%=(vec3 const& v);
 
-		template<typename T>
-		inline constexpr vec3 operator%(T scalar)
-		{
-			return {
-				fmod(x, static_cast<float>(scalar)),
-				fmod(y, static_cast<float>(scalar)),
-				fmod(z, static_cast<float>(scalar))
-			};
-		}
 
-		inline vec3 operator%(vec3 const& v)
-		{
-			return {
-				fmod(x, v.x),
-				fmod(y, v.y),
-				fmod(z, v.z)
-			};
-		}
+		inline constexpr vec3& operator++();
+		inline constexpr vec3 operator++(int);
 
-		inline constexpr vec3 operator+(vec3 const& v)
-		{
-			return vec3(x + v.x, y + v.y, z + v.z);
-		}
 
-		template<typename T>
-		inline constexpr vec3 operator+(T scalar)
-		{
-			return vec3(x + static_cast<float>(scalar), y + static_cast<float>(scalar), z + static_cast<float>(scalar));
-		}
-
-		inline constexpr vec3 operator-(vec3 const& v)
-		{
-			return vec3(x - v.x, y - v.y, z - v.z);
-		}
-
-		template<typename T>
-		inline constexpr vec3 operator-(T scalar)
-		{
-			return vec3(x - static_cast<float>(scalar), y - static_cast<float>(scalar), z - static_cast<float>(scalar));
-		}
-
-		inline constexpr vec3 operator*(vec3 const& v)
-		{
-			return vec3(x * v.x, y * v.y, z * v.z);
-		}
-
-		template<typename T>
-		inline constexpr vec3 operator*(T scalar)
-		{
-			return vec3(scalar * x, scalar * y, scalar * z);
-		}
-
-		inline constexpr vec3 operator/(vec3 const& v)
-		{
-			return vec3(x / v.x, y / v.y, z / v.z);
-		}
-
-		template<typename T>
-		inline constexpr vec3 operator/(T scalar)
-		{
-			return vec3(x / scalar, y / scalar, z / scalar);
-		}
-
-		inline constexpr bool operator==(vec3 const& v) const
-		{
-			return ((x - v.x) < std::numeric_limits<float>::epsilon())
-				&& ((y - v.y) < std::numeric_limits<float>::epsilon())
-				&& ((z - v.z) < std::numeric_limits<float>::epsilon());
-		}
-
-		inline constexpr bool operator!=(vec3 const& v)
-		{
-			return !(*this == v);
-		}
-
-		inline constexpr vec3 operator-()
-		{
-			return { -x, -y, -z };
-		}
-
-		inline constexpr vec3 operator+()
-		{
-			return { x, y, z };
-		}
-
-		inline constexpr vec3& operator++()
-		{
-			++x;
-			++y;
-			++z;
-			return *this;
-		}
-
-		inline constexpr vec3 operator++(int)
-		{
-			vec3 result{ *this };
-			++*this;
-			return result;
-		}
-
-		inline constexpr vec3& operator--()
-		{
-			--x;
-			--y;
-			--z;
-			return *this;
-		}
-
-		inline constexpr vec3 operator--(int)
-		{
-			vec3 result{ *this };
-			--*this;
-			return result;
-		}
+		inline constexpr vec3& operator--();
+		inline constexpr vec3 operator--(int);
 	};
+
+	inline constexpr vec3 operator+(vec3 const& v);
+	inline constexpr vec3 operator-(vec3 const& v);
+
+
+	inline constexpr vec3 operator+(vec3 const& lhs, vec3 const& rhs);
+	template<typename T>
+	inline constexpr vec3 operator+(vec3 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec3 operator+(T scalar, vec3 const& v);
+
+
+	inline constexpr vec3 operator-(vec3 const& lhs, vec3 const& rhs);
+	template<typename T>
+	inline constexpr vec3 operator-(vec3 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec3 operator-(T scalar, vec3 const& v);
+
+
+	inline constexpr vec3 operator*(vec3 const& lhs, vec3 const& rhs);
+	template<typename T>
+	inline constexpr vec3 operator*(vec3 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec3 operator*(T scalar, vec3 const& v);
+
+
+	inline constexpr vec3 operator/(vec3 const& lhs, vec3 const& rhs);
+	template<typename T>
+	inline constexpr vec3 operator/(vec3 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec3 operator/(T scalar, vec3 const& v);
+
+
+	inline constexpr vec3 operator%(vec3 const& lhs, vec3 const& rhs);
+	template<typename T>
+	inline constexpr vec3 operator%(vec3 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec3 operator%(T scalar, vec3 const& v);
+
+
+	inline constexpr bool operator==(vec3 const& lhs, vec3 const& rhs);
+	inline constexpr bool operator!=(vec3 const& lhs, vec3 const& rhs);
 
 	struct vec4
 	{
 		float x = 0, y = 0, z = 0, w = 0;
 
-		inline constexpr float operator[](int i)
-		{
-			assert(i >= 0 && i < 4);
-
-			switch (i)
-			{
-			case 0:
-				return x;
-			case 1:
-				return y;
-			case 2:
-				return z;
-			case 3:
-				return w;
-			default: 
-				return 0;
-			}
-
-		}
 
 		vec4() = default;
 
-		inline constexpr vec4(float x, float y, float z, float w)
-			: x{ x }, y{ y }, z{ z }, w{ w } {}
-
-		inline constexpr vec4(float scalar)
-			: x{ scalar }, y{ scalar }, z{ scalar }, w{ scalar } {}
-
-		template<typename T>
-		inline constexpr vec4(T scalar)
-			: x{ static_cast<float>(scalar) }, y{ static_cast<float>(scalar) }, z{ static_cast<float>(scalar) }, w{ static_cast<float>(scalar) } {}
+		inline constexpr float operator[](int i);
 
 		template<typename A, typename B, typename C, typename D>
-		inline constexpr vec4(A x, B y, C z, D w)
-			: x{ static_cast<float>(x) }, y{ static_cast<float>(y) }, z{ static_cast<float>(z) }, w{ static_cast<float>(w) } {}
+		inline constexpr vec4(A x, B y, C z, D w);
+		inline constexpr vec4(float x, float y, float z, float w);
 
-		inline constexpr vec4(vec4 const& v)
-			: x{ v.x }, y{ v.y }, z{ v.z }, w{ v.w } {}
+		template<typename T>
+		inline constexpr vec4(T scalar);
+		inline constexpr vec4(float scalar);
 
-		inline constexpr vec4(vec4&& v)
-			: x{ v.x }, y{ v.y }, z{ v.z }, w{ v.w } {}
+		inline constexpr vec4(vec4 const& v);
+		inline constexpr vec4(vec4&& v);
 
 		vec4& operator=(vec4 const&) = default;
 		vec4& operator=(vec4&& v) = default;
 
-		inline constexpr vec4& operator+=(vec4 const& v)
-		{
-			x += v.x;
-			y += v.y;
-			z += v.z;
-			w += v.w;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec4& operator+=(T scalar)
-		{
-			x += static_cast<float>(scalar);
-			y += static_cast<float>(scalar);
-			z += static_cast<float>(scalar);
-			w += static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec4& operator+=(T scalar);
+		inline constexpr vec4& operator+=(vec4 const& v);
 
-		inline constexpr vec4& operator-=(vec4 const& v)
-		{
-			x -= v.x;
-			y -= v.y;
-			z -= v.z;
-			w -= v.w;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec4& operator-=(T scalar)
-		{
-			x -= static_cast<float>(scalar);
-			y -= static_cast<float>(scalar);
-			z -= static_cast<float>(scalar);
-			w -= static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec4& operator-=(T scalar);
+		inline constexpr vec4& operator-=(vec4 const& v);
 
-		inline constexpr vec4& operator*=(vec4 const& v)
-		{
-			x *= v.x;
-			y *= v.y;
-			z *= v.z;
-			w *= v.w;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec4& operator*=(T scalar)
-		{
-			x *= static_cast<float>(scalar);
-			y *= static_cast<float>(scalar);
-			z *= static_cast<float>(scalar);
-			w *= static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec4& operator*=(T scalar);
+		inline constexpr vec4& operator*=(vec4 const& v);
 
-		inline constexpr vec4& operator/=(vec4 const& v)
-		{
-			x /= v.x;
-			y /= v.y;
-			z /= v.z;
-			w /= v.w;
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec4& operator/=(T scalar)
-		{
-			x /= static_cast<float>(scalar);
-			y /= static_cast<float>(scalar);
-			z /= static_cast<float>(scalar);
-			w /= static_cast<float>(scalar);
-			return *this;
-		}
+		inline constexpr vec4& operator/=(T scalar);
+		inline constexpr vec4& operator/=(vec4 const& v);
 
-		inline vec4& operator%=(vec4 const& v)
-		{
-			x = fmod(x, v.x);
-			y = fmod(y, v.y);
-			z = fmod(z, v.z);
-			w = fmod(w, v.w);
-			return *this;
-		}
 
 		template<typename T>
-		inline constexpr vec4& operator%=(T scalar)
-		{
-			x = fmod(x, static_cast<float>(scalar));
-			y = fmod(y, static_cast<float>(scalar));
-			z = fmod(z, static_cast<float>(scalar));
-			w = fmod(w, static_cast<float>(scalar));
-			return *this;
-		}
+		inline constexpr vec4& operator%=(T scalar);
+		inline vec4& operator%=(vec4 const& v);
 
-		template<typename T>
-		inline constexpr vec4 operator%(T scalar)
-		{
-			return {
-				fmod(x, static_cast<float>(scalar)),
-				fmod(y, static_cast<float>(scalar)),
-				fmod(z, static_cast<float>(scalar)),
-				fmod(w, static_cast<float>(scalar))
-			};
-		}
+		
+		inline constexpr vec4& operator++();
+		inline constexpr vec4 operator++(int);
 
-		inline vec4 operator%(vec4 const& v)
-		{
-			return {
-				fmod(x, v.x),
-				fmod(y, v.y),
-				fmod(z, v.z),
-				fmod(w, v.w)
-			};
-		}
 
-		inline constexpr vec4 operator+(vec4 const& v)
-		{
-			return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
-		}
-
-		template<typename T>
-		inline constexpr vec4 operator+(T scalar)
-		{
-			return vec4(x + static_cast<float>(scalar), y + static_cast<float>(scalar), z + static_cast<float>(scalar), w + static_cast<float>(scalar));
-		}
-
-		inline constexpr vec4 operator-(vec4 const& v)
-		{
-			return vec4(x - v.x, y - v.y, z - v.z, w - v.w);
-		}
-
-		template<typename T>
-		inline constexpr vec4 operator-(T scalar)
-		{
-			return vec4(x - static_cast<float>(scalar), y - static_cast<float>(scalar), z - static_cast<float>(scalar), w - static_cast<float>(scalar));
-		}
-
-		inline constexpr vec4 operator*(vec4 const& v)
-		{
-			return vec4(x * v.x, y * v.y, z * v.z, w * v.w);
-		}
-
-		template<typename T>
-		inline constexpr vec4 operator*(T scalar)
-		{
-			return vec4(scalar * x, scalar * y, scalar * z, scalar * w);
-		}
-
-		inline constexpr vec4 operator/(vec4 const& v)
-		{
-			return vec4(x / v.x, y / v.y, z / v.z, w / v.w);
-		}
-
-		template<typename T>
-		inline constexpr vec4 operator/(T scalar)
-		{
-			return vec4(x / scalar, y / scalar, z / scalar, w / scalar);
-		}
-
-		inline constexpr bool operator==(vec4 const& v) const
-		{
-			return ((x - v.x) < std::numeric_limits<float>::epsilon())
-				&& ((y - v.y) < std::numeric_limits<float>::epsilon())
-				&& ((z - v.z) < std::numeric_limits<float>::epsilon())
-				&& ((w - v.w) < std::numeric_limits<float>::epsilon());
-		}
-
-		inline constexpr bool operator!=(vec4 const& v)
-		{
-			return !(*this == v);
-		}
-
-		inline constexpr vec4 operator-()
-		{
-			return { -x, -y, -z, -w };
-		}
-
-		inline constexpr vec4 operator+()
-		{
-			return { x, y, z, w };
-		}
-
-		inline constexpr vec4& operator++()
-		{
-			++x;
-			++y;
-			++z;
-			++w;
-			return *this;
-		}
-
-		inline constexpr vec4 operator++(int)
-		{
-			vec4 result{ *this };
-			++*this;
-			return result;
-		}
-
-		inline constexpr vec4& operator--()
-		{
-			--x;
-			--y;
-			--z;
-			--w;
-			return *this;
-		}
-
-		inline constexpr vec4 operator--(int)
-		{
-			vec4 result{ *this };
-			--*this;
-			return result;
-		}
+		inline constexpr vec4& operator--();
+		inline constexpr vec4 operator--(int);
 	};
+
+	inline constexpr vec4 operator+(vec4 const& v);
+	inline constexpr vec4 operator-(vec4 const& v);
+
+
+	inline constexpr vec4 operator+(vec4 const& lhs, vec4 const& rhs);
+	template<typename T>
+	inline constexpr vec4 operator+(vec4 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec4 operator+(T scalar, vec4 const& v);
+
+
+	inline constexpr vec4 operator-(vec4 const& lhs, vec4 const& rhs);
+	template<typename T>
+	inline constexpr vec4 operator-(vec4 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec4 operator-(T scalar, vec4 const& v);
+
+
+	inline constexpr vec4 operator*(vec4 const& lhs, vec4 const& rhs);
+	template<typename T>
+	inline constexpr vec4 operator*(vec4 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec4 operator*(T scalar, vec4 const& v);
+
+
+	inline constexpr vec4 operator/(vec4 const& lhs, vec4 const& rhs);
+	template<typename T>
+	inline constexpr vec4 operator/(vec4 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec4 operator/(T scalar, vec4 const& v);
+
+
+	inline constexpr vec4 operator%(vec4 const& lhs, vec4 const& rhs);
+	template<typename T>
+	inline constexpr vec4 operator%(vec4 const& v, T scalar);
+	template<typename T>
+	inline constexpr vec4 operator%(T scalar, vec4 const& v);
+
+
+	inline constexpr bool operator==(vec4 const& lhs, vec4 const& rhs);
+	inline constexpr bool operator!=(vec4 const& lhs, vec4 const& rhs);
 
 	struct Rect
 	{
@@ -978,4 +531,6 @@ namespace lf2d
 #define Color_DarkPurple  { 112,  31, 126, 255 } 
 #define Color_Beige       { 211, 176, 131, 255 }
 #define Color_Brown       { 127, 106,  79, 255 } 
-#define Color_DarkBrown   {  76,  63,  47, 255 }  
+#define Color_DarkBrown   {  76,  63,  47, 255 }
+
+#include "lf2d.inl"
