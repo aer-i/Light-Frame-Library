@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <cassert>
 
 namespace lf2d
 {
@@ -11,6 +10,14 @@ namespace lf2d
 		vec2() = default;
 
 		inline constexpr float operator[](int i);
+
+		inline vec2 normalize();
+		inline float length();
+		inline float distance(vec2 const& v);
+		inline constexpr vec2 lerp(vec2 const& v, float amount);
+		inline constexpr float lengthSqr();
+		inline constexpr float distanceSqr(vec2 const& v);
+		inline constexpr float dotProduct(vec2 const& v);
 
 		template<typename A, typename B>
 		inline constexpr vec2(A x, B y);

@@ -1,4 +1,5 @@
 #pragma once
+#include <cassert>
 
 namespace lf2d
 {
@@ -15,6 +16,51 @@ namespace lf2d
 		default:
 			return 0;
 		}
+	}
+
+	lf2d::vec2 lf2d::vec2::normalize()
+	{
+		float len = length();
+
+		if (len > 0)
+		{
+			float ilen = 1.f / len;
+			return { x * ilen, y * ilen };
+		}
+		return { 0 };
+	}
+
+	inline float vec2::length()
+	{
+		return sqrtf(x * x + y * y);
+	}
+
+	inline float vec2::distance(vec2 const& v)
+	{
+		return sqrtf((x - v.x) * (x - v.x) + (y - v.y) * (y - v.y));
+	}
+
+	inline constexpr vec2 vec2::lerp(vec2 const& v, float amount)
+	{
+		return {
+			x + amount * (v.x - x),
+			y + amount * (v.y - y)
+		};
+	}
+
+	inline constexpr float vec2::lengthSqr()
+	{
+		return x * x + y * y;
+	}
+
+	inline constexpr float vec2::distanceSqr(vec2 const& v)
+	{
+		return (x - v.x) * (x - v.x) + (y - v.y) * (y - v.y);
+	}
+
+	inline constexpr float vec2::dotProduct(vec2 const& v)
+	{
+		return x * v.x + y * v.y;
 	}
 
 	template<typename A, typename B>
