@@ -11,10 +11,19 @@ static bool shouldClose = false;
 
 namespace lf2d
 {
+	glm::vec2 getWindowSize()
+	{
+		return {
+			lfWindow::GetWidth(),
+			lfWindow::GetHeight()
+		};
+	}
+
 	int getWindowWidth()
 	{
 		return lfWindow::GetWidth();
 	}
+
 	int getWindowHeight()
 	{
 		return lfWindow::GetHeight();
@@ -68,6 +77,11 @@ namespace lf2d
 	bool isButtonUp(int button)
 	{
 		return !InputController::IsButtonDown(button);
+	}
+
+	glm::vec2 getCursorPos()
+	{
+		return { InputController::GetCursorPosX(), InputController::GetCursorPosY() };
 	}
 
 	double getCursorPosX()

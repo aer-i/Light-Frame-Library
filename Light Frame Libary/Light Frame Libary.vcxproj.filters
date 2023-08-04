@@ -98,8 +98,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\renderer\shaders.u32" />
-    <None Include="src\lf2d.inl">
-      <Filter>Header Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

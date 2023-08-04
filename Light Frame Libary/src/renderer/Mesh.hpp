@@ -5,12 +5,12 @@
 struct Vertex
 {
 	Vertex() = default;
-	Vertex(lf2d::vec2 position, lf2d::vec4 color);
+	Vertex(glm::vec2 position, glm::vec4 color);
 	Vertex(const Vertex& other);
 	Vertex(Vertex&& other);
 
-	lf2d::vec2 position;
-	lf2d::vec4 color;
+	glm::vec2 position;
+	glm::vec4 color;
 };
 
 class Mesh

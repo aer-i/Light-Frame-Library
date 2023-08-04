@@ -1,315 +1,10 @@
 #pragma once
 #include <string>
+#include <glm/glm.hpp>
 
 namespace lf2d
 {
-	struct vec2
-	{
-		float x = 0, y = 0;
-
-		vec2() = default;
-
-		inline constexpr float operator[](int i);
-
-		inline vec2 normalize();
-		inline float length();
-		inline float distance(vec2 const& v);
-		inline constexpr vec2 lerp(vec2 const& v, float amount);
-		inline constexpr float lengthSqr();
-		inline constexpr float distanceSqr(vec2 const& v);
-		inline constexpr float dotProduct(vec2 const& v);
-
-		template<typename A, typename B>
-		inline constexpr vec2(A x, B y);
-		inline constexpr vec2(float x, float y);
-
-		template<typename T>
-		inline constexpr vec2(T scalar);
-		inline constexpr vec2(float scalar);
-
-		inline constexpr vec2(vec2 const& v);
-		inline constexpr vec2(vec2&& v);
-
-		vec2& operator=(vec2 const&) = default;
-		vec2& operator=(vec2&& v) = default;
-
-		template<typename T>
-		inline constexpr vec2& operator+=(T scalar);
-		inline constexpr vec2& operator+=(vec2 const& v);
-
-
-		template<typename T>
-		inline constexpr vec2& operator-=(T scalar);
-		inline constexpr vec2& operator-=(vec2 const& v);
-
-
-		template<typename T>
-		inline constexpr vec2& operator*=(T scalar);
-		inline constexpr vec2& operator*=(vec2 const& v);
-
-
-		template<typename T>
-		inline constexpr vec2& operator/=(T scalar);
-		inline constexpr vec2& operator/=(vec2 const& v);
-
-
-		template<typename T>
-		inline constexpr vec2& operator%=(T scalar);
-		inline vec2& operator%=(vec2 const& v);
-
-
-		inline constexpr vec2& operator++();
-		inline constexpr vec2 operator++(int);
-
-
-		inline constexpr vec2& operator--();
-		inline constexpr vec2 operator--(int);
-	};
-
-	inline constexpr vec2 operator+(vec2 const& v);
-	inline constexpr vec2 operator-(vec2 const& v);
-
-
-	inline constexpr vec2 operator+(vec2 const& lhs, vec2 const& rhs);
-	template<typename T>
-	inline constexpr vec2 operator+(vec2 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec2 operator+(T scalar, vec2 const& v);
-
-
-	inline constexpr vec2 operator-(vec2 const& lhs, vec2 const& rhs);
-	template<typename T>
-	inline constexpr vec2 operator-(vec2 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec2 operator-(T scalar, vec2 const& v);
-
-
-	inline constexpr vec2 operator*(vec2 const& lhs, vec2 const& rhs);
-	template<typename T>
-	inline constexpr vec2 operator*(vec2 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec2 operator*(T scalar, vec2 const& v);
-
-
-	inline constexpr vec2 operator/(vec2 const& lhs, vec2 const& rhs);
-	template<typename T>
-	inline constexpr vec2 operator/(vec2 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec2 operator/(T scalar, vec2 const& v);
-
-
-	inline constexpr vec2 operator%(vec2 const& lhs, vec2 const& rhs);
-	template<typename T>
-	inline constexpr vec2 operator%(vec2 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec2 operator%(T scalar, vec2 const& v);
-
-
-	inline constexpr bool operator==(vec2 const& lhs, vec2 const& rhs);
-	inline constexpr bool operator!=(vec2 const& lhs, vec2 const& rhs);
-
-	struct vec3
-	{
-		float x = 0, y = 0, z = 0;
-
-
-		vec3() = default;
-
-		inline constexpr float operator[](int i);
-
-		template<typename A, typename B, typename C>
-		inline constexpr vec3(A x, B y, C z);
-		inline constexpr vec3(float x, float y, float z);
-
-		template<typename T>
-		inline constexpr vec3(T scalar);
-		inline constexpr vec3(float scalar);
-
-		inline constexpr vec3(vec3 const& v);
-		inline constexpr vec3(vec3&& v);
-
-		vec3& operator=(vec3 const&) = default;
-		vec3& operator=(vec3&& v) = default;
-
-
-		template<typename T>
-		inline constexpr vec3& operator+=(T scalar);
-		inline constexpr vec3& operator+=(vec3 const& v);
-
-
-		template<typename T>
-		inline constexpr vec3& operator-=(T scalar);
-		inline constexpr vec3& operator-=(vec3 const& v);
-
-
-		template<typename T>
-		inline constexpr vec3& operator*=(T scalar);
-		inline constexpr vec3& operator*=(vec3 const& v);
-
-
-		template<typename T>
-		inline constexpr vec3& operator/=(T scalar);
-		inline constexpr vec3& operator/=(vec3 const& v);
-
-
-		template<typename T>
-		inline constexpr vec3& operator%=(T scalar);
-		inline vec3& operator%=(vec3 const& v);
-
-
-		inline constexpr vec3& operator++();
-		inline constexpr vec3 operator++(int);
-
-
-		inline constexpr vec3& operator--();
-		inline constexpr vec3 operator--(int);
-	};
-
-	inline constexpr vec3 operator+(vec3 const& v);
-	inline constexpr vec3 operator-(vec3 const& v);
-
-
-	inline constexpr vec3 operator+(vec3 const& lhs, vec3 const& rhs);
-	template<typename T>
-	inline constexpr vec3 operator+(vec3 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec3 operator+(T scalar, vec3 const& v);
-
-
-	inline constexpr vec3 operator-(vec3 const& lhs, vec3 const& rhs);
-	template<typename T>
-	inline constexpr vec3 operator-(vec3 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec3 operator-(T scalar, vec3 const& v);
-
-
-	inline constexpr vec3 operator*(vec3 const& lhs, vec3 const& rhs);
-	template<typename T>
-	inline constexpr vec3 operator*(vec3 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec3 operator*(T scalar, vec3 const& v);
-
-
-	inline constexpr vec3 operator/(vec3 const& lhs, vec3 const& rhs);
-	template<typename T>
-	inline constexpr vec3 operator/(vec3 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec3 operator/(T scalar, vec3 const& v);
-
-
-	inline constexpr vec3 operator%(vec3 const& lhs, vec3 const& rhs);
-	template<typename T>
-	inline constexpr vec3 operator%(vec3 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec3 operator%(T scalar, vec3 const& v);
-
-
-	inline constexpr bool operator==(vec3 const& lhs, vec3 const& rhs);
-	inline constexpr bool operator!=(vec3 const& lhs, vec3 const& rhs);
-
-	struct vec4
-	{
-		float x = 0, y = 0, z = 0, w = 0;
-
-
-		vec4() = default;
-
-		inline constexpr float operator[](int i);
-
-		template<typename A, typename B, typename C, typename D>
-		inline constexpr vec4(A x, B y, C z, D w);
-		inline constexpr vec4(float x, float y, float z, float w);
-
-		template<typename T>
-		inline constexpr vec4(T scalar);
-		inline constexpr vec4(float scalar);
-
-		inline constexpr vec4(vec4 const& v);
-		inline constexpr vec4(vec4&& v);
-
-		vec4& operator=(vec4 const&) = default;
-		vec4& operator=(vec4&& v) = default;
-
-
-		template<typename T>
-		inline constexpr vec4& operator+=(T scalar);
-		inline constexpr vec4& operator+=(vec4 const& v);
-
-
-		template<typename T>
-		inline constexpr vec4& operator-=(T scalar);
-		inline constexpr vec4& operator-=(vec4 const& v);
-
-
-		template<typename T>
-		inline constexpr vec4& operator*=(T scalar);
-		inline constexpr vec4& operator*=(vec4 const& v);
-
-
-		template<typename T>
-		inline constexpr vec4& operator/=(T scalar);
-		inline constexpr vec4& operator/=(vec4 const& v);
-
-
-		template<typename T>
-		inline constexpr vec4& operator%=(T scalar);
-		inline vec4& operator%=(vec4 const& v);
-
-		
-		inline constexpr vec4& operator++();
-		inline constexpr vec4 operator++(int);
-
-
-		inline constexpr vec4& operator--();
-		inline constexpr vec4 operator--(int);
-	};
-
-	inline constexpr vec4 operator+(vec4 const& v);
-	inline constexpr vec4 operator-(vec4 const& v);
-
-
-	inline constexpr vec4 operator+(vec4 const& lhs, vec4 const& rhs);
-	template<typename T>
-	inline constexpr vec4 operator+(vec4 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec4 operator+(T scalar, vec4 const& v);
-
-
-	inline constexpr vec4 operator-(vec4 const& lhs, vec4 const& rhs);
-	template<typename T>
-	inline constexpr vec4 operator-(vec4 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec4 operator-(T scalar, vec4 const& v);
-
-
-	inline constexpr vec4 operator*(vec4 const& lhs, vec4 const& rhs);
-	template<typename T>
-	inline constexpr vec4 operator*(vec4 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec4 operator*(T scalar, vec4 const& v);
-
-
-	inline constexpr vec4 operator/(vec4 const& lhs, vec4 const& rhs);
-	template<typename T>
-	inline constexpr vec4 operator/(vec4 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec4 operator/(T scalar, vec4 const& v);
-
-
-	inline constexpr vec4 operator%(vec4 const& lhs, vec4 const& rhs);
-	template<typename T>
-	inline constexpr vec4 operator%(vec4 const& v, T scalar);
-	template<typename T>
-	inline constexpr vec4 operator%(T scalar, vec4 const& v);
-
-
-	inline constexpr bool operator==(vec4 const& lhs, vec4 const& rhs);
-	inline constexpr bool operator!=(vec4 const& lhs, vec4 const& rhs);
-
-	struct Rect
-	{
-		float x, y, width, height;
-	};
+	using Rect = glm::vec4;
 
 	struct Color
 	{
@@ -319,19 +14,21 @@ namespace lf2d
 		constexpr Color()
 			: r{ 0 }, g{ 0 }, b{ 0 }, a{ 0 } {}
 
-		vec4 normalized() { return { r / 255.f, g / 255.f, b / 255.f, a / 255.f }; }
+		glm::vec4 normalized() { return { r / 255.f, g / 255.f, b / 255.f, a / 255.f }; }
 
 		uint8_t r, g, b, a;
 	};
 
 	struct Camera
 	{
-		vec2 position{}, offset{};
+		glm::vec2 position{}, offset{};
 		float zoom{1.f};
 	};
 
+	glm::vec2 getWindowSize();
 	int getWindowWidth();
 	int getWindowHeight();
+
 	float getDeltaTime();
 	double getTime();
 
@@ -345,6 +42,7 @@ namespace lf2d
 	bool isButtonReleased(int button);
 	bool isButtonUp(int button);
 
+	glm::vec2 getCursorPos();
 	double getCursorPosX();
 	double getCursorPosY();
 
@@ -539,5 +237,3 @@ namespace lf2d
 #define Color_Beige       { 211, 176, 131, 255 }
 #define Color_Brown       { 127, 106,  79, 255 } 
 #define Color_DarkBrown   {  76,  63,  47, 255 }
-
-#include "lf2d.inl"

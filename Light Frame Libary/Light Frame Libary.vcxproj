@@ -215,7 +215,6 @@
     <ClCompile Include="src\renderer\VulkanBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\lf2d.inl" />
     <None Include="src\renderer\shaders.u32" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

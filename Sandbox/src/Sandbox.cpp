@@ -8,7 +8,7 @@ auto main(int argc, char* const argv[]) -> int
 
 	// Main camera
 	lf2d::Camera camera;
-	camera.position = lf2d::vec2{ 0.f, 0.f };
+	camera.position = glm::vec2{ 0.f, 0.f };
 	camera.zoom = 1.0f;
 
 #ifndef NDEBUG
@@ -52,11 +52,15 @@ auto main(int argc, char* const argv[]) -> int
 
 		renderer.beginRendering(camera);
 		{
-			// Add quad to render queue
+			// Add quads to render queue
 			renderer.renderRect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, Color_Maroon);
-			renderer.renderRectGradientV({ -100, -100, 100, 100 }, Color_Black, Color_White);
+
+			static constexpr lf2d::Rect rect = lf2d::Rect(-100, -100, 100, 100);
+			renderer.renderRectGradientV(rect, Color_Black, Color_White);
+
 			renderer.renderRectGradient({ -100, 0, 100, 100 }, { 255, 0, 0, 255 }, { 255, 255, 255, 255 }, {0, 0, 255, 255}, {0, 255, 0, 255});
-			renderer.renderRectGradientH({ 0, -100, 100, 100 }, Color_Gold, Color_Transparent);
+
+			renderer.renderRectGradientH(lf2d::Rect{ 0, -100, 100, 100 }, Color_Gold, Color_Transparent);
 		}
 		renderer.endRendering();
 	}
