@@ -27,7 +27,7 @@ namespace lf2d
 
 		inline constexpr glm::vec2 fromWorldToScreenPos(glm::vec2 const& v)
 		{
-			return v - position + offset;
+			return (v - position) * zoom + offset;
 		}
 
 		inline constexpr glm::vec2 fromScreenToWorldPos(glm::vec2 const& v)
