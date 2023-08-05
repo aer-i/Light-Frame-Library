@@ -153,7 +153,7 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 	}
 	catch (const vk::SystemError& e)
 	{
-		spdlog::critical(e.what());
+		printf("[error] %s\n", e.what());
 	}
 
 	vc::Get().device.destroy(fragShaderModule);

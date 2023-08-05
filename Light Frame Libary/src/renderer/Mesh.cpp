@@ -59,7 +59,7 @@ void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
 {
 	if (rect.z < 1 || rect.w < 1)
 	{
-		spdlog::error("Rect width and height can't be negative");
+		printf("[error] Rect width and height can't be negative\n");
 		return;
 	}
 
@@ -94,7 +94,7 @@ void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Col
 {
 	if (rect.z < 1 || rect.w < 1)
 	{
-		spdlog::error("Rect width and height can't be negative");
+		printf("[error] Rect width and height can't be negative\n");
 		return;
 	}
 

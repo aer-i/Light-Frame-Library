@@ -82,7 +82,7 @@ void InputController::setCallback(GLFWwindow* window)
 {
 	if (!window)
 	{
-		spdlog::error("GLFW window not created");
+		printf("[error] GLFW window not created\n");
 		return;
 	}
 

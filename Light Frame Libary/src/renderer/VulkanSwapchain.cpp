@@ -50,11 +50,11 @@ void VulkanSwapchain::createHandle(bool vsync)
 			.oldSwapchain = m_oldSwapchain
 		});
 
-		spdlog::info("Created vulkan swapchain. Extent: {} px width, {} px height", extent.width, extent.height);
+		printf("[info] Created vulkan swapchain. Extent: %d px width, %d px height\n", extent.width, extent.height);
 	}
 	catch (const vk::SystemError& e)
 	{
-		spdlog::critical(e.what());
+		printf("[error] %s\n", e.what());
 	}
 
 	vc::Get().device.destroy(m_oldSwapchain);
@@ -85,7 +85,7 @@ void VulkanSwapchain::teardown()
 	if (m_swapchain)
 	{
 		vc::Get().device.destroy(m_swapchain);
-		spdlog::info("Vulkan swapchain destroyed");
+		printf("[info] Vulkan swapchain destroyed\n");
 	}
 }
 

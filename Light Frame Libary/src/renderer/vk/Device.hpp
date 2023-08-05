@@ -28,8 +28,8 @@ namespace vi
 		}
 
 		vc::Get().deviceProperties = gpus.rbegin()->second.getProperties();
-		spdlog::info("Selected physical device: {} with a score of {}", vc::Get().deviceProperties.deviceName, gpus.rbegin()->first);
-		spdlog::info("Physical device type: {}", vk::to_string(vc::Get().deviceProperties.deviceType));
+		printf("[info] Selected physical device: %s with a score of %d\n", vc::Get().deviceProperties.deviceName.data(), gpus.rbegin()->first);
+		printf("[info] Physical device type: %s\n", vk::to_string(vc::Get().deviceProperties.deviceType).c_str());
 		return gpus.rbegin()->second;
 	}
 
@@ -42,11 +42,11 @@ namespace vi
 		{
 			if (family.queueFlags & vk::QueueFlagBits::eTransfer)
 			{
-				spdlog::info("Transfer queue family available at index: {}", i);
+				printf("[info] Transfer queue family available at index: %d\n", i);
 			}
 			if (family.queueFlags & vk::QueueFlagBits::eCompute)
 			{
-				spdlog::info("Compute queue family available at index: {}", i);
+				printf("[info] Compute queue family available at index: %d\n", i);
 			}
 			if (family.queueFlags & vk::QueueFlagBits::eGraphics)
 			{
@@ -58,11 +58,11 @@ namespace vi
 			}
 			if (UINT32_MAX != graphics && UINT32_MAX != present)
 			{
-				spdlog::info("Graphics queue family index: {}, Present queue family index: {}", graphics, present);
+				printf("[info] Graphics queue family index: %d, Present queue family index: %d\n", graphics, present);
 				if (graphics == present)
-					spdlog::info("Exclusive sharing mode available");
+					printf("[info] Exclusive sharing mode available\n");
 				else
-					spdlog::info("Concurrent sharing mode available");
+					printf("[info] Concurrent sharing mode available\n");
 
 				return std::make_tuple(graphics, present);
 			}
@@ -130,7 +130,7 @@ namespace vi
 		}
 		catch (const vk::SystemError& e)
 		{
-			spdlog::error(e.what());
+			printf("[critical] %s\n", e.what());
 		}
 
 	}

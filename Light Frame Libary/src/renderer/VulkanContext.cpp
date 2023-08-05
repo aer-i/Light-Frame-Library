@@ -104,7 +104,7 @@ void VulkanContext::create(bool enableVL)
 
 #pragma region Log
 	{
-		spdlog::info("Created vulkan context");
+		printf("[info] Created vulkan context\n");
 	}
 #pragma endregion
 }
@@ -119,5 +119,5 @@ void VulkanContext::teardown()
 	if (debugMessenger)			instance.destroy(debugMessenger);
 	if (instance)				instance.destroy();
 
-	spdlog::info("Destroyed vulkan context");
+	printf("[info] Destroyed vulkan context\n");
 }

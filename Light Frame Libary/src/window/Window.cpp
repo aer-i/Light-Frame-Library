@@ -10,18 +10,18 @@ lfWindow::lfWindow()
 {
 	if (glfwInit() == GLFW_FALSE)
 	{
-		spdlog::critical("Failed to initialize GLFW");
+		printf("[critical] Failed to initialize GLFW\n");
 	}
 	else
 	{
-		spdlog::info("Successfully initialized GLFW");
+		printf("[info] Successfully initialized GLFW\n");
 	}
 }
 
 lfWindow::~lfWindow()
 {
 	glfwTerminate();
-	spdlog::info("GLFW terminated");
+	printf("[info] GLFW terminated\n");
 }
 
 void lfWindow::create(int w, int h, std::string const& n, bool resizable)
@@ -42,11 +42,11 @@ void lfWindow::create(int w, int h, std::string const& n, bool resizable)
 
 	if (s_glfwWindow)
 	{
-		spdlog::info("Created window with {} px width and {} px height", w, h);
+		printf("[info] Created window with %d px width and %d px height\n", w, h);
 	}
 	else
 	{
-		spdlog::critical("Failed to create window!");
+		printf("[critical] Failed to create window\n");
 	}
 }
 
@@ -55,7 +55,7 @@ vk::SurfaceKHR lfWindow::CreateSurface(vk::Instance instance)
 	VkSurfaceKHR cSurface;
 	if (glfwCreateWindowSurface(instance, s_glfwWindow, nullptr, &cSurface) != VK_SUCCESS)
 	{
-		spdlog::critical("Failed to create window surface!");
+		printf("[critical] Failed to create window surface\n");
 		return nullptr;
 	}
 

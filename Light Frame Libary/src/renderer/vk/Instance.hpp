@@ -56,7 +56,7 @@ namespace vi
 		}
 		catch (const vk::SystemError& e)
 		{
-			spdlog::critical(e.what());
+			printf("[critical] %s\n",e.what());
 		}
 
 		return nullptr;
@@ -67,13 +67,13 @@ namespace vi
 		switch (messageSeverity)
 		{
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-			spdlog::warn("Vulkan validation layer:\n{}\n", pCallbackData->pMessage);
+			printf("[warn] Vulkan validation layer:\n%s\n", pCallbackData->pMessage);
 			break;
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-			spdlog::error("Vulkan validation layer:\n{}\n", pCallbackData->pMessage);
+			printf("[error] Vulkan validation layer:\n%s\n", pCallbackData->pMessage);
 			break;
 		default:
-			spdlog::info("Vulkan validation layer:\n{}\n", pCallbackData->pMessage);
+			printf("[info] Vulkan validation layer:\n%s\n", pCallbackData->pMessage);
 			break;
 		}
 
@@ -82,7 +82,7 @@ namespace vi
 
 	inline vk::DebugUtilsMessengerEXT createDebugUtilsMessenger(vk::Instance instance)
 	{
-		spdlog::warn("Validation layers are enabled!");
+		printf("[warn] Validation layers are enabled!\n");
 
 		const vk::DebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCI {
 			.messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError | vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,
@@ -96,7 +96,7 @@ namespace vi
 		}
 		catch (const vk::SystemError& e)
 		{
-			spdlog::critical(e.what());
+			printf("[critical] %s\n", e.what());
 		}
 		return nullptr;
 	}
