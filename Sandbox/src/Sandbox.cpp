@@ -1,4 +1,5 @@
 #include <lf2d.hpp>
+#include <vector>
 
 auto main(int argc, char* const argv[]) -> int
 {
@@ -34,7 +35,7 @@ auto main(int argc, char* const argv[]) -> int
 	while (!renderer.windowShouldClose()) // Main loop. Executing every frame
 	{
 		// Setting this camera offset causes objects at position {0, 0} to be rendered in the center of the screen instead of in the top left corner
-		camera.offset = { lf2d::getWindowWidth() / 2.f, lf2d::getWindowHeight() / 2.f };
+		camera.offset = lf2d::getWindowSize() / 2.f;
 
 		camera.zoom = std::max(0.5f, std::min(1.5f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
 
@@ -61,6 +62,18 @@ auto main(int argc, char* const argv[]) -> int
 			renderer.renderRectGradient({ -100, 0, 100, 100 }, { 255, 0, 0, 255 }, { 255, 255, 255, 255 }, {0, 0, 255, 255}, {0, 255, 0, 255});
 
 			renderer.renderRectGradientH(lf2d::Rect{ 0, -100, 100, 100 }, Color_Gold, Color_Transparent);
+
+			static std::vector<lf2d::Rect> cursorPosRects;
+
+			if (lf2d::isButtonDown(lf2d::Button::Left))
+			{
+				cursorPosRects.emplace_back(camera.fromScreenToWorldPos(lf2d::getCursorPos()), 10, 10);
+			}
+
+			for (const auto& cursorRect: cursorPosRects)
+			{
+				renderer.renderRect(cursorRect, {100, 0, 100, 50});
+			}
 		}
 		renderer.endRendering();
 	}

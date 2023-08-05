@@ -25,7 +25,7 @@ public:
 private:
 	lf2d::Camera* m_currentCamera;
 	std::vector<Vertex> m_vertices;
-	std::vector<uint16_t> m_indices;
+	std::vector<uint32_t> m_indices;
 	uint32_t m_totalObjectCount = 0;
 	uint32_t m_renderedObjectCount = 0;
 };

@@ -124,13 +124,13 @@ void lfRenderer::beginFrame(lf2d::Camera* camera)
 
 void lfRenderer::endFrame(Mesh& mesh)
 {
-	glm::mat4 const projection = glm::ortho(-1.f / m_currentCamera->zoom + 1.f, 1.f / m_currentCamera->zoom, -1.f / m_currentCamera->zoom + 1.f, 1.f / m_currentCamera->zoom, -1.f, 1.f);
+	glm::mat4 const projection = glm::ortho(-(0.5f / m_currentCamera->zoom), 0.5f / m_currentCamera->zoom, -(0.5f / m_currentCamera->zoom), (0.5f / m_currentCamera->zoom), -1.f, 1.f);
 
 	CameraPushConstant const cameraConstant {
 		.projView = projection * glm::inverse(
 		glm::translate(
 			glm::mat4(1.f),
-			{ (m_currentCamera->position.x - m_currentCamera->offset.x) / lfWindow::GetWidth(), (m_currentCamera->position.y - m_currentCamera->offset.y) / lfWindow::GetHeight(), 0.f }))
+			{ (m_currentCamera->position + (lf2d::getWindowSize() / 2.f) - m_currentCamera->offset) / lf2d::getWindowSize(), 0.f }))
 	};
 		
 	frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);

@@ -19,13 +19,23 @@ namespace lf2d
 		uint8_t r, g, b, a;
 	};
 
+	glm::vec2 getWindowSize();
 	struct Camera
 	{
 		glm::vec2 position{}, offset{};
 		float zoom{1.f};
+
+		inline constexpr glm::vec2 fromWorldToScreenPos(glm::vec2 const& v)
+		{
+			return v - position + offset;
+		}
+
+		inline constexpr glm::vec2 fromScreenToWorldPos(glm::vec2 const& v)
+		{
+			return (v - offset) / zoom + position;
+		}
 	};
 
-	glm::vec2 getWindowSize();
 	int getWindowWidth();
 	int getWindowHeight();
 

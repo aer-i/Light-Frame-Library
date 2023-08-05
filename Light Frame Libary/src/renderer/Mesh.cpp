@@ -32,7 +32,7 @@ void Mesh::render(vk::CommandBuffer commandBuffer, VulkanBuffer& vertexBuffer, V
 		if (vertexCount > vertexBuffer.count || vertexCount * 2 < vertexBuffer.count)
 		{
 			vertexBuffer.create(sizeof(Vertex) * vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-			indexBuffer.create(sizeof(uint16_t) * indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+			indexBuffer.create(sizeof(uint32_t) * indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
 		}
 
 		vertexBuffer.writeToBuffer(m_vertices.data());
@@ -45,7 +45,7 @@ void Mesh::render(vk::CommandBuffer commandBuffer, VulkanBuffer& vertexBuffer, V
 
 		constexpr vk::DeviceSize offsets[]{ 0 };
 		commandBuffer.bindVertexBuffers(0, 1, vertexBuffer, offsets);
-		commandBuffer.bindIndexBuffer(indexBuffer, 0, vk::IndexType::eUint16);
+		commandBuffer.bindIndexBuffer(indexBuffer, 0, vk::IndexType::eUint32);
 		commandBuffer.drawIndexed(indexCount, 1, 0, 0, 0);
 	}
 }
@@ -67,10 +67,10 @@ void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
 	float w = static_cast<float>(lf2d::getWindowWidth()), h = static_cast<float>(lf2d::getWindowHeight());
 
 	// Little frustum culling
-	if (   rect.x + rect.z  > (m_currentCamera->position.x - m_currentCamera->offset.x) + (-w / m_currentCamera->zoom + w)
-		&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w / m_currentCamera->zoom
-		&& rect.y + rect.w > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
-		&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
+	//if (   rect.x + rect.z  > (m_currentCamera->position.x - m_currentCamera->offset.x) + (-w / m_currentCamera->zoom + w)
+	//	&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w / m_currentCamera->zoom
+	//	&& rect.y + rect.w > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
+	//	&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
 	{
 		m_vertices.push_back({ { rect.x / w, rect.y / h}, color.normalized() });
 		m_vertices.push_back({ {(rect.x + rect.z) / w,	rect.y / h}, color.normalized() });
@@ -101,10 +101,10 @@ void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Col
 	float w = static_cast<float>(lf2d::getWindowWidth()), h = static_cast<float>(lf2d::getWindowHeight());
 
 	// Little frustum culling
-	if (   rect.x + rect.z  > (m_currentCamera->position.x - m_currentCamera->offset.x) + (-w / m_currentCamera->zoom + w)
-		&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w / m_currentCamera->zoom
-		&& rect.y + rect.w > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
-		&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
+	//if (   rect.x + rect.z  > (m_currentCamera->position.x - m_currentCamera->offset.x) + (-w / m_currentCamera->zoom + w)
+	//	&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w / m_currentCamera->zoom
+	//	&& rect.y + rect.w > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
+	//	&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
 	{
 		m_vertices.push_back({ { rect.x / w, rect.y / h}, color1.normalized() });
 		m_vertices.push_back({ {(rect.x + rect.z) / w,	rect.y  / h}, color2.normalized() });
