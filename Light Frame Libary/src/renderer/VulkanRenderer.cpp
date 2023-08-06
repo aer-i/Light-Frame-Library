@@ -124,7 +124,8 @@ void lfRenderer::beginFrame(lf2d::Camera* camera)
 
 void lfRenderer::endFrame(Mesh& mesh)
 {
-	glm::mat4 const projection = glm::ortho(-(0.5f / m_currentCamera->zoom), 0.5f / m_currentCamera->zoom, -(0.5f / m_currentCamera->zoom), (0.5f / m_currentCamera->zoom), -1.f, 1.f);
+	float	  const halfZoom   = 0.5f / m_currentCamera->zoom;
+	glm::mat4 const projection = glm::ortho(-halfZoom, halfZoom, -halfZoom, halfZoom, -1.f, 1.f);
 
 	CameraPushConstant const cameraConstant {
 		.projView = projection * glm::inverse(

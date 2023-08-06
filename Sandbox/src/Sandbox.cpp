@@ -1,4 +1,5 @@
 #include <lf2d.hpp>
+#include <glm/gtx/compatibility.hpp>
 #include <vector>
 
 auto main(int argc, char* const argv[]) -> int
@@ -21,7 +22,7 @@ auto main(int argc, char* const argv[]) -> int
 	constexpr bool enableValidationLayers = false;
 #endif
 	constexpr bool resizable = true;
-	constexpr bool vsync = false;
+	constexpr bool vsync = true;
 
 	// Enabling v-sync for lower power usage and no visible screen tearing
 	renderer.setVsync(vsync);
@@ -37,7 +38,7 @@ auto main(int argc, char* const argv[]) -> int
 		// Setting this camera offset causes objects at position {0, 0} to be rendered in the center of the screen instead of in the top left corner
 		camera.offset = lf2d::getWindowSize() / 2.f;
 
-		camera.zoom = std::max(0.5f, std::min(1.5f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
+		camera.zoom = std::max(0.25f, std::min(3.f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
 
 		if (lf2d::isKeyDown(lf2d::Key::D))
 			camera.position.x += 300.f * lf2d::getDeltaTime();
@@ -67,12 +68,22 @@ auto main(int argc, char* const argv[]) -> int
 
 			if (lf2d::isButtonDown(lf2d::Button::Left))
 			{
-				cursorPosRects.emplace_back(camera.fromScreenToWorldPos(lf2d::getCursorPos()), 10, 10);
+				static auto lastCursorPos = lf2d::getCursorPos();
+				auto cursorPos = camera.fromScreenToWorldPos(lf2d::getCursorPos());
+
+				float distance = glm::distance(lastCursorPos, cursorPos);
+
+				for (int i = 0; i <= distance; i += 15)
+				{
+					cursorPosRects.emplace_back(glm::lerp(lastCursorPos, cursorPos, i / distance), 10, 10);
+				}
+
+				lastCursorPos = cursorPos;
 			}
 
-			for (const auto& cursorRect: cursorPosRects)
+			for (const auto& cursorRect : cursorPosRects)
 			{
-				renderer.renderRect(cursorRect, {100, 0, 100, 50});
+				renderer.renderRect(cursorRect, {255, 0, 255, 50});
 			}
 		}
 		renderer.endRendering();

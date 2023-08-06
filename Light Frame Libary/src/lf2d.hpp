@@ -20,6 +20,9 @@ namespace lf2d
 	};
 
 	glm::vec2 getWindowSize();
+	int getWindowWidth();
+	int getWindowHeight();
+
 	struct Camera
 	{
 		glm::vec2 position{}, offset{};
@@ -34,10 +37,17 @@ namespace lf2d
 		{
 			return (v - offset) / zoom + position;
 		}
-	};
 
-	int getWindowWidth();
-	int getWindowHeight();
+		inline constexpr lf2d::Rect getViewRect()
+		{
+			return {
+				(				 0 - offset.x) / zoom + position.x,
+				( getWindowWidth() - offset.x) / zoom + position.x,
+				(				 0 - offset.y) / zoom + position.y,
+				(getWindowHeight() - offset.y) / zoom + position.y
+			};
+		}
+	};
 
 	float getDeltaTime();
 	double getTime();

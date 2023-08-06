@@ -63,19 +63,17 @@ void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
 		return;
 	}
 
-
-	float w = static_cast<float>(lf2d::getWindowWidth()), h = static_cast<float>(lf2d::getWindowHeight());
-
-	// Little frustum culling
-	//if (   rect.x + rect.z  > (m_currentCamera->position.x - m_currentCamera->offset.x) + (-w / m_currentCamera->zoom + w)
-	//	&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w / m_currentCamera->zoom
-	//	&& rect.y + rect.w > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
-	//	&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
+	float width = static_cast<float>(lf2d::getWindowWidth()), height = static_cast<float>(lf2d::getWindowHeight());
+	
+	if (   rect.x + rect.z > (	   0 - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
+		&& rect.x <			 ( width - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
+		&& rect.y + rect.w > (	   0 - m_currentCamera->offset.y) / m_currentCamera->zoom + m_currentCamera->position.y
+		&& rect.y <			 (height - m_currentCamera->offset.y) / m_currentCamera->zoom + m_currentCamera->position.y)
 	{
-		m_vertices.push_back({ { rect.x / w, rect.y / h}, color.normalized() });
-		m_vertices.push_back({ {(rect.x + rect.z) / w,	rect.y / h}, color.normalized() });
-		m_vertices.push_back({ {(rect.x + rect.z) / w, (rect.y + rect.w) / h}, color.normalized() });
-		m_vertices.push_back({ { rect.x / w, (rect.w + rect.y) / h}, color.normalized() });
+		m_vertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color.normalized() });
+		m_vertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color.normalized() });
+		m_vertices.push_back({ {(rect.x + rect.z) / width, (rect.y + rect.w) / height}, color.normalized() });
+		m_vertices.push_back({ { rect.x			  / width, (rect.w + rect.y) / height},	color.normalized() });
 
 		m_indices.emplace_back(m_renderedObjectCount * 4	);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
@@ -97,19 +95,18 @@ void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Col
 		printf("[error] Rect width and height can't be negative\n");
 		return;
 	}
+		
+	float width = static_cast<float>(lf2d::getWindowWidth()), height = static_cast<float>(lf2d::getWindowHeight());
 
-	float w = static_cast<float>(lf2d::getWindowWidth()), h = static_cast<float>(lf2d::getWindowHeight());
-
-	// Little frustum culling
-	//if (   rect.x + rect.z  > (m_currentCamera->position.x - m_currentCamera->offset.x) + (-w / m_currentCamera->zoom + w)
-	//	&& rect.x < (m_currentCamera->position.x - m_currentCamera->offset.x) + w / m_currentCamera->zoom
-	//	&& rect.y + rect.w > (m_currentCamera->position.y - m_currentCamera->offset.y) + (-h / m_currentCamera->zoom + h)
-	//	&& rect.y < (m_currentCamera->position.y - m_currentCamera->offset.y) + h / m_currentCamera->zoom)
+	if (   rect.x + rect.z > (	   0 - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
+		&& rect.x <			 ( width - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
+		&& rect.y + rect.w > (	   0 - m_currentCamera->offset.y) / m_currentCamera->zoom + m_currentCamera->position.y
+		&& rect.y <			 (height - m_currentCamera->offset.y) / m_currentCamera->zoom + m_currentCamera->position.y)
 	{
-		m_vertices.push_back({ { rect.x / w, rect.y / h}, color1.normalized() });
-		m_vertices.push_back({ {(rect.x + rect.z) / w,	rect.y  / h}, color2.normalized() });
-		m_vertices.push_back({ {(rect.x + rect.z) / w, (rect.y + rect.w) / h}, color4.normalized() });
-		m_vertices.push_back({ { rect.x / w, (rect.w + rect.y) / h}, color3.normalized() });
+		m_vertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color1.normalized() });
+		m_vertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color2.normalized() });
+		m_vertices.push_back({ {(rect.x + rect.z) / width, (rect.y + rect.w) / height}, color4.normalized() });
+		m_vertices.push_back({ { rect.x			  / width, (rect.w + rect.y) / height},	color3.normalized() });
 
 		m_indices.emplace_back(m_renderedObjectCount * 4	);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
