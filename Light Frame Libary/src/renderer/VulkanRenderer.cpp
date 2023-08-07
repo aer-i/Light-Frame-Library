@@ -131,7 +131,7 @@ void lfRenderer::endFrame(Mesh& mesh)
 		.projView = projection * glm::inverse(
 		glm::translate(
 			glm::mat4(1.f),
-			{ (m_currentCamera->position + (lf2d::getWindowSize() / 2.f) - m_currentCamera->offset) / lf2d::getWindowSize(), 0.f }))
+			{ (m_currentCamera->position + (lf2d::window::size() / 2.f) - m_currentCamera->offset) / lf2d::window::size(), 0.f }))
 	};
 		
 	frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);

@@ -63,7 +63,7 @@ void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
 		return;
 	}
 
-	float width = static_cast<float>(lf2d::getWindowWidth()), height = static_cast<float>(lf2d::getWindowHeight());
+	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
 	
 	if (   rect.x + rect.z > (	   0 - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
 		&& rect.x <			 ( width - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
@@ -96,7 +96,7 @@ void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Col
 		return;
 	}
 		
-	float width = static_cast<float>(lf2d::getWindowWidth()), height = static_cast<float>(lf2d::getWindowHeight());
+	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
 
 	if (   rect.x + rect.z > (	   0 - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
 		&& rect.x <			 ( width - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x

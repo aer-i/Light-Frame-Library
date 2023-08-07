@@ -4,34 +4,16 @@
 #include "renderer/VulkanRenderer.hpp"
 #include "engine/InputController.hpp"
 
-static lfWindow window;
-static lfRenderer renderer;
-static Mesh mesh;
-static bool shouldClose = false;
+static lfWindow s_window;
+static lfRenderer s_renderer;
+static Mesh s_mesh;
+static bool s_shouldClose = false;
 
 namespace lf2d
 {
-	glm::vec2 getWindowSize()
-	{
-		return {
-			lfWindow::GetWidth(),
-			lfWindow::GetHeight()
-		};
-	}
-
-	int getWindowWidth()
-	{
-		return lfWindow::GetWidth();
-	}
-
-	int getWindowHeight()
-	{
-		return lfWindow::GetHeight();
-	}
-
 	float getDeltaTime()
 	{
-		return renderer.getDeltaTime();
+		return s_renderer.getDeltaTime();
 	}
 
 	double getTime()
@@ -99,64 +81,133 @@ namespace lf2d
 		return InputController::GetMouseWheelOffset();
 	}
 
-	void Renderer::beginRendering(Camera& camera)
+	void window::create(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers)
 	{
-		window.pollEvents();
-		shouldClose = window.shouldClose();
-		renderer.beginFrame(&camera);
-		mesh.setCamera(&camera);
-	}
-
-	void Renderer::endRendering()
-	{
-		renderer.endFrame(mesh);
-
-		if (shouldClose)
-			renderer.waitIdle();
-	}
-
-	void Renderer::renderRect(const Rect& rect, Color color)
-	{
-		mesh.addRect(rect, color);
-	}
-
-	void Renderer::renderRectGradientV(const Rect& rect, Color color1, Color color2)
-	{
-		mesh.addRectGradient(rect, color1, color1, color2, color2);
-	}
-
-	void Renderer::renderRectGradientH(const Rect& rect, Color color1, Color color2)
-	{
-		mesh.addRectGradient(rect, color1, color2, color1, color2);
-	}
-
-	void Renderer::renderRectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4)
-	{
-		mesh.addRectGradient(rect, color1, color4, color2, color3);
-	}
-
-	void Renderer::clearColor(Color color)
-	{
-		renderer.clearColor(color);
-	}
-
-	void Renderer::setVsync(bool enabled)
-	{
-		renderer.setVsync(enabled);
-	}
-
-	void Renderer::createWindow(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers)
-	{
-		static std::once_flag flag;
-		std::call_once(flag, [&]
+		if (!s_window.isCreated())
 		{
-			window.create(width, height, title, resizable);
-			renderer.create(enableValidationLayers);
-		});
+			s_window.create(width, height, title, resizable);
+			s_renderer.create(enableValidationLayers);
+		}
 	}
 
-	bool Renderer::windowShouldClose()
+	void window::waitEvents()
 	{
-		return shouldClose;
+		s_window.waitEvents();
+	}
+
+	bool window::shouldClose()
+	{
+		return s_shouldClose;
+	}
+
+	void window::close()
+	{
+		s_window.close();
+	}
+
+	std::string const& window::getTitle()
+	{
+		return lfWindow::GetTitle();
+	}
+
+	void window::setTitle(std::string_view title)
+	{
+		if (s_window.isCreated())
+			lfWindow::SetTitle(title);
+		else
+			printf("[error] You can't set window title when it's not created\n");
+	}
+
+	glm::vec2 window::size()
+	{
+		return { lfWindow::GetWidth(), lfWindow::GetHeight() };
+	}
+
+	int window::width()
+	{
+		return lfWindow::GetWidth();
+	}
+
+	int window::height()
+	{
+		return lfWindow::GetHeight();
+	}
+
+	const char* window::getMonitorName()
+	{
+		return lfWindow::GetMonitorName();
+	}
+
+	glm::vec4 window::getMonitorWorkarea()
+	{
+		return lfWindow::GetMonitorWorkarea();
+	}
+
+	glm::vec2 window::getMonitorPhysicalSize()
+	{
+		return lfWindow::GetMonitorPhysicalSize();
+	}
+
+	glm::vec2 window::getMonitorPos()
+	{
+		return lfWindow::GetMonitorPos();
+	}
+
+	void renderer::beginRendering(Camera& camera)
+	{
+		if (!s_window.isCreated())
+		{
+			printf("[error] You can't call 'beginRendering' function when window is not created\n");
+			return;
+		}
+
+		s_window.pollEvents();
+		s_shouldClose = s_window.shouldClose();
+		s_renderer.beginFrame(&camera);
+		s_mesh.setCamera(&camera);
+	}
+
+	void renderer::endRendering()
+	{
+		if (!s_window.isCreated())
+		{
+			printf("[error] You can't call 'endRendering' function when window is not created\n");
+			return;
+		}
+
+		s_renderer.endFrame(s_mesh);
+
+		if (s_shouldClose)
+			s_renderer.waitIdle();
+	}
+
+	void renderer::renderRect(const Rect& rect, Color color)
+	{
+		s_mesh.addRect(rect, color);
+	}
+
+	void renderer::renderRectGradientV(const Rect& rect, Color color1, Color color2)
+	{
+		s_mesh.addRectGradient(rect, color1, color1, color2, color2);
+	}
+
+	void renderer::renderRectGradientH(const Rect& rect, Color color1, Color color2)
+	{
+		s_mesh.addRectGradient(rect, color1, color2, color1, color2);
+	}
+
+	void renderer::renderRectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4)
+	{
+		s_mesh.addRectGradient(rect, color1, color4, color2, color3);
+	}
+
+	void renderer::clearColor(Color color)
+	{
+		s_renderer.clearColor(color);
+	}
+
+	void renderer::setVsync(bool enabled)
+	{
+		s_renderer.setVsync(enabled);
 	}
 }

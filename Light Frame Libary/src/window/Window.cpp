@@ -1,10 +1,11 @@
 #include "pch.hpp"
 #include "Window.hpp"
 
-GLFWwindow* lfWindow::s_glfwWindow = nullptr;
-int			lfWindow::s_width = 0;
-int			lfWindow::s_height = 0;
-std::string lfWindow::s_title;
+GLFWwindow*  lfWindow::s_glfwWindow = nullptr;
+GLFWmonitor* lfWindow::s_glfwMonitor = nullptr;
+int			 lfWindow::s_width = 0;
+int			 lfWindow::s_height = 0;
+std::string  lfWindow::s_title;
 
 lfWindow::lfWindow()
 {
@@ -33,6 +34,7 @@ void lfWindow::create(int w, int h, std::string const& n, bool resizable)
 	h = std::max(100, h);
 
 	s_glfwWindow = glfwCreateWindow(w, h, n.c_str(), nullptr, nullptr);
+	s_glfwMonitor = glfwGetPrimaryMonitor();
 
 	InputController::SetCallback(s_glfwWindow);
 
@@ -43,6 +45,7 @@ void lfWindow::create(int w, int h, std::string const& n, bool resizable)
 	if (s_glfwWindow)
 	{
 		printf("[info] Created window with %d px width and %d px height\n", w, h);
+		m_isCreated = true;
 	}
 	else
 	{

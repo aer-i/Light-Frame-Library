@@ -8,20 +8,47 @@ namespace lf2d
 
 	struct Color
 	{
-		Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-			: r{r}, g{g}, b{b}, a{a} {}
+		uint8_t r, g, b, a;
 
-		constexpr Color()
+		constexpr Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+			: r{ r }, g{ g }, b{ b }, a{ a } {}
+
+		consteval Color()
 			: r{ 0 }, g{ 0 }, b{ 0 }, a{ 0 } {}
 
 		glm::vec4 normalized() { return { r / 255.f, g / 255.f, b / 255.f, a / 255.f }; }
-
-		uint8_t r, g, b, a;
+		
+		static consteval Color Transparent() { return Color{   0,   0,   0,   0 }; }
+		static consteval Color Black()		 { return Color{   0,   0,   0, 255 }; }
+		static consteval Color White()		 { return Color{ 255, 255, 255, 255 }; }
+		static consteval Color Lime()		 { return Color{   0, 255,   0, 255 }; }
+		static consteval Color Yellow()		 { return Color{ 255, 255,   0, 255 }; }
+		static consteval Color Aqua()		 { return Color{   0, 255, 255, 255 }; }
+		static consteval Color Magenta()	 { return Color{ 255,   0, 255, 255 }; }
+		static consteval Color Silver()		 { return Color{ 192, 192, 192, 255 }; }
+		static consteval Color Maroon()		 { return Color{ 128,   0,   0, 255 }; }
+		static consteval Color Olive()		 { return Color{ 128, 128,   0, 255 }; }
+		static consteval Color Teal()		 { return Color{   0, 128, 128, 255 }; }
+		static consteval Color Navy()		 { return Color{   0,   0, 128, 255 }; }
+		static consteval Color LightGray()	 { return Color{ 200, 200, 200, 255 }; }
+		static consteval Color Gray()		 { return Color{ 130, 130, 130, 255 }; }
+		static consteval Color DarkGray()	 { return Color{  80,  80,  80, 255 }; }
+		static consteval Color Gold()		 { return Color{ 255, 203,   0, 255 }; }
+		static consteval Color Orange()		 { return Color{ 255, 161,   0, 255 }; }
+		static consteval Color Pink()		 { return Color{ 255, 109, 194, 255 }; }
+		static consteval Color Red()		 { return Color{ 230,  41,  55, 255 }; }
+		static consteval Color Green()		 { return Color{   0, 228,  48, 255 }; }
+		static consteval Color DarkGreen()	 { return Color{   0, 117,  44, 255 }; }
+		static consteval Color LightBlue()	 { return Color{ 102, 191, 255, 255 }; }
+		static consteval Color Blue()		 { return Color{   0, 121, 241, 255 }; }
+		static consteval Color DarkBlue()	 { return Color{   0,  82, 172, 255 }; }
+		static consteval Color Purple()		 { return Color{ 200, 122, 255, 255 }; }
+		static consteval Color Violet()		 { return Color{ 135,  60, 190, 255 }; }
+		static consteval Color DarkPurple()	 { return Color{ 112,  31, 126, 255 }; }
+		static consteval Color Beige()		 { return Color{ 211, 176, 131, 255 }; }
+		static consteval Color Brown()		 { return Color{ 127, 106,  79, 255 }; }
+		static consteval Color DarkBrown()	 { return Color{  76,  63,  47, 255 }; }
 	};
-
-	glm::vec2 getWindowSize();
-	int getWindowWidth();
-	int getWindowHeight();
 
 	struct Camera
 	{
@@ -36,16 +63,6 @@ namespace lf2d
 		inline constexpr glm::vec2 fromScreenToWorldPos(glm::vec2 const& v)
 		{
 			return (v - offset) / zoom + position;
-		}
-
-		inline constexpr lf2d::Rect getViewRect()
-		{
-			return {
-				(				 0 - offset.x) / zoom + position.x,
-				( getWindowWidth() - offset.x) / zoom + position.x,
-				(				 0 - offset.y) / zoom + position.y,
-				(getWindowHeight() - offset.y) / zoom + position.y
-			};
 		}
 	};
 
@@ -67,19 +84,29 @@ namespace lf2d
 	double getCursorPosY();
 
 	double getMouseWheelOffset();
-	
-	class Renderer
-	{
-	public:
-		Renderer() = default;
-		Renderer(const Renderer&) = delete;
-		Renderer(Renderer&&) = delete;
-		Renderer& operator=(const Renderer&) = delete;
-		Renderer& operator=(Renderer&&) = delete;
 
+	namespace window
+	{
+		void create(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers = false);
+		void waitEvents();
+		bool shouldClose();
+		void close();
+		std::string const& getTitle();
+		void setTitle(std::string_view title);
+		glm::vec2 size();
+		int width();
+		int height();
+		const char* getMonitorName();
+		glm::vec4 getMonitorWorkarea();
+		glm::vec2 getMonitorPhysicalSize();
+		glm::vec2 getMonitorPos();
+	}
+	
+	namespace renderer
+	{
 		void beginRendering(Camera& camera);
 		void endRendering();
-		
+	
 		void renderRect(const Rect& rect, Color color);
 		void renderRectGradientV(const Rect& rect, Color color1, Color color2);
 		void renderRectGradientH(const Rect& rect, Color color1, Color color2);
@@ -87,10 +114,7 @@ namespace lf2d
 
 		void clearColor(Color color);
 		void setVsync(bool enabled);
-
-		void createWindow(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers = false);
-		bool windowShouldClose();
-	};
+	}
 
 	namespace Key
 	{
@@ -227,33 +251,3 @@ namespace lf2d
 	}
 }
 
-#define Color_Transparent {   0,   0,   0,   0 }
-#define Color_Black		  {   0,   0,   0, 255 }
-#define Color_White		  { 255, 255, 255, 255 }
-#define Color_Lime		  {   0, 255,   0, 255 }
-#define Color_Yellow	  { 255, 255,   0, 255 }
-#define Color_Aqua		  {   0, 255, 255, 255 }
-#define Color_Magenta	  { 255,   0, 255, 255 }
-#define Color_Silver	  { 192, 192, 192, 255 }
-#define Color_Maroon	  { 128,   0,   0, 255 }
-#define Color_Olive		  { 128, 128,   0, 255 }
-#define Color_Teal		  {   0, 128, 128, 255 }
-#define Color_Navy		  {   0,   0, 128, 255 }
-#define Color_LightGray   { 200, 200, 200, 255 }
-#define Color_Gray        { 130, 130, 130, 255 }
-#define Color_DarkGray    {  80,  80,  80, 255 }
-#define Color_Gold        { 255, 203,   0, 255 }  
-#define Color_Orange      { 255, 161,   0, 255 }  
-#define Color_Pink        { 255, 109, 194, 255 }
-#define Color_Red         { 230,  41,  55, 255 }
-#define Color_Green       {   0, 228,  48, 255 }   
-#define Color_DarkGreen   {   0, 117,  44, 255 }   
-#define Color_LightBlue   { 102, 191, 255, 255 }
-#define Color_Blue        {   0, 121, 241, 255 }  
-#define Color_DarkBlue    {   0,  82, 172, 255 }   
-#define Color_Purple      { 200, 122, 255, 255 }
-#define Color_Violet      { 135,  60, 190, 255 } 
-#define Color_DarkPurple  { 112,  31, 126, 255 } 
-#define Color_Beige       { 211, 176, 131, 255 }
-#define Color_Brown       { 127, 106,  79, 255 } 
-#define Color_DarkBrown   {  76,  63,  47, 255 }
