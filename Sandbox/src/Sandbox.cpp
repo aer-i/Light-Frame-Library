@@ -18,8 +18,6 @@ auto main(int argc, char* const argv[]) -> int
 	// Initializing lf2d (GLFW, Vulkan, e.t.c)
 	lf2d::window::create(1280, 720, "Light Frame - Example App", resizable, enableValidationLayers);
 
-	printf("%s\n", lf2d::window::getMonitorName());
-
 	// Enabling v-sync for lower power usage and no visible screen tearing
 	lf2d::renderer::setVsync(vsync);
 	// You can clear color just once or every frame (or don't (black is default color))
@@ -27,14 +25,17 @@ auto main(int argc, char* const argv[]) -> int
 
 	// Main camera
 	lf2d::Camera camera;
+	// Camera position is always in the center of the screen
 	camera.position = glm::vec2{ 0.f, 0.f };
+	// For example, if you want camera position to be in top left corner set offset to window::size() / 2.0f
+	// Normally it should be the other way around, but I'll change it
+	camera.offset = glm::vec2{ 0.f };
+	// Default zoom should be equal to 1.
 	camera.zoom = 1.0f;
 
 	// true is returned when window is closed
 	while (!lf2d::window::shouldClose()) // Main loop. Executing every frame
 	{
-		// Setting this camera offset causes objects at position {0, 0} to be rendered in the center of the screen instead of in the top left corner
-		camera.offset = lf2d::window::size() / 2.f;
 		camera.zoom = std::max(0.25f, std::min(3.f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
 		
 		if (lf2d::isKeyDown(lf2d::Key::D))
@@ -70,7 +71,7 @@ auto main(int argc, char* const argv[]) -> int
 
 				float distance = glm::distance(lastCursorPos, cursorPos);
 
-				for (int i = 0; i <= distance; i += 15)
+				for (int i = 0; i <= distance; i += 20)
 				{
 					cursorPosRects.emplace_back(glm::lerp(lastCursorPos, cursorPos, i / distance), 10, 10);
 				}
@@ -80,7 +81,7 @@ auto main(int argc, char* const argv[]) -> int
 
 			for (const auto& cursorRect : cursorPosRects)
 			{
-				lf2d::renderer::renderRect(cursorRect, {255, 0, 255, 50});
+				lf2d::renderer::renderRect(cursorRect, {255, 0, 255, 25});
 			}
 		}
 		lf2d::renderer::endRendering();

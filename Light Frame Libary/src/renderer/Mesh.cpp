@@ -65,10 +65,10 @@ void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
 
 	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
 	
-	if (   rect.x + rect.z > (	   0 - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
-		&& rect.x <			 ( width - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
-		&& rect.y + rect.w > (	   0 - m_currentCamera->offset.y) / m_currentCamera->zoom + m_currentCamera->position.y
-		&& rect.y <			 (height - m_currentCamera->offset.y) / m_currentCamera->zoom + m_currentCamera->position.y)
+	if (   rect.x + rect.z > (	   0 - (lf2d::window::width()  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		&& rect.x <			 ( width - (lf2d::window::width()  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		&& rect.y + rect.w > (	   0 - (lf2d::window::height() / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
+		&& rect.y <			 (height - (lf2d::window::height() / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
 	{
 		m_vertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color.normalized() });
 		m_vertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color.normalized() });
@@ -98,10 +98,10 @@ void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Col
 		
 	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
 
-	if (   rect.x + rect.z > (	   0 - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
-		&& rect.x <			 ( width - m_currentCamera->offset.x) / m_currentCamera->zoom + m_currentCamera->position.x
-		&& rect.y + rect.w > (	   0 - m_currentCamera->offset.y) / m_currentCamera->zoom + m_currentCamera->position.y
-		&& rect.y <			 (height - m_currentCamera->offset.y) / m_currentCamera->zoom + m_currentCamera->position.y)
+	if (   rect.x + rect.z > (	   0 - (lf2d::window::width()  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		&& rect.x <			 ( width - (lf2d::window::width()  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		&& rect.y + rect.w > (	   0 - (lf2d::window::height() / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
+		&& rect.y <			 (height - (lf2d::window::height() / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
 	{
 		m_vertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color1.normalized() });
 		m_vertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color2.normalized() });

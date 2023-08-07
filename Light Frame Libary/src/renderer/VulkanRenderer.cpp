@@ -129,9 +129,11 @@ void lfRenderer::endFrame(Mesh& mesh)
 
 	CameraPushConstant const cameraConstant {
 		.projView = projection * glm::inverse(
-		glm::translate(
-			glm::mat4(1.f),
-			{ (m_currentCamera->position + (lf2d::window::size() / 2.f) - m_currentCamera->offset) / lf2d::window::size(), 0.f }))
+			glm::translate(
+				glm::mat4(1.f),
+				{ m_currentCamera->getPosWithOffset() / lf2d::window::size(), 0.f }
+			)
+		)
 	};
 		
 	frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);

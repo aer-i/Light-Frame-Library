@@ -55,15 +55,9 @@ namespace lf2d
 		glm::vec2 position{}, offset{};
 		float zoom{1.f};
 
-		inline constexpr glm::vec2 fromWorldToScreenPos(glm::vec2 const& v)
-		{
-			return (v - position) * zoom + offset;
-		}
-
-		inline constexpr glm::vec2 fromScreenToWorldPos(glm::vec2 const& v)
-		{
-			return (v - offset) / zoom + position;
-		}
+		inline glm::vec2 getPosWithOffset() { return position + offset; }
+		inline glm::vec2 fromWorldToScreenPos(glm::vec2 const& v);
+		inline glm::vec2 fromScreenToWorldPos(glm::vec2 const& v);
 	};
 
 	float getDeltaTime();
@@ -251,3 +245,12 @@ namespace lf2d
 	}
 }
 
+inline glm::vec2 lf2d::Camera::fromWorldToScreenPos(glm::vec2 const& v)
+{
+	return (v - this->getPosWithOffset()) * zoom + window::size() / 2.f;
+}
+
+inline glm::vec2 lf2d::Camera::fromScreenToWorldPos(glm::vec2 const& v)
+{
+	return (v - window::size() / 2.f) / zoom + this->getPosWithOffset();
+}
