@@ -2,6 +2,7 @@
 #include "VulkanContext.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanPipeline.hpp"
+#include "VulkanTexturePool.hpp"
 #include "VulkanFrame.hpp"
 #include "Mesh.hpp"
 
@@ -16,6 +17,7 @@ public:
 
 	void clearColor(lf2d::Color color);
 	void setVsync(bool enabled);
+	void loadTexture(std::string_view filepath, bool pixelated);
 
 	void create(bool);
 	void beginFrame(lf2d::Camera* camera);
@@ -25,6 +27,7 @@ private:
 	VulkanSwapchain m_swapchain;
 	PipelineLayout m_defaultPipelineLayout;
 	Pipeline m_defaultPipeline;
+	VulkanTexturePool m_texturePool;
 	uint32_t m_imageIndex = 0;
 	uint32_t m_currentFrame = 0;
 	std::vector<VulkanFrame> m_frames;

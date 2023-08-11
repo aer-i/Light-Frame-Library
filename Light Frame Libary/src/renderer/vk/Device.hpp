@@ -102,12 +102,20 @@ namespace vi
 
 		enabledFeatures.multiDrawIndirect = deviceFeatures.multiDrawIndirect;
 
-		const vk::PhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures {
+		constexpr vk::PhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures {
 			.shaderDrawParameters = true
 		};
 
-		const vk::PhysicalDeviceVulkan13Features vulkan13features {
+		vk::PhysicalDeviceVulkan12Features const vulkan12features {
 			.pNext = (void*)&shaderDrawFeatures,
+			.shaderSampledImageArrayNonUniformIndexing = true,
+			.descriptorBindingPartiallyBound = true,
+			.descriptorBindingVariableDescriptorCount = true,
+			.runtimeDescriptorArray = true,
+		};
+
+		vk::PhysicalDeviceVulkan13Features const vulkan13features {
+			.pNext = (void*)&vulkan12features,
 			.synchronization2 = true,
 			.dynamicRendering = true
 		};		
@@ -133,5 +141,6 @@ namespace vi
 			printf("[critical] %s\n", e.what());
 		}
 
+		return {};
 	}
 }

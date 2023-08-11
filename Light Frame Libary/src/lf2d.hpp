@@ -58,6 +58,18 @@ namespace lf2d
 		inline glm::vec2 getPosWithOffset() { return position + offset; }
 		inline glm::vec2 fromWorldToScreenPos(glm::vec2 const& v);
 		inline glm::vec2 fromScreenToWorldPos(glm::vec2 const& v);
+		inline lf2d::Rect getViewRect();
+	};
+
+	struct Texture
+	{
+	public:
+		explicit Texture(std::string_view filepath, bool pixelated = false);
+		inline int32_t getIndex() const { return m_index; }
+
+	private:
+		static int32_t s_currentTextureIndex;
+		const int32_t m_index;
 	};
 
 	float getDeltaTime();
@@ -83,7 +95,7 @@ namespace lf2d
 	{
 		void create(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers = false);
 		void waitEvents();
-		bool shouldClose();
+		bool shouldClose() noexcept;
 		void close();
 		std::string const& getTitle();
 		void setTitle(std::string_view title);
@@ -98,13 +110,17 @@ namespace lf2d
 	
 	namespace renderer
 	{
-		void beginRendering(Camera& camera);
-		void endRendering();
+		void beginRendering(Camera& camera) noexcept;
+		void endRendering() noexcept;
 	
 		void renderRect(const Rect& rect, Color color);
+		void renderRect(const Rect& rect, const Texture& texture, Color color = Color::White());
 		void renderRectGradientV(const Rect& rect, Color color1, Color color2);
+		void renderRectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2);
 		void renderRectGradientH(const Rect& rect, Color color1, Color color2);
+		void renderRectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2);
 		void renderRectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4);
+		void renderRectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4);
 
 		void clearColor(Color color);
 		void setVsync(bool enabled);

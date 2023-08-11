@@ -11,6 +11,14 @@ static bool s_shouldClose = false;
 
 namespace lf2d
 {
+	int32_t Texture::s_currentTextureIndex = 0;
+
+	Texture::Texture(std::string_view filepath, bool pixelated)
+		: m_index{ s_currentTextureIndex++ }
+	{
+		s_renderer.loadTexture(filepath, pixelated);
+	}
+
 	float getDeltaTime()
 	{
 		return s_renderer.getDeltaTime();
@@ -95,7 +103,7 @@ namespace lf2d
 		s_window.waitEvents();
 	}
 
-	bool window::shouldClose()
+	bool window::shouldClose() noexcept
 	{
 		return s_shouldClose;
 	}
@@ -153,7 +161,7 @@ namespace lf2d
 		return lfWindow::GetMonitorPos();
 	}
 
-	void renderer::beginRendering(Camera& camera)
+	void renderer::beginRendering(Camera& camera) noexcept
 	{
 		if (!s_window.isCreated())
 		{
@@ -167,7 +175,7 @@ namespace lf2d
 		s_mesh.setCamera(&camera);
 	}
 
-	void renderer::endRendering()
+	void renderer::endRendering() noexcept
 	{
 		if (!s_window.isCreated())
 		{
@@ -183,22 +191,42 @@ namespace lf2d
 
 	void renderer::renderRect(const Rect& rect, Color color)
 	{
-		s_mesh.addRect(rect, color);
+		s_mesh.addRect(rect, 0, color, color, color, color);
+	}
+
+	void renderer::renderRect(const Rect& rect, const Texture& texture, Color color)
+	{
+		s_mesh.addRect(rect, texture.getIndex(), color, color, color, color);
 	}
 
 	void renderer::renderRectGradientV(const Rect& rect, Color color1, Color color2)
 	{
-		s_mesh.addRectGradient(rect, color1, color1, color2, color2);
+		s_mesh.addRect(rect, 0, color1, color1, color2, color2);
+	}
+
+	void renderer::renderRectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2)
+	{
+		s_mesh.addRect(rect, texture.getIndex(), color1, color1, color2, color2);
 	}
 
 	void renderer::renderRectGradientH(const Rect& rect, Color color1, Color color2)
 	{
-		s_mesh.addRectGradient(rect, color1, color2, color1, color2);
+		s_mesh.addRect(rect, 0, color1, color2, color1, color2);
+	}
+
+	void renderer::renderRectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2)
+	{
+		s_mesh.addRect(rect, texture.getIndex(), color1, color2, color1, color2);
 	}
 
 	void renderer::renderRectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4)
 	{
-		s_mesh.addRectGradient(rect, color1, color4, color2, color3);
+		s_mesh.addRect(rect, 0, color1, color4, color2, color3);
+	}
+
+	void renderer::renderRectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4)
+	{
+		s_mesh.addRect(rect, texture.getIndex(), color1, color4, color2, color3);
 	}
 
 	void renderer::clearColor(Color color)

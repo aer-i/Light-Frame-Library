@@ -17,6 +17,82 @@ const vk::ImageView VulkanContext::CreateImageView(vk::Image image, vk::ImageVie
 	});
 }
 
+const void VulkanContext::ImmediateSubmit(std::function<void(vk::CommandBuffer commandBuffer)>&& function)
+{
+	Get().uploadContext.cmdBuffer.begin({ .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit });
+
+	function(Get().uploadContext.cmdBuffer);
+
+	Get().uploadContext.cmdBuffer.end();
+
+	Get().graphicsQueue.submit(
+		vk::SubmitInfo {
+			.commandBufferCount = 1,
+			.pCommandBuffers = &Get().uploadContext.cmdBuffer
+		},
+		Get().uploadContext.fence
+	);
+
+	Get().device.waitForFences(Get().uploadContext.fence, true, UINT64_MAX);
+	Get().device.resetFences(Get().uploadContext.fence);
+
+	Get().device.resetCommandPool(Get().uploadContext.cmdPool);
+}
+
+const void VulkanContext::TransitionImageLayout(vk::Image image, vk::ImageLayout oldLayout, vk::ImageLayout newLayout)
+{
+	vk::ImageMemoryBarrier2 barrier {
+		.oldLayout = oldLayout,
+		.newLayout = newLayout,
+		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+		.image = image,
+		.subresourceRange = { {vk::ImageAspectFlagBits::eColor}, 0, 1, 0, 1 }
+	};
+
+	if (oldLayout == vk::ImageLayout::eUndefined && newLayout == vk::ImageLayout::eTransferDstOptimal)
+	{
+		barrier.srcAccessMask = {};
+		barrier.dstAccessMask = vk::AccessFlagBits2::eTransferWrite;
+
+		barrier.srcStageMask = vk::PipelineStageFlagBits2::eTopOfPipe;
+		barrier.dstStageMask = vk::PipelineStageFlagBits2::eTransfer;
+	}
+	else if (oldLayout == vk::ImageLayout::eTransferDstOptimal && newLayout == vk::ImageLayout::eShaderReadOnlyOptimal)
+	{
+		barrier.srcAccessMask = vk::AccessFlagBits2::eTransferWrite;
+		barrier.dstAccessMask = vk::AccessFlagBits2::eShaderRead;
+
+		barrier.srcStageMask = vk::PipelineStageFlagBits2::eTransfer;
+		barrier.dstStageMask = vk::PipelineStageFlagBits2::eFragmentShader;
+	}
+
+	ImmediateSubmit([&](vk::CommandBuffer commandBuffer)
+	{
+		commandBuffer.pipelineBarrier2({
+			.imageMemoryBarrierCount = 1,
+			.pImageMemoryBarriers = &barrier
+		});
+	});
+}
+
+const void VulkanContext::CopyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height)
+{
+	ImmediateSubmit([&](vk::CommandBuffer commandBuffer)
+	{
+		commandBuffer.copyBufferToImage(
+			buffer,
+			image,
+			vk::ImageLayout::eTransferDstOptimal,
+			vk::BufferImageCopy {
+				.imageSubresource = { {vk::ImageAspectFlagBits::eColor}, 0, 0, 1 },
+				.imageOffset = { 0, 0, 0 },
+				.imageExtent = { width, height, 1 }
+			}
+		);
+	});
+}
+
 void VulkanContext::create(bool enableVL)
 {
 #pragma region Dispatcher

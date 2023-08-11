@@ -10,6 +10,7 @@ struct CameraPushConstant
 
 lfRenderer::~lfRenderer()
 {
+	m_texturePool.teardown();
 	this->teardown();
 }
 
@@ -34,6 +35,11 @@ void lfRenderer::setVsync(bool enabled)
 	}
 }
 
+void lfRenderer::loadTexture(std::string_view filepath, bool pixelated)
+{
+	m_texturePool.loadTexture(filepath, pixelated);
+}
+
 void lfRenderer::create(bool enableVL)
 {
 	vc::Create(enableVL);
@@ -46,11 +52,15 @@ void lfRenderer::create(bool enableVL)
 		frame.create();
 	}
 
+	m_texturePool.create();
+
 	m_defaultPipelineLayout = PipelineLayout::Builder()
-		.addPushConstantRange({.stageFlags = vk::ShaderStageFlagBits::eVertex, .size = sizeof(CameraPushConstant)})
+		.addPushConstantRange({ .stageFlags = vk::ShaderStageFlagBits::eVertex, .size = sizeof(CameraPushConstant) })
+		.addDescriptorSetLayout(m_texturePool.descriptorSetLayout)
 		.build();
 
 	m_defaultPipeline.construct(m_swapchain, m_defaultPipelineLayout);
+
 }
 
 static VulkanFrame* frame = nullptr;
@@ -120,6 +130,8 @@ void lfRenderer::beginFrame(lf2d::Camera* camera)
 
 	frame->commandBuffer.setViewport(0, viewport);
 	frame->commandBuffer.setScissor(0, scissor);
+
+	frame->commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, m_defaultPipelineLayout, 0, 1, &m_texturePool.descriptorSet, 0, nullptr);
 }
 
 void lfRenderer::endFrame(Mesh& mesh)

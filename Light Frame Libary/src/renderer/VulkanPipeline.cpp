@@ -67,12 +67,26 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 		.offset = offsetof(Vertex, color)
 	};
 
-	vk::VertexInputAttributeDescription constexpr attributeDescriptions[]{ posAttributeDescription, colorAttributeDescription };
+	vk::VertexInputAttributeDescription constexpr uvAttributeDescription {
+		.location = 2,
+		.binding = 0,
+		.format = vk::Format::eR32G32Sfloat,
+		.offset = offsetof(Vertex, uv)
+	};
 
-	vk::PipelineVertexInputStateCreateInfo constexpr vertexInput {
+	vk::VertexInputAttributeDescription constexpr textureIndexAttributeDescription {
+		.location = 3,
+		.binding = 0,
+		.format = vk::Format::eR32Sint,
+		.offset = offsetof(Vertex, textureIndex)
+	};
+
+	vk::VertexInputAttributeDescription constexpr attributeDescriptions[]{ posAttributeDescription, colorAttributeDescription, uvAttributeDescription, textureIndexAttributeDescription };
+
+	vk::PipelineVertexInputStateCreateInfo const vertexInput {
 		.vertexBindingDescriptionCount = 1,
 		.pVertexBindingDescriptions = &bindingDescription,
-		.vertexAttributeDescriptionCount = 2,
+		.vertexAttributeDescriptionCount = 4,
 		.pVertexAttributeDescriptions = attributeDescriptions
 	};
 
@@ -112,7 +126,7 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 		.colorWriteMask = vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA,
 	};
 
-	vk::PipelineColorBlendStateCreateInfo constexpr colorBlending {
+	vk::PipelineColorBlendStateCreateInfo const colorBlending {
 		.logicOpEnable = false,
 		.logicOp = vk::LogicOp::eCopy,
 		.attachmentCount = 1,
@@ -122,7 +136,7 @@ void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipel
 
 	std::array<vk::DynamicState, 2> constexpr dynamicStates { vk::DynamicState::eViewport, vk::DynamicState::eScissor};
 
-	vk::PipelineDynamicStateCreateInfo constexpr dynamicState {
+	vk::PipelineDynamicStateCreateInfo const dynamicState {
 		.dynamicStateCount = 2,
 		.pDynamicStates = dynamicStates.data()
 	};

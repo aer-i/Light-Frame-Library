@@ -1,22 +1,19 @@
 #include "pch.hpp"
 #include "Mesh.hpp"
 
-Vertex::Vertex(glm::vec2 position, glm::vec4 color)
+Vertex::Vertex(glm::vec2 position, glm::vec4 color, glm::vec2 uv, int32_t textureIndex)
+	: position{ position }, color{ color }, uv{ uv }, textureIndex{ textureIndex }
 {
-	this->position = position;
-	this->color = color;
 }
 
 Vertex::Vertex(const Vertex& other)
+	: position{ other.position }, color{ other.color }, uv{ other.uv }, textureIndex{ other.textureIndex }
 {
-	this->position = other.position;
-	this->color = other.color;
 }
 
 Vertex::Vertex(Vertex&& other)
+	: position{ other.position }, color{ other.color }, uv{ other.uv }, textureIndex{ other.textureIndex }
 {
-	this->position = other.position;
-	this->color = other.color;
 }
 
 void Mesh::render(vk::CommandBuffer commandBuffer, VulkanBuffer& vertexBuffer, VulkanBuffer& indexBuffer)
@@ -31,8 +28,10 @@ void Mesh::render(vk::CommandBuffer commandBuffer, VulkanBuffer& vertexBuffer, V
 
 		if (vertexCount > vertexBuffer.count || vertexCount * 2 < vertexBuffer.count)
 		{
-			vertexBuffer.create(sizeof(Vertex) * vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-			indexBuffer.create(sizeof(uint32_t) * indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+			vertexBuffer.create(sizeof(Vertex) * vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT);
+			vertexBuffer.map();
+			indexBuffer.create(sizeof(uint32_t) * indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT);
+			indexBuffer.map();
 		}
 
 		vertexBuffer.writeToBuffer(m_vertices.data());
@@ -55,58 +54,26 @@ void Mesh::setCamera(lf2d::Camera* camera)
 	m_currentCamera = camera;
 }
 
-void Mesh::addRect(lf2d::Rect const& rect, lf2d::Color color)
+
+void Mesh::addRect(lf2d::Rect const& rect, int textureIndex, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4)
 {
 	if (rect.z < 1 || rect.w < 1)
 	{
-		printf("[error] Rect width and height can't be negative\n");
-		return;
-	}
-
-	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
-	
-	if (   rect.x + rect.z > (	   0 - (lf2d::window::width()  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
-		&& rect.x <			 ( width - (lf2d::window::width()  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
-		&& rect.y + rect.w > (	   0 - (lf2d::window::height() / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
-		&& rect.y <			 (height - (lf2d::window::height() / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
-	{
-		m_vertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color.normalized() });
-		m_vertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color.normalized() });
-		m_vertices.push_back({ {(rect.x + rect.z) / width, (rect.y + rect.w) / height}, color.normalized() });
-		m_vertices.push_back({ { rect.x			  / width, (rect.w + rect.y) / height},	color.normalized() });
-
-		m_indices.emplace_back(m_renderedObjectCount * 4	);
-		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
-		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
-
-		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
-		m_indices.emplace_back(m_renderedObjectCount * 4 + 3);
-		m_indices.emplace_back(m_renderedObjectCount * 4	);
-
-		m_renderedObjectCount++;
-	}
-	m_totalObjectCount++;
-}
-
-void Mesh::addRectGradient(lf2d::Rect const& rect, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4)
-{
-	if (rect.z < 1 || rect.w < 1)
-	{
-		printf("[error] Rect width and height can't be negative\n");
+		printf("[error] Rect width and height can't be negative or equal to zero\n");
 		return;
 	}
 		
 	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
 
-	if (   rect.x + rect.z > (	   0 - (lf2d::window::width()  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
-		&& rect.x <			 ( width - (lf2d::window::width()  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
-		&& rect.y + rect.w > (	   0 - (lf2d::window::height() / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
-		&& rect.y <			 (height - (lf2d::window::height() / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
+	if (   rect.x + rect.z > (-(width  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		&& rect.x <			 ( (width  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		&& rect.y + rect.w > (-(height / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
+		&& rect.y <			 ( (height / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
 	{
-		m_vertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color1.normalized() });
-		m_vertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color2.normalized() });
-		m_vertices.push_back({ {(rect.x + rect.z) / width, (rect.y + rect.w) / height}, color4.normalized() });
-		m_vertices.push_back({ { rect.x			  / width, (rect.w + rect.y) / height},	color3.normalized() });
+		m_vertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color1.normalized(), {0, 0}, textureIndex });
+		m_vertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color2.normalized(), {1, 0}, textureIndex });
+		m_vertices.push_back({ {(rect.x + rect.z) / width, (rect.y + rect.w) / height}, color4.normalized(), {1, 1}, textureIndex });
+		m_vertices.push_back({ { rect.x			  / width, (rect.w + rect.y) / height},	color3.normalized(), {0, 1}, textureIndex });
 
 		m_indices.emplace_back(m_renderedObjectCount * 4	);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);

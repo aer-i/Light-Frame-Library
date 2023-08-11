@@ -2,7 +2,7 @@
 #include "VulkanBuffer.hpp"
 #include "VulkanContext.hpp"
 
-void VulkanBuffer::create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage)
+void VulkanBuffer::create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUsage, VmaAllocationCreateFlags allocationFlags, VmaAllocationInfo* allocationInfo)
 {
 	assert(bufferSize > 0);
 
@@ -17,16 +17,14 @@ void VulkanBuffer::create(vk::DeviceSize bufferSize, VkBufferUsageFlags bufferUs
 	};
 
 	VmaAllocationCreateInfo allocationCI{
-		.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT,
-		.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE
+		.flags = allocationFlags,
+		.usage = VMA_MEMORY_USAGE_AUTO
 	};
 
 	VkBuffer buffer;
-	vmaCreateBuffer(vc::Get().allocator, &bufferCI, &allocationCI, &buffer, &allocation, nullptr);
+	vmaCreateBuffer(vc::Get().allocator, &bufferCI, &allocationCI, &buffer, &allocation, allocationInfo);
 
 	m_handle = vk::Buffer(buffer);
-
-	map();
 }
 
 void VulkanBuffer::free()
