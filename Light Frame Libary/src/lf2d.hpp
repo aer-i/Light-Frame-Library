@@ -270,3 +270,8 @@ inline glm::vec2 lf2d::Camera::fromScreenToWorldPos(glm::vec2 const& v)
 {
 	return (v - window::size() / 2.f) / zoom + this->getPosWithOffset();
 }
+
+inline lf2d::Rect lf2d::Camera::getViewRect()
+{
+	return { fromScreenToWorldPos(glm::vec2{ 0.f }), lf2d::window::size() / zoom };
+}

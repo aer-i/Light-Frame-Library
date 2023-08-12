@@ -57,12 +57,6 @@ void Mesh::setCamera(lf2d::Camera* camera)
 
 void Mesh::addRect(lf2d::Rect const& rect, int textureIndex, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4)
 {
-	if (rect.z < 1 || rect.w < 1)
-	{
-		printf("[error] Rect width and height can't be negative or equal to zero\n");
-		return;
-	}
-		
 	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
 
 	if (   rect.x + rect.z > (-(width  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x

@@ -198,7 +198,7 @@ namespace lf2d
 	{
 		s_mesh.addRect(rect, texture.getIndex(), color, color, color, color);
 	}
-
+	
 	void renderer::renderRectGradientV(const Rect& rect, Color color1, Color color2)
 	{
 		s_mesh.addRect(rect, 0, color1, color1, color2, color2);

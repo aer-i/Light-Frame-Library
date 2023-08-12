@@ -34,7 +34,7 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	// Always load textures after window creation
 	lf2d::Texture texture1("textures/hit.png", true);
 	lf2d::Texture texture2("textures/pexels.jpg", false);
-	lf2d::Texture texture3("textures/nx.png", false);
+	lf2d::Texture texture3("textures/nx.png", true);
 
 	// true is returned when window is closed
 	while (!lf2d::window::shouldClose()) // Main loop. Executing every frame
@@ -55,6 +55,8 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 
 		lf2d::renderer::beginRendering(camera);
 		{
+			lf2d::renderer::renderRect(camera.getViewRect(), texture3);
+
 			// Add quads to render queue
 			lf2d::renderer::renderRect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1);
 
@@ -67,7 +69,7 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 
 			static std::vector<lf2d::Rect> cursorPosRects;
 
-			if (lf2d::isButtonDown(lf2d::Button::Left))
+			if (lf2d::isButtonPressed(lf2d::Button::Left))
 			{
 				static auto lastCursorPos = lf2d::getCursorPos();
 				auto cursorPos = camera.fromScreenToWorldPos(lf2d::getCursorPos());
