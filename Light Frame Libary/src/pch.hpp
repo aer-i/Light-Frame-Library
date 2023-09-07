@@ -15,5 +15,7 @@
 #include <glm/gtx/transform.hpp>
 #include <vma/vk_mem_alloc.h>
 #include <STB/stb_image.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 #include <map>
 #include <future>

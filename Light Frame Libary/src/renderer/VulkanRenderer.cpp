@@ -40,6 +40,11 @@ void lfRenderer::loadTexture(std::string_view filepath, bool pixelated)
 	m_texturePool.loadTexture(filepath, pixelated);
 }
 
+void lfRenderer::loadTexture(void* buffer, vk::DeviceSize bufferSize)
+{
+	m_texturePool.loadTexture(buffer, bufferSize);
+}
+
 void lfRenderer::create(bool enableVL)
 {
 	vc::Create(enableVL);

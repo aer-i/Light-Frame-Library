@@ -9,6 +9,7 @@ public:
 	void teardown();
 
 	void loadTexture(std::string_view filepath, bool pixelated);
+	void loadTexture(void* buffer, vk::DeviceSize bufferSize);
 
 	vk::DescriptorSetLayout descriptorSetLayout;
 	vk::DescriptorSet descriptorSet;

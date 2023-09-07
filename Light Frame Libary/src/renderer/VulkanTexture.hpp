@@ -25,6 +25,7 @@ class VulkanTexture
 {
 public:
 	VulkanTexture(std::string_view filepath, bool pixelated);
+	VulkanTexture(void* buffer, vk::DeviceSize bufferSize);
 
 	void teardown();
 

@@ -92,3 +92,26 @@ void VulkanTexturePool::loadTexture(std::string_view filepath, bool pixelated)
 		nullptr
 	);
 }
+
+void VulkanTexturePool::loadTexture(void* buffer, vk::DeviceSize bufferSize)
+{
+	textures.emplace_back(buffer, bufferSize);
+
+	std::vector<vk::DescriptorImageInfo> textureDescriptors(textures.size());
+	for (uint32_t i = 0; i < textureDescriptors.size(); i++)
+	{
+		textureDescriptors[i] = textures[i].getImageInfo();
+	}
+
+	vc::Get().device.updateDescriptorSets(
+		vk::WriteDescriptorSet{
+		.dstSet = descriptorSet,
+			.dstBinding = 0,
+			.dstArrayElement = 0,
+			.descriptorCount = static_cast<uint32_t>(textures.size()),
+			.descriptorType = vk::DescriptorType::eCombinedImageSampler,
+			.pImageInfo = textureDescriptors.data()
+		},
+		nullptr
+	);
+}

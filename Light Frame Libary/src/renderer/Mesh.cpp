@@ -54,7 +54,6 @@ void Mesh::setCamera(lf2d::Camera* camera)
 	m_currentCamera = camera;
 }
 
-
 void Mesh::addRect(lf2d::Rect const& rect, int textureIndex, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4)
 {
 	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
@@ -80,4 +79,9 @@ void Mesh::addRect(lf2d::Rect const& rect, int textureIndex, lf2d::Color color1,
 		m_renderedObjectCount++;
 	}
 	m_totalObjectCount++;
+}
+
+void Mesh::addText(std::string_view text, glm::vec2 const& pos, float scale, lf2d::Color color)
+{
+
 }

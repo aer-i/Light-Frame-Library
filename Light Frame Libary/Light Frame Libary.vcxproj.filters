@@ -60,6 +60,9 @@
     <ClInclude Include="src\renderer\VulkanTexturePool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\renderer\Text.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch.cpp">
@@ -105,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\renderer\VulkanTexturePool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\Text.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

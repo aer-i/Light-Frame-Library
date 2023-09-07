@@ -24,6 +24,7 @@ public:
 	void setCamera(lf2d::Camera* camera);
 	
 	void addRect(lf2d::Rect const& rect, int textureIndex, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4);
+	void addText(std::string_view text, glm::vec2 const& pos, float scale, lf2d::Color color);
 
 private:
 	lf2d::Camera* m_currentCamera;

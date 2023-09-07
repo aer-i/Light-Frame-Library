@@ -13,6 +13,8 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	constexpr bool enableValidationLayers = false;
 #endif
 
+	lf2d::Font font("fonts/arial.ttf");
+
 	// Initializing lf2d (GLFW, Vulkan, e.t.c)
 	lf2d::window::create(1280, 720, "Light Frame - Example App", true, enableValidationLayers);
 

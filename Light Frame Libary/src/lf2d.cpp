@@ -3,10 +3,12 @@
 #include "window/Window.hpp"
 #include "renderer/VulkanRenderer.hpp"
 #include "engine/InputController.hpp"
+#include "renderer/Text.hpp"
 
 static lfWindow s_window;
 static lfRenderer s_renderer;
 static Mesh s_mesh;
+static Text s_text;
 static bool s_shouldClose = false;
 
 namespace lf2d
@@ -17,6 +19,18 @@ namespace lf2d
 		: m_index{ s_currentTextureIndex++ }
 	{
 		s_renderer.loadTexture(filepath, pixelated);
+	}
+
+	Texture::Texture(void* buffer, size_t bufferSize)
+		: m_index{ s_currentTextureIndex++ }
+	{
+		s_renderer.loadTexture(buffer, bufferSize);
+	}
+
+	Font::Font(std::string_view filepath)
+	{
+		auto face = s_text.load(filepath);
+
 	}
 
 	float getDeltaTime()
@@ -227,6 +241,11 @@ namespace lf2d
 	void renderer::renderRectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4)
 	{
 		s_mesh.addRect(rect, texture.getIndex(), color1, color4, color2, color3);
+	}
+
+	void renderer::renderText(const Font& font, std::string_view text, const glm::vec2& position, float scale, Color color)
+	{
+
 	}
 
 	void renderer::clearColor(Color color)

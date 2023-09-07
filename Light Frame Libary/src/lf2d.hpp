@@ -65,11 +65,19 @@ namespace lf2d
 	{
 	public:
 		explicit Texture(std::string_view filepath, bool pixelated = false);
+		Texture(void* buffer, size_t bufferSize);
 		inline int32_t getIndex() const { return m_index; }
 
 	private:
 		static int32_t s_currentTextureIndex;
 		const int32_t m_index;
+	};
+
+	struct Font
+	{
+	public:
+		explicit Font(std::string_view filepath);
+
 	};
 
 	float getDeltaTime();
@@ -121,6 +129,8 @@ namespace lf2d
 		void renderRectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2);
 		void renderRectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4);
 		void renderRectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4);
+
+		void renderText(const Font& font, std::string_view text, const glm::vec2& position, float scale = 1.f, Color color = Color::White());
 
 		void clearColor(Color color);
 		void setVsync(bool enabled);
