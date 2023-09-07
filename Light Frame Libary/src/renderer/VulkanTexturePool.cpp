@@ -93,9 +93,9 @@ void VulkanTexturePool::loadTexture(std::string_view filepath, bool pixelated)
 	);
 }
 
-void VulkanTexturePool::loadTexture(void* buffer, vk::DeviceSize bufferSize)
+void VulkanTexturePool::loadTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t width, uint32_t height)
 {
-	textures.emplace_back(buffer, bufferSize);
+	textures.emplace_back(buffer, bufferSize, width, height);
 
 	std::vector<vk::DescriptorImageInfo> textureDescriptors(textures.size());
 	for (uint32_t i = 0; i < textureDescriptors.size(); i++)

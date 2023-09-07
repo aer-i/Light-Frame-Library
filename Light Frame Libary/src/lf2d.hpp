@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <map>
 #include <glm/glm.hpp>
 
 namespace lf2d
@@ -65,7 +66,8 @@ namespace lf2d
 	{
 	public:
 		explicit Texture(std::string_view filepath, bool pixelated = false);
-		Texture(void* buffer, size_t bufferSize);
+		Texture(void* buffer, size_t bufferSize, uint32_t width, uint32_t height);
+		Texture(const Texture& other);
 		inline int32_t getIndex() const { return m_index; }
 
 	private:
@@ -78,6 +80,16 @@ namespace lf2d
 	public:
 		explicit Font(std::string_view filepath);
 
+	public:
+		struct Character {
+			Texture		 texture;
+			glm::ivec2   size;
+			glm::ivec2   bearing;
+			unsigned int advance;
+		};
+
+	public:
+		std::map<char, Character> m_characters;
 	};
 
 	float getDeltaTime();
@@ -118,19 +130,19 @@ namespace lf2d
 	
 	namespace renderer
 	{
-		void beginRendering(Camera& camera) noexcept;
-		void endRendering() noexcept;
+		void begin(Camera& camera) noexcept;
+		void end() noexcept;
 	
-		void renderRect(const Rect& rect, Color color);
-		void renderRect(const Rect& rect, const Texture& texture, Color color = Color::White());
-		void renderRectGradientV(const Rect& rect, Color color1, Color color2);
-		void renderRectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2);
-		void renderRectGradientH(const Rect& rect, Color color1, Color color2);
-		void renderRectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2);
-		void renderRectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4);
-		void renderRectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4);
+		void rect(const Rect& rect, Color color);
+		void rect(const Rect& rect, const Texture& texture, Color color = Color::White());
+		void rectGradientV(const Rect& rect, Color color1, Color color2);
+		void rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2);
+		void rectGradientH(const Rect& rect, Color color1, Color color2);
+		void rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2);
+		void rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4);
+		void rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4);
 
-		void renderText(const Font& font, std::string_view text, const glm::vec2& position, float scale = 1.f, Color color = Color::White());
+		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());
 
 		void clearColor(Color color);
 		void setVsync(bool enabled);

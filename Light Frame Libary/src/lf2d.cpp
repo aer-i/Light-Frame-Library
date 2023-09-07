@@ -21,16 +21,42 @@ namespace lf2d
 		s_renderer.loadTexture(filepath, pixelated);
 	}
 
-	Texture::Texture(void* buffer, size_t bufferSize)
+	Texture::Texture(void* buffer, size_t bufferSize, uint32_t width, uint32_t height)
 		: m_index{ s_currentTextureIndex++ }
 	{
-		s_renderer.loadTexture(buffer, bufferSize);
+		s_renderer.loadTexture(buffer, bufferSize, width, height);
 	}
+
+	Texture::Texture(const Texture& other)
+		: m_index{ other.m_index }
+	{}
 
 	Font::Font(std::string_view filepath)
 	{
 		auto face = s_text.load(filepath);
 
+		for (unsigned char c = 32; c < 127; c++)
+		{
+			// load character glyph 
+			if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+			{
+				printf("Failed to load glyph\n\n");
+				continue;
+			}
+
+			Texture texture(face->glyph->bitmap.buffer, face->glyph->bitmap.width * face->glyph->bitmap.rows * 4, face->glyph->bitmap.width, face->glyph->bitmap.rows);
+
+			Character character = {
+				texture,
+				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+				face->glyph->advance.x
+			};
+
+			m_characters.insert(std::pair<char, Character>(c, character));
+		}
+
+		FT_Done_Face(face);
 	}
 
 	float getDeltaTime()
@@ -175,7 +201,7 @@ namespace lf2d
 		return lfWindow::GetMonitorPos();
 	}
 
-	void renderer::beginRendering(Camera& camera) noexcept
+	void renderer::begin(Camera& camera) noexcept
 	{
 		if (!s_window.isCreated())
 		{
@@ -189,7 +215,7 @@ namespace lf2d
 		s_mesh.setCamera(&camera);
 	}
 
-	void renderer::endRendering() noexcept
+	void renderer::end() noexcept
 	{
 		if (!s_window.isCreated())
 		{
@@ -203,49 +229,63 @@ namespace lf2d
 			s_renderer.waitIdle();
 	}
 
-	void renderer::renderRect(const Rect& rect, Color color)
+	void renderer::rect(const Rect& rect, Color color)
 	{
 		s_mesh.addRect(rect, 0, color, color, color, color);
 	}
 
-	void renderer::renderRect(const Rect& rect, const Texture& texture, Color color)
+	void renderer::rect(const Rect& rect, const Texture& texture, Color color)
 	{
 		s_mesh.addRect(rect, texture.getIndex(), color, color, color, color);
 	}
 	
-	void renderer::renderRectGradientV(const Rect& rect, Color color1, Color color2)
+	void renderer::rectGradientV(const Rect& rect, Color color1, Color color2)
 	{
 		s_mesh.addRect(rect, 0, color1, color1, color2, color2);
 	}
 
-	void renderer::renderRectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2)
+	void renderer::rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2)
 	{
 		s_mesh.addRect(rect, texture.getIndex(), color1, color1, color2, color2);
 	}
 
-	void renderer::renderRectGradientH(const Rect& rect, Color color1, Color color2)
+	void renderer::rectGradientH(const Rect& rect, Color color1, Color color2)
 	{
 		s_mesh.addRect(rect, 0, color1, color2, color1, color2);
 	}
 
-	void renderer::renderRectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2)
+	void renderer::rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2)
 	{
 		s_mesh.addRect(rect, texture.getIndex(), color1, color2, color1, color2);
 	}
 
-	void renderer::renderRectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4)
+	void renderer::rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4)
 	{
 		s_mesh.addRect(rect, 0, color1, color4, color2, color3);
 	}
 
-	void renderer::renderRectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4)
+	void renderer::rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4)
 	{
 		s_mesh.addRect(rect, texture.getIndex(), color1, color4, color2, color3);
 	}
 
-	void renderer::renderText(const Font& font, std::string_view text, const glm::vec2& position, float scale, Color color)
+	void renderer::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
 	{
+		std::string_view::const_iterator c;
+		for (c = text.begin(); c != text.end(); c++)
+		{
+			auto& ch = font.m_characters.at(*c);
 
+			float xpos = position.x + ch.bearing.x * scale;
+			float ypos = position.y - (ch.size.y - ch.bearing.y) * scale;
+
+			float w = ch.size.x * scale;
+			float h = ch.size.y * scale;
+
+			rect({ xpos, ypos, w, h }, ch.texture);
+
+			position.x += (ch.advance >> 6) * scale;
+		}
 	}
 
 	void renderer::clearColor(Color color)

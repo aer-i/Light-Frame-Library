@@ -18,7 +18,7 @@ public:
 			printf("Failed to load %s\n", filepath.data());
 		}
 
-		FT_Set_Pixel_Sizes(face, 0, 48);
+		FT_Set_Pixel_Sizes(face, 0, 96);
 
 		return face;
 	}

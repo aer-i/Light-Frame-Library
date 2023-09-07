@@ -22,6 +22,12 @@ VulkanTexture::VulkanTexture(std::string_view filepath, bool pixelated)
 
 	m_size = 4 * m_width * m_height;
 
+	if (m_width == 0 || m_height == 0)
+	{
+		createDefaultTexture();
+		return;
+	}
+
 	VkImageCreateInfo imageCI = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.imageType = VK_IMAGE_TYPE_2D,
@@ -72,12 +78,20 @@ VulkanTexture::VulkanTexture(std::string_view filepath, bool pixelated)
 	});
 }
 
-VulkanTexture::VulkanTexture(void* buffer, vk::DeviceSize bufferSize)
+VulkanTexture::VulkanTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t width, uint32_t height)
+	: m_width{ width }, m_height{ height }, m_size{ bufferSize }
 {
+
+	if (m_width == 0 || m_height == 0)
+	{
+		createDefaultTexture();
+		return;
+	}
+
 	VkImageCreateInfo imageCI = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = VK_FORMAT_R8G8B8A8_SRGB,
+		.format = VK_FORMAT_R8_SRGB,
 		.extent = VkExtent3D{m_width, m_height, 1},
 		.mipLevels = 1,
 		.arrayLayers = 1,
@@ -108,14 +122,14 @@ VulkanTexture::VulkanTexture(void* buffer, vk::DeviceSize bufferSize)
 
 	stagingBuffer.free();
 
-	m_imageView = vc::CreateImageView(image, vk::ImageViewType::e2D, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
+	m_imageView = vc::CreateImageView(image, vk::ImageViewType::e2D, vk::Format::eR8Srgb, vk::ImageAspectFlagBits::eColor);
 
 	m_sampler = vc::Get().device.createSampler({
-		.magFilter = vk::Filter::eLinear,
-		.minFilter = vk::Filter::eLinear,
-		.addressModeU = vk::SamplerAddressMode::eRepeat,
-		.addressModeV = vk::SamplerAddressMode::eRepeat,
-		.addressModeW = vk::SamplerAddressMode::eRepeat,
+		.magFilter = vk::Filter::eNearest,
+		.minFilter = vk::Filter::eNearest,
+		.addressModeU = vk::SamplerAddressMode::eClampToEdge,
+		.addressModeV = vk::SamplerAddressMode::eClampToEdge,
+		.addressModeW = vk::SamplerAddressMode::eClampToEdge,
 		.compareEnable = false,
 		.compareOp = vk::CompareOp::eNever,
 		.borderColor = vk::BorderColor::eIntOpaqueBlack,
