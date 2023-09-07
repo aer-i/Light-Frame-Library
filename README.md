@@ -1,4 +1,4 @@
-⚠️Unfinished⚠️
+⚠️Unusable, Unfinished⚠️
 
 Don't use that, it's terrible.
 
