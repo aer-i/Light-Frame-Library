@@ -78,14 +78,14 @@ namespace lf2d
 	struct Font
 	{
 	public:
-		explicit Font(std::string_view filepath);
+		explicit Font(std::string_view filepath, uint32_t textureResolution = 48);
 
 	public:
 		struct Character {
 			Texture		 texture;
 			glm::ivec2   size;
 			glm::ivec2   bearing;
-			unsigned int advance;
+			uint32_t	 advance;
 		};
 
 	public:
@@ -143,6 +143,7 @@ namespace lf2d
 		void rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4);
 
 		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());
+		void worldText(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());
 
 		void clearColor(Color color);
 		void setVsync(bool enabled);

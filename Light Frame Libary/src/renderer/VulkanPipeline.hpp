@@ -30,11 +30,19 @@ private:
 class Pipeline
 {
 public:
+	enum class Type
+	{
+		eDefault = 0,
+		eText
+	};
+
+public:
 	Pipeline() = default;
-	void construct(const VulkanSwapchain& swapchain, PipelineLayout& pipelineLayout);
+	void construct(const VulkanSwapchain& swapchain, PipelineLayout& pipelineLayout, Type type = Type::eDefault);
 	void teardown();
 
 	constexpr operator vk::Pipeline() const { return m_handle; }
+
 
 private:
 	vk::Pipeline m_handle;

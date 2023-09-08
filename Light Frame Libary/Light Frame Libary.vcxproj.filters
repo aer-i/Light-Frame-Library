@@ -116,5 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\renderer\shaders.u32" />
+    <None Include="shaders\text.shader.vert" />
+    <None Include="shaders\text.shader.frag" />
   </ItemGroup>
 </Project>

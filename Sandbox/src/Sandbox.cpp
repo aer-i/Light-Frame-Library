@@ -17,7 +17,6 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	// Initializing lf2d (GLFW, Vulkan, e.t.c)
 	lf2d::window::create(1280, 720, "Light Frame - Example App", true, enableValidationLayers);
 
-	lf2d::Font font("fonts/arial.ttf");
 	// Enabling v-sync for lower power usage and no visible screen tearing
 	lf2d::renderer::setVsync(false);
 	// You can clear color just once or every frame (or don't (black is default color))
@@ -38,6 +37,8 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	lf2d::Texture texture2("textures/pexels.jpg", false);
 	lf2d::Texture texture3("textures/nx.png", true);
 
+	// Same with textures
+	lf2d::Font font("fonts/arial.ttf");
 	// true is returned when window is closed
 	while (!lf2d::window::shouldClose()) // Main loop. Executing every frame
 	{
@@ -58,40 +59,41 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 		lf2d::renderer::begin(camera);
 		{
 			lf2d::renderer::rect(camera.getViewRect(), texture3);
-
+			
 			// Add quads to render queue
 			lf2d::renderer::rect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1);
-
+			
 			static constexpr lf2d::Rect rect = lf2d::Rect(-100, -100, 100, 100);
 			lf2d::renderer::rectGradientV(rect, lf2d::Color::Black(), lf2d::Color::White());
-
+			
 			lf2d::renderer::rectGradient({ -100, 0, 100, 100 }, texture2, { 255, 0, 0, 255 }, { 255, 255, 255, 255 }, {0, 0, 255, 255}, {0, 255, 0, 255});
-
+			
 			lf2d::renderer::rectGradientH(lf2d::Rect{ 0, -100, 100, 100 }, lf2d::Color::Gold(), lf2d::Color::Transparent());
-
+			
 			static std::vector<lf2d::Rect> cursorPosRects;
-
+			
 			if (lf2d::isButtonPressed(lf2d::Button::Left))
 			{
 				static auto lastCursorPos = lf2d::getCursorPos();
 				auto cursorPos = camera.fromScreenToWorldPos(lf2d::getCursorPos());
-
+			
 				float distance = glm::distance(lastCursorPos, cursorPos);
-
+			
 				for (int i = 0; i <= distance; i += 20)
 				{
 					cursorPosRects.emplace_back(glm::lerp(lastCursorPos - 5.f, cursorPos - 5.f, i / distance), 10, 10);
 				}
-
+			
 				lastCursorPos = cursorPos;
 			}
-
+			
 			for (const auto& cursorRect : cursorPosRects)
 			{
 				lf2d::renderer::rectGradientV(cursorRect, {255, 0, 255, 25}, { 255, 0, 255, 25 });
 			}
 
-			lf2d::renderer::text(font, "CE SZARP", camera.fromScreenToWorldPos({400, 400}), 1);
+			lf2d::renderer::text(font, "Witam", {600, 400}, 1.f);
+			lf2d::renderer::worldText(font, "Witam", {600, 400}, 1.f);
 		}
 		lf2d::renderer::end();
 	}

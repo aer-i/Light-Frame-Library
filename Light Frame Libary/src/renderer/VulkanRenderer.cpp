@@ -10,7 +10,6 @@ struct CameraPushConstant
 
 lfRenderer::~lfRenderer()
 {
-	m_texturePool.teardown();
 	this->teardown();
 }
 
@@ -65,7 +64,7 @@ void lfRenderer::create(bool enableVL)
 		.build();
 
 	m_defaultPipeline.construct(m_swapchain, m_defaultPipelineLayout);
-
+	m_textPipeline.construct(m_swapchain, m_defaultPipelineLayout, Pipeline::Type::eText);
 }
 
 static VulkanFrame* frame = nullptr;
@@ -155,7 +154,11 @@ void lfRenderer::endFrame(Mesh& mesh)
 		
 	frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);
 
-	mesh.render(frame->commandBuffer, frame->vertexBuffer, frame->indexBuffer);
+	mesh.render(frame);
+
+	frame->commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_textPipeline);
+
+	mesh.renderText(frame);
 
 	vk::ImageMemoryBarrier2 const imageMemoryBarrier {
 		.srcStageMask = vk::PipelineStageFlagBits2::eColorAttachmentOutput,
@@ -228,11 +231,14 @@ void lfRenderer::recreateSwapchain()
 
 void lfRenderer::teardown()
 {
+	m_texturePool.teardown();
+	m_textPipeline.teardown();
 	m_defaultPipeline.teardown();
 	m_defaultPipelineLayout.teardown();
 
 	for (auto& frame : m_frames)
 		frame.teardown();
+
 	m_swapchain.teardown();
 	vc::Teardown();
 }

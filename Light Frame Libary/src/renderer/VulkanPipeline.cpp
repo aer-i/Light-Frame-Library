@@ -36,10 +36,22 @@ void PipelineLayout::teardown()
 	if (m_handle) vc::Get().device.destroy(m_handle);
 }
 
-void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipelineLayout)
+void Pipeline::construct(const VulkanSwapchain& swapchain, PipelineLayout& pipelineLayout, Type type)
 {
-	auto const vertShaderModule = vc::Get().device.createShaderModule({ .codeSize = sizeof(vertShaderCode), .pCode = vertShaderCode });
-	auto const fragShaderModule = vc::Get().device.createShaderModule({ .codeSize = sizeof(fragShaderCode), .pCode = fragShaderCode });
+	vk::ShaderModule vertShaderModule;
+	vk::ShaderModule fragShaderModule;
+
+	switch (type)
+	{
+	default:
+		vertShaderModule = vc::Get().device.createShaderModule({ .codeSize = sizeof(defaultVertShaderCode), .pCode = defaultVertShaderCode });
+		fragShaderModule = vc::Get().device.createShaderModule({ .codeSize = sizeof(defaultFragShaderCode), .pCode = defaultFragShaderCode });
+		break;
+	case Type::eText:
+		vertShaderModule = vc::Get().device.createShaderModule({ .codeSize = sizeof(textVertShaderCode), .pCode = textVertShaderCode });
+		fragShaderModule = vc::Get().device.createShaderModule({ .codeSize = sizeof(textFragShaderCode), .pCode = textFragShaderCode });
+		break;
+	}
 
 	const vk::PipelineShaderStageCreateInfo shaderStages[]
 	{

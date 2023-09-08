@@ -9,8 +9,7 @@ s_ftInitializer;
 class Text
 {
 public:
-
-	FT_Face load(std::string_view filepath)
+	FT_Face load(std::string_view filepath, uint32_t textureResolution)
 	{
 		FT_Face face;
 		if (FT_New_Face(s_ft, filepath.data(), 0, &face))
@@ -18,7 +17,7 @@ public:
 			printf("Failed to load %s\n", filepath.data());
 		}
 
-		FT_Set_Pixel_Sizes(face, 0, 96);
+		FT_Set_Pixel_Sizes(face, 0, textureResolution);
 
 		return face;
 	}

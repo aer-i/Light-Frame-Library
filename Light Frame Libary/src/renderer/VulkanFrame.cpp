@@ -18,10 +18,12 @@ void VulkanFrame::create()
 
 void VulkanFrame::teardown()
 {
-	if (indexBuffer)	indexBuffer.free();
-	if (vertexBuffer)	vertexBuffer.free();
-	if (fence)			vc::Get().device.destroy(fence);
-	if (renderFinished) vc::Get().device.destroy(renderFinished);
-	if (imageAvailable) vc::Get().device.destroy(imageAvailable);
-	if (commandPool)	vc::Get().device.destroy(commandPool);
+	if (textVertexBuffer)	textVertexBuffer.free();
+	if (textIndexBuffer)	textIndexBuffer.free();
+	if (indexBuffer)		indexBuffer.free();
+	if (vertexBuffer)		vertexBuffer.free();
+	if (fence)				vc::Get().device.destroy(fence);
+	if (renderFinished)		vc::Get().device.destroy(renderFinished);
+	if (imageAvailable)		vc::Get().device.destroy(imageAvailable);
+	if (commandPool)		vc::Get().device.destroy(commandPool);
 }

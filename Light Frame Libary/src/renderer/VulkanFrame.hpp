@@ -13,5 +13,7 @@ struct VulkanFrame
 	vk::Fence fence;
 	VulkanBuffer vertexBuffer;
 	VulkanBuffer indexBuffer;
+	VulkanBuffer textVertexBuffer;
+	VulkanBuffer textIndexBuffer;
 };
 

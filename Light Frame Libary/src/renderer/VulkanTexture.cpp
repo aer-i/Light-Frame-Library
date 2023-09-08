@@ -125,11 +125,11 @@ VulkanTexture::VulkanTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t w
 	m_imageView = vc::CreateImageView(image, vk::ImageViewType::e2D, vk::Format::eR8Srgb, vk::ImageAspectFlagBits::eColor);
 
 	m_sampler = vc::Get().device.createSampler({
-		.magFilter = vk::Filter::eNearest,
-		.minFilter = vk::Filter::eNearest,
-		.addressModeU = vk::SamplerAddressMode::eClampToEdge,
-		.addressModeV = vk::SamplerAddressMode::eClampToEdge,
-		.addressModeW = vk::SamplerAddressMode::eClampToEdge,
+		.magFilter = vk::Filter::eLinear,
+		.minFilter = vk::Filter::eLinear,
+		.addressModeU = vk::SamplerAddressMode::eClampToBorder,
+		.addressModeV = vk::SamplerAddressMode::eClampToBorder,
+		.addressModeW = vk::SamplerAddressMode::eClampToBorder,
 		.compareEnable = false,
 		.compareOp = vk::CompareOp::eNever,
 		.borderColor = vk::BorderColor::eIntOpaqueBlack,

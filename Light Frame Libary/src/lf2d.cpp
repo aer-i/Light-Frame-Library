@@ -9,6 +9,7 @@ static lfWindow s_window;
 static lfRenderer s_renderer;
 static Mesh s_mesh;
 static Text s_text;
+static lf2d::Camera* s_cameraPtr;
 static bool s_shouldClose = false;
 
 namespace lf2d
@@ -31,26 +32,24 @@ namespace lf2d
 		: m_index{ other.m_index }
 	{}
 
-	Font::Font(std::string_view filepath)
+	Font::Font(std::string_view filepath, uint32_t textureResolution)
 	{
-		auto face = s_text.load(filepath);
+		auto face = s_text.load(filepath, textureResolution);
 
-		for (unsigned char c = 32; c < 127; c++)
+		for (uint8_t c = 32; c < 128; c++)
 		{
-			// load character glyph 
 			if (FT_Load_Char(face, c, FT_LOAD_RENDER))
 			{
-				printf("Failed to load glyph\n\n");
 				continue;
 			}
 
-			Texture texture(face->glyph->bitmap.buffer, face->glyph->bitmap.width * face->glyph->bitmap.rows * 4, face->glyph->bitmap.width, face->glyph->bitmap.rows);
+			Texture texture(face->glyph->bitmap.buffer, face->glyph->bitmap.width * face->glyph->bitmap.rows, face->glyph->bitmap.width, face->glyph->bitmap.rows);
 
 			Character character = {
 				texture,
 				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-				face->glyph->advance.x
+				static_cast<uint32_t>(face->glyph->advance.x)
 			};
 
 			m_characters.insert(std::pair<char, Character>(c, character));
@@ -209,6 +208,8 @@ namespace lf2d
 			return;
 		}
 
+		s_cameraPtr = &camera;
+
 		s_window.pollEvents();
 		s_shouldClose = s_window.shouldClose();
 		s_renderer.beginFrame(&camera);
@@ -271,18 +272,42 @@ namespace lf2d
 
 	void renderer::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
 	{
+		position = (position - window::size() / 2.f) + s_cameraPtr->position - s_cameraPtr->offset;
+
 		std::string_view::const_iterator c;
 		for (c = text.begin(); c != text.end(); c++)
 		{
 			auto& ch = font.m_characters.at(*c);
 
-			float xpos = position.x + ch.bearing.x * scale;
-			float ypos = position.y - (ch.size.y - ch.bearing.y) * scale;
+			s_mesh.addText(
+				//{ position.x + ch.bearing.x * scale, position.y - (ch.bearing.y) * scale, ch.size.x * scale, ch.size.y * scale },
+				{ (position.x + ch.bearing.x * scale) / s_cameraPtr->zoom, (position.y - (ch.bearing.y) * scale) / s_cameraPtr->zoom, ch.size.x * scale / s_cameraPtr->zoom, ch.size.y * scale / s_cameraPtr->zoom},
+				ch.texture.getIndex(),
+				color,
+				color,
+				color,
+				color
+			);
 
-			float w = ch.size.x * scale;
-			float h = ch.size.y * scale;
+			position.x += (ch.advance >> 6) * scale;
+		}
+	}
 
-			rect({ xpos, ypos, w, h }, ch.texture);
+	void renderer::worldText(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
+	{
+		std::string_view::const_iterator c;
+		for (c = text.begin(); c != text.end(); c++)
+		{
+			auto& ch = font.m_characters.at(*c);
+
+			s_mesh.addText(
+				{ position.x + ch.bearing.x * scale, position.y - (ch.bearing.y) * scale, ch.size.x * scale, ch.size.y * scale },
+				ch.texture.getIndex(),
+				color,
+				color,
+				color,
+				color
+			);
 
 			position.x += (ch.advance >> 6) * scale;
 		}

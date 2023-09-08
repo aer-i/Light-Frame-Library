@@ -5,6 +5,7 @@
 #include "VulkanTexturePool.hpp"
 #include "VulkanFrame.hpp"
 #include "Mesh.hpp"
+#include "Text.hpp"
 
 class lfRenderer
 {
@@ -28,6 +29,7 @@ private:
 	VulkanSwapchain m_swapchain;
 	PipelineLayout m_defaultPipelineLayout;
 	Pipeline m_defaultPipeline;
+	Pipeline m_textPipeline;
 	VulkanTexturePool m_texturePool;
 	uint32_t m_imageIndex = 0;
 	uint32_t m_currentFrame = 0;

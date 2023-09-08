@@ -221,6 +221,8 @@
     <ClCompile Include="src\renderer\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\text.shader.frag" />
+    <None Include="shaders\text.shader.vert" />
     <None Include="src\renderer\shaders.u32" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
