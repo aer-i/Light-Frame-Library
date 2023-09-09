@@ -17,6 +17,8 @@ public:
 	static inline double GetCursorPosY() { return s_mouseY; }
 	static inline double GetMouseWheelOffset() { return s_scrollOffsetY; }
 
+	static inline uint32_t GetFPS() { return s_fpsCount; }
+
 	static void Update();
 
 private:
@@ -38,6 +40,8 @@ private:
 
 	static double s_mouseX, s_mouseY;
 	static double s_scrollOffsetY;
+
+	static uint32_t s_fpsCount;
 
 private:
 	static void framebufferResizeCallback(GLFWwindow* window, int width, int height);

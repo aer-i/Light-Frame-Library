@@ -7,7 +7,7 @@ struct Vertex
 	Vertex() = default;
 	Vertex(glm::vec2 position, glm::vec4 color, glm::vec2 uv, int32_t textureIndex);
 	Vertex(const Vertex& other);
-	Vertex(Vertex&& other);
+	Vertex(Vertex&& other) noexcept;
 	Vertex& operator=(const Vertex&) = default;
 	Vertex& operator=(Vertex&&) = default;
 

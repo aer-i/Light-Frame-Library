@@ -11,7 +11,7 @@ Vertex::Vertex(const Vertex& other)
 {
 }
 
-Vertex::Vertex(Vertex&& other)
+Vertex::Vertex(Vertex&& other) noexcept
 	: position{ other.position }, color{ other.color }, uv{ other.uv }, textureIndex{ other.textureIndex }
 {
 }
@@ -118,6 +118,10 @@ void Mesh::addText(lf2d::Rect const& rect, int textureIndex, lf2d::Color color1,
 {
 	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
 
+	if (   rect.x + rect.z > (-(width  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		&& rect.x <			 ( (width  / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		&& rect.y + rect.w > (-(height / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
+		&& rect.y <			 ( (height / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
 	{
 		m_textVertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color1.normalized(), {0, 0}, textureIndex });
 		m_textVertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color2.normalized(), {1, 0}, textureIndex });

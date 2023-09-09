@@ -110,6 +110,7 @@ namespace lf2d
 	double getCursorPosY();
 
 	double getMouseWheelOffset();
+	uint32_t getFPS();
 
 	namespace window
 	{

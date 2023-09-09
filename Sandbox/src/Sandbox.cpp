@@ -92,8 +92,10 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 				lf2d::renderer::rectGradientV(cursorRect, {255, 0, 255, 25}, { 255, 0, 255, 25 });
 			}
 
-			lf2d::renderer::text(font, "Witam", {600, 400}, 1.f);
-			lf2d::renderer::worldText(font, "Witam", {600, 400}, 1.f);
+			char text[16];
+			sprintf_s(text, "FPS: %d", lf2d::getFPS());
+			lf2d::renderer::text(font, text, {100, 100}, 1.f, lf2d::Color::Red());
+			lf2d::renderer::worldText(font, "Text 123~!@#$%^&*()_+?", {-120, 250}, 1.f);
 		}
 		lf2d::renderer::end();
 	}

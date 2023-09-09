@@ -34,7 +34,7 @@ void VulkanSwapchain::createHandle(bool vsync)
 	{
 		m_swapchain = vc::Get().device.createSwapchainKHR({
 			.surface = vc::Get().surface,
-			.minImageCount = std::clamp(3u, capabilities.minImageCount, capabilities.maxImageCount),
+			.minImageCount = std::max(2u, capabilities.minImageCount),
 			.imageFormat = surfaceFormat.format,
 			.imageColorSpace = surfaceFormat.colorSpace,
 			.imageExtent = extent,

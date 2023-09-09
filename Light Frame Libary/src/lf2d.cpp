@@ -128,6 +128,11 @@ namespace lf2d
 		return InputController::GetMouseWheelOffset();
 	}
 
+	uint32_t getFPS()
+	{
+		return InputController::GetFPS();
+	}
+
 	void window::create(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers)
 	{
 		if (!s_window.isCreated())
@@ -272,7 +277,7 @@ namespace lf2d
 
 	void renderer::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
 	{
-		position = (position - window::size() / 2.f) + s_cameraPtr->position - s_cameraPtr->offset;
+		position = (position - window::size() / 2.f) / s_cameraPtr->zoom + s_cameraPtr->position - s_cameraPtr->offset;
 
 		std::string_view::const_iterator c;
 		for (c = text.begin(); c != text.end(); c++)
@@ -280,8 +285,7 @@ namespace lf2d
 			auto& ch = font.m_characters.at(*c);
 
 			s_mesh.addText(
-				//{ position.x + ch.bearing.x * scale, position.y - (ch.bearing.y) * scale, ch.size.x * scale, ch.size.y * scale },
-				{ (position.x + ch.bearing.x * scale) / s_cameraPtr->zoom, (position.y - (ch.bearing.y) * scale) / s_cameraPtr->zoom, ch.size.x * scale / s_cameraPtr->zoom, ch.size.y * scale / s_cameraPtr->zoom},
+				{ position.x + ch.bearing.x * scale / s_cameraPtr->zoom, position.y - (ch.bearing.y) * scale / s_cameraPtr->zoom, ch.size.x * scale / s_cameraPtr->zoom, ch.size.y * scale / s_cameraPtr->zoom },
 				ch.texture.getIndex(),
 				color,
 				color,
@@ -289,7 +293,7 @@ namespace lf2d
 				color
 			);
 
-			position.x += (ch.advance >> 6) * scale;
+			position.x += (ch.advance >> 6) * scale / s_cameraPtr->zoom;
 		}
 	}
 

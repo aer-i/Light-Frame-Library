@@ -3,7 +3,7 @@
 static FT_Library s_ft;
 
 static class FtInitializer
-{ public: FtInitializer() { if (FT_Init_FreeType(&s_ft)) { printf("Failed to init ft\n"); } } ~FtInitializer() { FT_Done_FreeType(s_ft); } }
+{ public: FtInitializer() { if (FT_Init_FreeType(&s_ft)) { printf("Failed to init ft\n"); } } }
 s_ftInitializer;
 
 class Text

@@ -13,6 +13,8 @@ bool InputController::s_buttonsReleased[GLFW_MOUSE_BUTTON_LAST] = { false };
 double InputController::s_mouseX = 0.0, InputController::s_mouseY = 0.0;
 double InputController::s_scrollOffsetY = 0.0;
 
+uint32_t InputController::s_fpsCount = 0;
+
 bool InputController::IsKeyPressed(int key)
 {
 	if (key < 0 || key >= GLFW_KEY_LAST)
@@ -75,6 +77,20 @@ void InputController::Update()
 	{
 		s_buttonsPressed[i] = false;
 		s_buttonsReleased[i] = false;
+	}
+
+	static double previousTime = glfwGetTime();
+	static uint32_t frameCount = 0;
+
+	double currentTime = glfwGetTime();
+	frameCount++;
+
+	if (currentTime - previousTime >= 1.0)
+	{
+		s_fpsCount = frameCount;
+
+		frameCount = 0;
+		previousTime = currentTime;
 	}
 }
 
