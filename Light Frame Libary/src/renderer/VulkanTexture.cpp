@@ -91,7 +91,7 @@ VulkanTexture::VulkanTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t w
 	VkImageCreateInfo imageCI = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = VK_FORMAT_R8_SRGB,
+		.format = VK_FORMAT_R8_UNORM,
 		.extent = VkExtent3D{m_width, m_height, 1},
 		.mipLevels = 1,
 		.arrayLayers = 1,
@@ -122,7 +122,7 @@ VulkanTexture::VulkanTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t w
 
 	stagingBuffer.free();
 
-	m_imageView = vc::CreateImageView(image, vk::ImageViewType::e2D, vk::Format::eR8Srgb, vk::ImageAspectFlagBits::eColor);
+	m_imageView = vc::CreateImageView(image, vk::ImageViewType::e2D, vk::Format::eR8Unorm, vk::ImageAspectFlagBits::eColor);
 
 	m_sampler = vc::Get().device.createSampler({
 		.magFilter = vk::Filter::eLinear,
