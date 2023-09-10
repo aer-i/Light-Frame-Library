@@ -15,6 +15,7 @@ public:
 		if (FT_New_Face(s_ft, filepath.data(), 0, &face))
 		{
 			printf("Failed to load %s\n", filepath.data());
+			std::terminate();
 		}
 
 		FT_Set_Pixel_Sizes(face, 0, textureResolution);

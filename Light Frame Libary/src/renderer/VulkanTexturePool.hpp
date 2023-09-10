@@ -14,7 +14,6 @@ public:
 	vk::DescriptorSetLayout descriptorSetLayout;
 	vk::DescriptorSet descriptorSet;
 	vk::DescriptorPool descriptorPool;
-	vk::PhysicalDeviceDescriptorIndexingProperties descriptorIndexingProperties;
 	std::vector<VulkanTexture> textures;
 };
 

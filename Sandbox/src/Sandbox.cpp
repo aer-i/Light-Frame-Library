@@ -10,7 +10,7 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	constexpr bool enableValidationLayers = true;
 #else
 	// Disable validation layers in release mode for better performance
-	constexpr bool enableValidationLayers = true;
+	constexpr bool enableValidationLayers = false;
 #endif
 
 
@@ -38,7 +38,11 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	lf2d::Texture texture3("textures/nx.png", true);
 
 	// Same with textures
-	lf2d::Font font("fonts/arial.ttf");
+	lf2d::Font fonts[] = {
+		lf2d::Font{"C:/Windows/Fonts/Arial.ttf"},
+		lf2d::Font{"C:/Windows/Fonts/Comic.ttf"}
+	};
+
 	// true is returned when window is closed
 	while (!lf2d::window::shouldClose()) // Main loop. Executing every frame
 	{
@@ -94,8 +98,8 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 
 			char text[16];
 			sprintf_s(text, "FPS: %d", lf2d::getFPS());
-			lf2d::renderer::text(font, text, {100, 100}, 1.f, lf2d::Color::Red());
-			lf2d::renderer::worldText(font, "Text 123~!@#$%^&*()_+?", {-120, 250}, 1.f);
+			lf2d::renderer::text(fonts[0], text, {100, 100}, 0.4f, lf2d::Color::Red());
+			lf2d::renderer::worldText(fonts[1], "Text 123~!@#$%^&*()_+?", {-120, 250}, 1.f);
 		}
 		lf2d::renderer::end();
 	}

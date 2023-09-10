@@ -32,7 +32,8 @@ public:
 	} uploadContext;
 
 	vk::PhysicalDeviceFeatures enabledDeviceFeatures;
-	vk::PhysicalDeviceProperties deviceProperties;
+	vk::PhysicalDeviceProperties2 deviceProperties;
+	vk::PhysicalDeviceDescriptorIndexingProperties descriptorIndexingProperties;
 
 private:
 	void create(bool);

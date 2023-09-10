@@ -2,21 +2,18 @@
 #include "VulkanTexturePool.hpp"
 #include "VulkanContext.hpp"
 
-static constexpr uint32_t NumDescriptorsStreaming = 500000;
+static constexpr uint32_t NumDescriptorsStreaming = 1000000;
 
 void VulkanTexturePool::create()
 {
-	vk::PhysicalDeviceProperties2 properties2;
-	properties2.pNext = &descriptorIndexingProperties;
-	vc::Get().gpu.getProperties2(&properties2);
-
 	vk::DescriptorPoolSize poolSize {
 		.type = vk::DescriptorType::eCombinedImageSampler,
 		.descriptorCount = NumDescriptorsStreaming
 	};
 
 	descriptorPool = vc::Get().device.createDescriptorPool({
-		.maxSets = 1,
+		.flags = vk::DescriptorPoolCreateFlagBits::eUpdateAfterBind,
+		.maxSets = 100,
 		.poolSizeCount = 1,
 		.pPoolSizes = &poolSize
 	});
@@ -24,19 +21,21 @@ void VulkanTexturePool::create()
 	vk::DescriptorSetLayoutBinding layoutBinding {
 		.binding = 0,
 		.descriptorType = vk::DescriptorType::eCombinedImageSampler,
-		.descriptorCount = NumDescriptorsStreaming,
+		.descriptorCount = vc::Get().descriptorIndexingProperties.maxDescriptorSetUpdateAfterBindSamplers,
 		.stageFlags = vk::ShaderStageFlagBits::eFragment
 	};
 
-	vk::DescriptorBindingFlags constexpr descriptorBindingFlags[]{ vk::DescriptorBindingFlagBits::eVariableDescriptorCount | vk::DescriptorBindingFlagBits::ePartiallyBound };
+	vk::DescriptorBindingFlags constexpr descriptorBindingFlags =
+		vk::DescriptorBindingFlagBits::eVariableDescriptorCount | vk::DescriptorBindingFlagBits::ePartiallyBound | vk::DescriptorBindingFlagBits::eUpdateAfterBind | vk::DescriptorBindingFlagBits::eUpdateUnusedWhilePending;
 
 	vk::DescriptorSetLayoutBindingFlagsCreateInfo const setLayoutBindingFlags {
 		.bindingCount = 1,
-		.pBindingFlags = descriptorBindingFlags
+		.pBindingFlags = &descriptorBindingFlags
 	};
 
 	descriptorSetLayout = vc::Get().device.createDescriptorSetLayout({
 		.pNext = &setLayoutBindingFlags,
+		.flags = vk::DescriptorSetLayoutCreateFlagBits::eUpdateAfterBindPool,
 		.bindingCount = 1,
 		.pBindings = &layoutBinding
 	});

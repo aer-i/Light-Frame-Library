@@ -27,9 +27,11 @@ namespace vi
 			gpus.insert(std::make_pair(score, gpu));
 		}
 
-		vc::Get().deviceProperties = gpus.rbegin()->second.getProperties();
-		printf("[info] Selected physical device: %s with a score of %d\n", vc::Get().deviceProperties.deviceName.data(), gpus.rbegin()->first);
-		printf("[info] Physical device type: %s\n", vk::to_string(vc::Get().deviceProperties.deviceType).c_str());
+		vc::Get().deviceProperties.pNext = &vc::Get().descriptorIndexingProperties;
+		gpus.rbegin()->second.getProperties2(&vc::Get().deviceProperties);
+
+		printf("[info] Selected physical device: %s with a score of %d\n", vc::Get().deviceProperties.properties.deviceName.data(), gpus.rbegin()->first);
+		printf("[info] Physical device type: %s\n", vk::to_string(vc::Get().deviceProperties.properties.deviceType).c_str());
 		return gpus.rbegin()->second;
 	}
 
@@ -99,16 +101,18 @@ namespace vi
 
 		vk::PhysicalDeviceFeatures enabledFeatures;
 		vk::PhysicalDeviceFeatures deviceFeatures = gpu.getFeatures();
-
-		enabledFeatures.multiDrawIndirect = deviceFeatures.multiDrawIndirect;
+		
+		enabledFeatures.shaderSampledImageArrayDynamicIndexing = true;
 
 		constexpr vk::PhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures {
 			.shaderDrawParameters = true
 		};
 
-		vk::PhysicalDeviceVulkan12Features const vulkan12features {
+		vk::PhysicalDeviceVulkan12Features const vulkan12features{
 			.pNext = (void*)&shaderDrawFeatures,
 			.shaderSampledImageArrayNonUniformIndexing = true,
+			.descriptorBindingSampledImageUpdateAfterBind = true,
+			.descriptorBindingUpdateUnusedWhilePending = true,
 			.descriptorBindingPartiallyBound = true,
 			.descriptorBindingVariableDescriptorCount = true,
 			.runtimeDescriptorArray = true,
