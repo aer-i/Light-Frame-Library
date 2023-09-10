@@ -2,18 +2,16 @@
 #include "VulkanTexturePool.hpp"
 #include "VulkanContext.hpp"
 
-static constexpr uint32_t NumDescriptorsStreaming = 1000000;
-
 void VulkanTexturePool::create()
 {
 	vk::DescriptorPoolSize poolSize {
 		.type = vk::DescriptorType::eCombinedImageSampler,
-		.descriptorCount = NumDescriptorsStreaming
+		.descriptorCount = vc::Get().deviceProperties.properties.limits.maxSamplerAllocationCount
 	};
 
 	descriptorPool = vc::Get().device.createDescriptorPool({
 		.flags = vk::DescriptorPoolCreateFlagBits::eUpdateAfterBind,
-		.maxSets = 100,
+		.maxSets = 1,
 		.poolSizeCount = 1,
 		.pPoolSizes = &poolSize
 	});
@@ -21,7 +19,7 @@ void VulkanTexturePool::create()
 	vk::DescriptorSetLayoutBinding layoutBinding {
 		.binding = 0,
 		.descriptorType = vk::DescriptorType::eCombinedImageSampler,
-		.descriptorCount = vc::Get().descriptorIndexingProperties.maxDescriptorSetUpdateAfterBindSamplers,
+		.descriptorCount = vc::Get().deviceProperties.properties.limits.maxSamplerAllocationCount,
 		.stageFlags = vk::ShaderStageFlagBits::eFragment
 	};
 
@@ -40,7 +38,7 @@ void VulkanTexturePool::create()
 		.pBindings = &layoutBinding
 	});
 
-	uint32_t variableDescCounts[] = { NumDescriptorsStreaming };
+	uint32_t variableDescCounts[] = { vc::Get().deviceProperties.properties.limits.maxSamplerAllocationCount };
 
 	vk::DescriptorSetVariableDescriptorCountAllocateInfo variableDescriptorCountAllocInfo {
 		.descriptorSetCount = 1,
