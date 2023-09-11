@@ -134,14 +134,14 @@ namespace lf2d
 		void begin(Camera& camera) noexcept;
 		void end() noexcept;
 	
-		void rect(const Rect& rect, Color color);
-		void rect(const Rect& rect, const Texture& texture, Color color = Color::White());
-		void rectGradientV(const Rect& rect, Color color1, Color color2);
-		void rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2);
-		void rectGradientH(const Rect& rect, Color color1, Color color2);
-		void rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2);
-		void rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4);
-		void rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4);
+		void rect(const Rect& rect, Color color, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rect(const Rect& rect, const Texture& texture, Color color = Color::White(), glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradientH(const Rect& rect, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin = {}, float rotation = 0.f);
 
 		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());
 		void worldText(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());

@@ -235,44 +235,44 @@ namespace lf2d
 			s_renderer.waitIdle();
 	}
 
-	void renderer::rect(const Rect& rect, Color color)
+	void renderer::rect(const Rect& rect, Color color, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, color, color, color, color);
+		s_mesh.addRect(rect, 0, rotation, color, color, color, color);
 	}
 
-	void renderer::rect(const Rect& rect, const Texture& texture, Color color)
+	void renderer::rect(const Rect& rect, const Texture& texture, Color color, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), color, color, color, color);
+		s_mesh.addRect(rect, texture.getIndex(), rotation, color, color, color, color);
 	}
 	
-	void renderer::rectGradientV(const Rect& rect, Color color1, Color color2)
+	void renderer::rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, color1, color1, color2, color2);
+		s_mesh.addRect(rect, 0, rotation, color1, color1, color2, color2);
 	}
 
-	void renderer::rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2)
+	void renderer::rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), color1, color1, color2, color2);
+		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color1, color2, color2);
 	}
 
-	void renderer::rectGradientH(const Rect& rect, Color color1, Color color2)
+	void renderer::rectGradientH(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, color1, color2, color1, color2);
+		s_mesh.addRect(rect, 0, rotation, color1, color2, color1, color2);
 	}
 
-	void renderer::rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2)
+	void renderer::rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), color1, color2, color1, color2);
+		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color2, color1, color2);
 	}
 
-	void renderer::rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4)
+	void renderer::rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, color1, color4, color2, color3);
+		s_mesh.addRect(rect, 0, rotation, color1, color4, color2, color3);
 	}
 
-	void renderer::rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4)
+	void renderer::rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), color1, color4, color2, color3);
+		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color4, color2, color3);
 	}
 
 	void renderer::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
