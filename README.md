@@ -11,11 +11,11 @@ features:
 - rendering quads (even with textures) :)
 - rendering text
 - 2d camera
-- quad frustum culling
 - keyboard & mouse input handling
 
 TODO:
 - FIX DESCRIPTOR INDEXING
+- add rotations
 - improve camera
 - add ImGui support
 - add multithreaded command buffers generation (maybe)
