@@ -39,8 +39,10 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 
 	// Same with textures
 	lf2d::Font fonts[] = {
+#ifdef _WIN32
 		lf2d::Font{"C:/Windows/Fonts/Arial.ttf"},
 		lf2d::Font{"C:/Windows/Fonts/Comic.ttf"}
+#endif
 	};
 
 	// true is returned when window is closed
