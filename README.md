@@ -6,5 +6,4 @@ TODO:
 - FIX DESCRIPTOR INDEXING
 - add rotations
 - improve camera
-- add ImGui support
 - add multithreaded command buffers generation (maybe)
