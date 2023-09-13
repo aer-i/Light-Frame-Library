@@ -1,17 +1,6 @@
 ⚠️Unusable, Unfinished⚠️
 
-Don't use that, it's terrible.
-
-Simple C++ 20 library for window creation, input handling, 2d rendering via Vulkan 1.3.
-
-Working only on Visual Studio for now.
-Maybe I will add CMake support in future.🧢
-
-features:
-- rendering quads (even with textures) :)
-- rendering text
-- 2d camera
-- keyboard & mouse input handling
+Working only on Visual Studio 2022 for now.
 
 TODO:
 - FIX DESCRIPTOR INDEXING
@@ -19,4 +8,3 @@ TODO:
 - improve camera
 - add ImGui support
 - add multithreaded command buffers generation (maybe)
-- everything to be honest
