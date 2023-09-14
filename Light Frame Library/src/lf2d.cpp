@@ -1,15 +1,13 @@
 #include "pch.hpp"
 #include "lf2d.hpp"
-#include "window/Window.hpp"
 #include "renderer/VulkanRenderer.hpp"
-#include "engine/InputController.hpp"
 #include "renderer/Text.hpp"
 
-static lfWindow s_window;
 static lfRenderer s_renderer;
 static Mesh s_mesh;
 static Text s_text;
 static lf2d::Camera* s_cameraPtr;
+static int s_width, s_height;
 static bool s_shouldClose = false;
 
 namespace lf2d
@@ -58,224 +56,75 @@ namespace lf2d
 		FT_Done_Face(face);
 	}
 
-	float getDeltaTime()
+#ifdef _WIN32
+	Renderer::Renderer(HWND window, bool enableValidationLayers)
+#endif
 	{
-		return s_renderer.getDeltaTime();
+		s_renderer.create(window, enableValidationLayers);
 	}
 
-	double getTime()
+	void Renderer::begin(Camera& camera) noexcept
 	{
-		return glfwGetTime();
-	}
-
-	bool isKeyPressed(int key)
-	{
-		return InputController::IsKeyPressed(key);
-	}
-
-	bool isKeyDown(int key)
-	{
-		return InputController::IsKeyDown(key);
-	}
-
-	bool isKeyReleased(int key)
-	{
-		return InputController::IsKeyReleased(key);
-	}
-
-	bool isKeyUp(int key)
-	{
-		return !InputController::IsKeyDown(key);
-	}
-
-	bool isButtonPressed(int button)
-	{
-		return InputController::IsButtonPressed(button);
-	}
-
-	bool isButtonDown(int button)
-	{
-		return InputController::IsButtonDown(button);
-	}
-
-	bool isButtonReleased(int button)
-	{
-		return InputController::IsButtonReleased(button);
-	}
-
-	bool isButtonUp(int button)
-	{
-		return !InputController::IsButtonDown(button);
-	}
-
-	glm::vec2 getCursorPos()
-	{
-		return { InputController::GetCursorPosX(), InputController::GetCursorPosY() };
-	}
-
-	double getCursorPosX()
-	{
-		return InputController::GetCursorPosX();
-	}
-
-	double getCursorPosY()
-	{
-		return InputController::GetCursorPosY();
-	}
-
-	double getMouseWheelOffset()
-	{
-		return InputController::GetMouseWheelOffset();
-	}
-
-	uint32_t getFPS()
-	{
-		return InputController::GetFPS();
-	}
-
-	void window::create(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers)
-	{
-		if (!s_window.isCreated())
-		{
-			s_window.create(width, height, title, resizable);
-			s_renderer.create(enableValidationLayers);
-		}
-	}
-
-	void window::waitEvents()
-	{
-		s_window.waitEvents();
-	}
-
-	bool window::shouldClose() noexcept
-	{
-		return s_shouldClose;
-	}
-
-	void window::close()
-	{
-		s_window.close();
-	}
-
-	std::string const& window::getTitle()
-	{
-		return lfWindow::GetTitle();
-	}
-
-	void window::setTitle(std::string_view title)
-	{
-		if (s_window.isCreated())
-			lfWindow::SetTitle(title);
-		else
-			printf("[error] You can't set window title when it's not created\n");
-	}
-
-	glm::vec2 window::size()
-	{
-		return { lfWindow::GetWidth(), lfWindow::GetHeight() };
-	}
-
-	int window::width()
-	{
-		return lfWindow::GetWidth();
-	}
-
-	int window::height()
-	{
-		return lfWindow::GetHeight();
-	}
-
-	const char* window::getMonitorName()
-	{
-		return lfWindow::GetMonitorName();
-	}
-
-	glm::vec4 window::getMonitorWorkarea()
-	{
-		return lfWindow::GetMonitorWorkarea();
-	}
-
-	glm::vec2 window::getMonitorPhysicalSize()
-	{
-		return lfWindow::GetMonitorPhysicalSize();
-	}
-
-	glm::vec2 window::getMonitorPos()
-	{
-		return lfWindow::GetMonitorPos();
-	}
-
-	void renderer::begin(Camera& camera) noexcept
-	{
-		if (!s_window.isCreated())
-		{
-			printf("[error] You can't call 'beginRendering' function when window is not created\n");
-			return;
-		}
-
 		s_cameraPtr = &camera;
-
-		s_window.pollEvents();
-		s_shouldClose = s_window.shouldClose();
 		s_renderer.beginFrame(&camera);
 		s_mesh.setCamera(&camera);
 	}
 
-	void renderer::end() noexcept
+	void Renderer::end() noexcept
 	{
-		if (!s_window.isCreated())
-		{
-			printf("[error] You can't call 'endRendering' function when window is not created\n");
-			return;
-		}
-
 		s_renderer.endFrame(s_mesh);
 
 		if (s_shouldClose)
 			s_renderer.waitIdle();
 	}
 
-	void renderer::rect(const Rect& rect, Color color, glm::vec2 const origin, float rotation)
+	void Renderer::updateViewport(int width, int height)
+	{
+		s_width = width;
+		s_height = height;
+	}
+
+	void Renderer::rect(const Rect& rect, Color color, glm::vec2 const origin, float rotation)
 	{
 		s_mesh.addRect(rect, 0, rotation, color, color, color, color);
 	}
 
-	void renderer::rect(const Rect& rect, const Texture& texture, Color color, glm::vec2 const origin, float rotation)
+	void Renderer::rect(const Rect& rect, const Texture& texture, Color color, glm::vec2 const origin, float rotation)
 	{
 		s_mesh.addRect(rect, texture.getIndex(), rotation, color, color, color, color);
 	}
 	
-	void renderer::rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
+	void Renderer::rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
 		s_mesh.addRect(rect, 0, rotation, color1, color1, color2, color2);
 	}
 
-	void renderer::rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
+	void Renderer::rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
 		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color1, color2, color2);
 	}
 
-	void renderer::rectGradientH(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
+	void Renderer::rectGradientH(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
 		s_mesh.addRect(rect, 0, rotation, color1, color2, color1, color2);
 	}
 
-	void renderer::rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
+	void Renderer::rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
 		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color2, color1, color2);
 	}
 
-	void renderer::rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
+	void Renderer::rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
 		s_mesh.addRect(rect, 0, rotation, color1, color4, color2, color3);
 	}
 
-	void renderer::rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
+	void Renderer::rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
 		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color4, color2, color3);
 	}
 
-	void renderer::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
+	void Renderer::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
 	{
 		position = (position - window::size() / 2.f) / s_cameraPtr->zoom + s_cameraPtr->position - s_cameraPtr->offset;
 
@@ -297,7 +146,7 @@ namespace lf2d
 		}
 	}
 
-	void renderer::worldText(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
+	void Renderer::worldText(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
 	{
 		std::string_view::const_iterator c;
 		for (c = text.begin(); c != text.end(); c++)
@@ -317,13 +166,28 @@ namespace lf2d
 		}
 	}
 
-	void renderer::clearColor(Color color)
+	void Renderer::clearColor(Color color)
 	{
 		s_renderer.clearColor(color);
 	}
 
-	void renderer::setVsync(bool enabled)
+	void Renderer::setVsync(bool enabled)
 	{
 		s_renderer.setVsync(enabled);
 	}
+}
+
+int lf2d::window::width()
+{
+	return s_width;
+}
+
+int lf2d::window::height()
+{
+	return s_height;
+}
+
+glm::vec2 lf2d::window::size()
+{
+	return { s_width, s_height };
 }

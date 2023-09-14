@@ -11,7 +11,10 @@ public:
 	static const void CopyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
 
 	static VulkanContext& Get() { static VulkanContext vc; return vc; }
-	static void Create(bool enableVL) { Get().create(enableVL); }
+#ifdef _WIN32
+	static void Create(HWND window,bool enableVL) { Get().create(window, enableVL); }
+#endif
+
 	static void Teardown() { Get().teardown(); }
 
 	vk::Instance instance;
@@ -36,7 +39,9 @@ public:
 	vk::PhysicalDeviceDescriptorIndexingProperties descriptorIndexingProperties;
 
 private:
-	void create(bool);
+#ifdef _WIN32
+	void create(HWND, bool);
+#endif
 	void teardown();
 };
 

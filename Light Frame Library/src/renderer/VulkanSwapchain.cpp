@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanContext.hpp"
-#include "window/Window.hpp"
+#include "lf2d.hpp"
 
 void VulkanSwapchain::create(bool vsync)
 {
@@ -139,7 +139,7 @@ vk::Extent2D VulkanSwapchain::setExtent(const vk::SurfaceCapabilitiesKHR& capabi
 		return capabilities.currentExtent;
 	}
 
-	vk::Extent2D tempExtent {.width = (uint32_t)lfWindow::GetWidth(), .height = (uint32_t)lfWindow::GetHeight()};
+	vk::Extent2D tempExtent {.width = (uint32_t)lf2d::window::width(), .height = (uint32_t)lf2d::window::height()};
 
 	tempExtent.width = std::clamp(tempExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 	tempExtent.height = std::clamp(tempExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);

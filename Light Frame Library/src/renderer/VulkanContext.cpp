@@ -1,6 +1,5 @@
 #include "pch.hpp"
 #include "VulkanContext.hpp"
-#include "window/Window.hpp"
 #include "vk/Instance.hpp"
 #include "vk/Device.hpp"
 
@@ -9,11 +8,11 @@ VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 const vk::ImageView VulkanContext::CreateImageView(vk::Image image, vk::ImageViewType viewType, vk::Format format, vk::ImageAspectFlags aspectFlags)
 {
 	return Get().device.createImageView({
-			.image = image,
-			.viewType = viewType,
-			.format = format,
-			.components = { vk::ComponentSwizzle::eIdentity, vk::ComponentSwizzle::eIdentity, vk::ComponentSwizzle::eIdentity, vk::ComponentSwizzle::eIdentity },
-			.subresourceRange = { {aspectFlags}, 0, 1, 0, viewType == vk::ImageViewType::eCube ? 6u : 1u }
+		.image = image,
+		.viewType = viewType,
+		.format = format,
+		.components = { vk::ComponentSwizzle::eIdentity, vk::ComponentSwizzle::eIdentity, vk::ComponentSwizzle::eIdentity, vk::ComponentSwizzle::eIdentity },
+		.subresourceRange = { {aspectFlags}, 0, 1, 0, 1 }
 	});
 }
 
@@ -93,7 +92,9 @@ const void VulkanContext::CopyBufferToImage(vk::Buffer buffer, vk::Image image, 
 	});
 }
 
-void VulkanContext::create(bool enableVL)
+#ifdef _WIN32
+void VulkanContext::create(HWND window, bool enableVL)
+#endif
 {
 #pragma region Dispatcher
 	{
@@ -103,7 +104,7 @@ void VulkanContext::create(bool enableVL)
 
 #pragma region Instance
 	{
-		instance = vi::createInstance(lfWindow::GetTitle(), enableVL);
+		instance = vi::createInstance(enableVL);
 
 		vi::dispatcherLoadInstance(instance);
 	}
@@ -118,7 +119,18 @@ void VulkanContext::create(bool enableVL)
 
 #pragma region Window Surface
 	{
-		surface = lfWindow::CreateSurface(instance);
+#ifdef _WIN32
+		surface = instance.createWin32SurfaceKHR(vk::Win32SurfaceCreateInfoKHR{
+			.hinstance = GetModuleHandle(nullptr),
+			.hwnd = window
+			});
+
+#elif __linux__
+		surface = instance.createXcbSurfaceKHR(vk::XcbSurfaceCreateInfoKHR{
+			.connection = nullptr,
+			.window = nullptr
+			});
+#endif
 	}
 #pragma endregion
 
@@ -130,7 +142,7 @@ void VulkanContext::create(bool enableVL)
 
 #pragma region Queue Families
 	{
-		auto[graphics, present] = vi::selectQueueFamilies(gpu, surface);
+		auto [graphics, present] = vi::selectQueueFamilies(gpu, surface);
 		graphicsFamily = graphics;
 		presentFamily = present;
 	}
@@ -143,7 +155,7 @@ void VulkanContext::create(bool enableVL)
 		enabledDeviceFeatures = tempDeviceFeatures;
 
 		vi::dispatcherLoadDevice(device);
-		
+
 		graphicsQueue = device.getQueue2({ .queueFamilyIndex = graphicsFamily, .queueIndex = 0 });
 		presentQueue = device.getQueue2({ .queueFamilyIndex = presentFamily, .queueIndex = 0 });
 	}
@@ -151,8 +163,8 @@ void VulkanContext::create(bool enableVL)
 
 #pragma region Upload Context
 	{
-		uploadContext.cmdPool = device.createCommandPool({.queueFamilyIndex = graphicsFamily});
-		uploadContext.cmdBuffer = device.allocateCommandBuffers({ .commandPool = uploadContext.cmdPool, .level = {}, .commandBufferCount = 1}).front();
+		uploadContext.cmdPool = device.createCommandPool({ .queueFamilyIndex = graphicsFamily });
+		uploadContext.cmdBuffer = device.allocateCommandBuffers({ .commandPool = uploadContext.cmdPool, .level = {}, .commandBufferCount = 1 }).front();
 		uploadContext.fence = device.createFence({});
 	}
 #pragma endregion
@@ -161,7 +173,7 @@ void VulkanContext::create(bool enableVL)
 	{
 		vk::DynamicLoader dl;
 
-		VmaVulkanFunctions const functions {
+		VmaVulkanFunctions const functions{
 			.vkGetInstanceProcAddr = dl.getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr"),
 			.vkGetDeviceProcAddr = dl.getProcAddress<PFN_vkGetDeviceProcAddr>("vkGetDeviceProcAddr")
 		};

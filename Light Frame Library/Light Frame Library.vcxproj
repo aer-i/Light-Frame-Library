@@ -128,7 +128,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)vendor\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;freetype.lib</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -148,7 +148,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)vendor\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;freetype.lib;</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -172,11 +172,10 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)vendor\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;freetype.lib</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\engine\InputController.hpp" />
     <ClInclude Include="src\renderer\Mesh.hpp" />
     <ClInclude Include="src\renderer\vk\Device.hpp" />
     <ClInclude Include="src\renderer\VulkanRenderer.hpp" />
@@ -184,7 +183,6 @@
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="src\lf2d.hpp" />
     <ClInclude Include="src\renderer\VulkanTexture.hpp" />
-    <ClInclude Include="src\window\Window.hpp" />
     <ClInclude Include="src\renderer\VulkanContext.hpp" />
     <ClInclude Include="src\renderer\VulkanSwapchain.hpp" />
     <ClInclude Include="src\renderer\VulkanFrame.hpp" />
@@ -194,7 +192,6 @@
     <ClInclude Include="src\renderer\Text.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\engine\InputController.cpp" />
     <ClCompile Include="src\renderer\Mesh.cpp" />
     <ClCompile Include="src\renderer\vk\Device.cpp" />
     <ClCompile Include="src\renderer\VulkanRenderer.cpp" />
@@ -211,7 +208,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\renderer\VulkanTexture.cpp" />
-    <ClCompile Include="src\window\Window.cpp" />
     <ClCompile Include="src\renderer\VulkanContext.cpp" />
     <ClCompile Include="src\renderer\VulkanSwapchain.cpp" />
     <ClCompile Include="src\renderer\VulkanFrame.cpp" />

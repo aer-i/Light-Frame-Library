@@ -37,23 +37,24 @@ namespace vi
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(device);
 	}
 
-	inline vk::Instance createInstance(std::string const& appName, bool enableValidation)
+	inline vk::Instance createInstance(bool enableValidation)
 	{
-
-		uint32_t extensionCount;
-		const char** extensions = glfwGetRequiredInstanceExtensions(&extensionCount);
-		
-		std::vector<const char*> extensionNames(extensions, extensions + extensionCount);
 		std::vector<const char*> layerNames;
+		std::vector<const char*> extensionNames = {
+			//VK_KHR_SURFACE_EXTENSION_NAME,
+#ifdef _WIN32
+			//VK_KHR_WIN32_SURFACE_EXTENSION_NAME
+#endif
+		};
 
 		if (enableValidation)
 		{
 			extensionNames.emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 			layerNames.emplace_back("VK_LAYER_KHRONOS_validation");
 		}
-		
+
 		const vk::ApplicationInfo appInfo {
-			.pApplicationName = appName.c_str(),
+			.pApplicationName = "Light Frame App",
 			.applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0),
 			.pEngineName = "Light Frame",
 			.engineVersion = VK_MAKE_API_VERSION(0, 1, 0, 0),
@@ -74,7 +75,8 @@ namespace vi
 				.enabledLayerCount = static_cast<uint32_t>(layerNames.size()),
 				.ppEnabledLayerNames = layerNames.data(),
 				.enabledExtensionCount = static_cast<uint32_t>(extensionNames.size()),
-				.ppEnabledExtensionNames = extensionNames.data() });
+				.ppEnabledExtensionNames = extensionNames.data() 
+			});
 			
 		}
 		catch (const vk::SystemError& e)

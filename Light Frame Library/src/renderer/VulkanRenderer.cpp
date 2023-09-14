@@ -1,6 +1,5 @@
 #include "pch.hpp"
 #include "VulkanRenderer.hpp"
-#include "window/Window.hpp"
 #include "lf2d.hpp"
 
 struct CameraPushConstant
@@ -44,9 +43,11 @@ void lfRenderer::loadTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t w
 	m_texturePool.loadTexture(buffer, bufferSize, width, height);
 }
 
-void lfRenderer::create(bool enableVL)
+#ifdef _WIN32
+void lfRenderer::create(HWND window, bool enableVL)
+#endif
 {
-	vc::Create(enableVL);
+	vc::Create(window, enableVL);
 	m_swapchain.create(m_vsync);
 
 	m_frames.resize(m_swapchain.images.size());
@@ -72,15 +73,10 @@ static VulkanFrame* frame = nullptr;
 void lfRenderer::beginFrame(lf2d::Camera* camera)
 {
 	m_currentCamera = camera;
-	auto width = lfWindow::GetWidth();
-	auto height = lfWindow::GetHeight();
+	auto width = lf2d::window::width();
+	auto height = lf2d::window::height();
 
 	frame = &m_frames[m_currentFrame];
-
-	static double lastTime = glfwGetTime();
-
-	m_deltaTime = static_cast<float>(glfwGetTime() - lastTime);
-	lastTime = glfwGetTime();
 
 	if (vc::Get().device.getFenceStatus(frame->fence) != vk::Result::eSuccess)
 	{
@@ -215,16 +211,6 @@ void lfRenderer::endFrame(Mesh& mesh)
 
 void lfRenderer::recreateSwapchain()
 {
-	int w = lfWindow::GetWidth();
-	int h = lfWindow::GetHeight();
-
-	while (w == 0 || h == 0)
-	{
-		w = lfWindow::GetWidth();
-		h = lfWindow::GetHeight();
-		glfwWaitEvents();
-	}
-
 	vc::Get().device.waitIdle();
 	m_swapchain.recreate(m_vsync);
 }

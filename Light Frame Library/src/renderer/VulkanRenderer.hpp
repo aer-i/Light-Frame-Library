@@ -14,14 +14,15 @@ public:
 	~lfRenderer();
 
 	inline void waitIdle() { vc::Get().device.waitIdle(); }
-	inline float getDeltaTime() const { return m_deltaTime; }
 
 	void clearColor(lf2d::Color color);
 	void setVsync(bool enabled);
 	void loadTexture(std::string_view filepath, bool pixelated);
 	void loadTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t width, uint32_t height);
 
-	void create(bool);
+#ifdef _WIN32
+	void create(HWND, bool);
+#endif
 	void beginFrame(lf2d::Camera* camera);
 	void endFrame(Mesh& mesh);
 

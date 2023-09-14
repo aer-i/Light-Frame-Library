@@ -7,10 +7,14 @@
 #define VULKAN_HPP_NO_NODISCARD_WARNINGS
 #define VULKAN_HPP_HAS_SPACESHIP_OPERATOR
 #define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
-#define GLFW_INCLUDE_NONE
 
+#ifdef _WIN32
+#define VK_USE_PLATFORM_WIN32_KHR
+#elif __linux__
+#define VK_USE_PLATFORM_XCB_KHR
+#endif
 #include <vulkan/vulkan.hpp>
-#include <GLFW/glfw3.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <vma/vk_mem_alloc.h>

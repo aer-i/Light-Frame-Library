@@ -1,4 +1,9 @@
 #include <lf2d.hpp>
+#include <GLFW/glfw3.h>
+#ifdef _WIN32
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+#endif
 #include <glm/gtx/compatibility.hpp>
 #include <vector>
 
@@ -13,14 +18,18 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	constexpr bool enableValidationLayers = false;
 #endif
 
+	// Initialize GLFW
+	glfwInit();
+	// Creating GLFW window
+	GLFWwindow* window = glfwCreateWindow(1280, 720, "Light Frame sample", nullptr, nullptr);
 
-	// Initializing lf2d (GLFW, Vulkan, e.t.c)
-	lf2d::window::create(1280, 720, "Light Frame - Example App", true, enableValidationLayers);
+	// Initializing lf2d renderer
+	lf2d::Renderer renderer{ glfwGetWin32Window(window), enableValidationLayers };
 
 	// Enabling v-sync for lower power usage and no visible screen tearing
-	lf2d::renderer::setVsync(false);
+	renderer.setVsync(false);
 	// You can clear color just once or every frame (or don't (black is default color))
-	lf2d::renderer::clearColor(lf2d::Color::Blue());
+	renderer.clearColor(lf2d::Color::Blue());
 
 	// Main camera
 	lf2d::Camera camera;
@@ -46,39 +55,44 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	};
 
 	// true is returned when window is closed
-	while (!lf2d::window::shouldClose()) // Main loop. Executing every frame
+	while (!glfwWindowShouldClose(window)) // Main loop. Executing every frame
 	{
-		camera.zoom = std::max(0.25f, std::min(3.f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
+		glfwPollEvents();
+
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
+		renderer.updateViewport(width, height);
+
+		//camera.zoom = std::max(0.25f, std::min(3.f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
 		
-		if (lf2d::isKeyDown(lf2d::Key::D))
-			camera.position.x += 300.f * lf2d::getDeltaTime();
+		if (GetAsyncKeyState('D'))
+			camera.position.x += 300.f;// * lf2d::getDeltaTime();
 
-		if (lf2d::isKeyDown(lf2d::Key::A))
-			camera.position.x -= 300.f * lf2d::getDeltaTime();
+		if (GetAsyncKeyState('A'))
+			camera.position.x -= 300.f;// *lf2d::getDeltaTime();
 
-		if (lf2d::isKeyDown(lf2d::Key::W))
-			camera.position.y -= 300.f * lf2d::getDeltaTime();
+		if (GetAsyncKeyState('W'))
+			camera.position.y -= 300.f;// *lf2d::getDeltaTime();
 
-		if (lf2d::isKeyDown(lf2d::Key::S))
-			camera.position.y += 300.f * lf2d::getDeltaTime();
+		if (GetAsyncKeyState('S'))
+			camera.position.y += 300.f;// *lf2d::getDeltaTime();
 
-		lf2d::renderer::begin(camera);
+		renderer.begin(camera);
 		{
-			lf2d::renderer::rect(camera.getViewRect(), texture3);
+			renderer.rect(camera.getViewRect(), texture3);
 			
-			// Add quads to render queue
-			lf2d::renderer::rect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1);
+			renderer.rect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1);
 			
 			static constexpr lf2d::Rect rect = lf2d::Rect(-100, -100, 100, 100);
-			lf2d::renderer::rectGradientV(rect, lf2d::Color::Black(), lf2d::Color::White());
+			renderer.rectGradientV(rect, lf2d::Color::Black(), lf2d::Color::White());
 			
-			lf2d::renderer::rectGradient({ -100, 0, 100, 100 }, texture2, { 255, 0, 0, 255 }, { 255, 255, 255, 255 }, {0, 0, 255, 255}, {0, 255, 0, 255});
+			renderer.rectGradient({ -100, 0, 100, 100 }, texture2, { 255, 0, 0, 255 }, { 255, 255, 255, 255 }, {0, 0, 255, 255}, {0, 255, 0, 255});
 			
-			lf2d::renderer::rectGradientH(lf2d::Rect{ 0, -100, 100, 100 }, lf2d::Color::Gold(), lf2d::Color::Transparent());
+			renderer.rectGradientH(lf2d::Rect{ 0, -100, 100, 100 }, lf2d::Color::Gold(), lf2d::Color::Transparent());
 			
 			static std::vector<lf2d::Rect> cursorPosRects;
 			
-			if (lf2d::isButtonPressed(lf2d::Button::Left))
+			/*if (lf2d::isButtonPressed(lf2d::Button::Left))
 			{
 				static auto lastCursorPos = lf2d::getCursorPos();
 				auto cursorPos = camera.fromScreenToWorldPos(lf2d::getCursorPos());
@@ -91,19 +105,23 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 				}
 			
 				lastCursorPos = cursorPos;
-			}
+			}*/
 			
 			for (const auto& cursorRect : cursorPosRects)
 			{
-				lf2d::renderer::rectGradientV(cursorRect, {255, 0, 255, 25}, { 255, 0, 255, 25 });
+				renderer.rectGradientV(cursorRect, {255, 0, 255, 25}, { 255, 0, 255, 25 });
 			}
 
 			char text[16];
-			sprintf_s(text, "FPS: %d", lf2d::getFPS());
-			lf2d::renderer::text(fonts[0], text, {100, 100}, 0.4f, lf2d::Color::Red());
-			lf2d::renderer::worldText(fonts[1], "Text 123~!@#$%^&*()_+?", {-120, 250}, 1.f);
+			sprintf_s(text, "FPS:");
+			renderer.text(fonts[0], text, {100, 100}, 0.4f, lf2d::Color::Red());
+			renderer.worldText(fonts[1], "Text 123~!@#$%^&*()_+?", {-120, 250}, 1.f);
 		}
-		lf2d::renderer::end();
+		renderer.end();
 	}
 	// Exit main loop
+
+	// Terminate GLFW
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }
