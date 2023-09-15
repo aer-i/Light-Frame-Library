@@ -10,6 +10,7 @@ static lfRenderer s_renderer;
 static Mesh s_mesh;
 static Text s_text;
 static lf2d::Camera* s_cameraPtr;
+static float s_timeMultiplier = 1.f;
 static bool s_shouldClose = false;
 
 namespace lf2d
@@ -136,14 +137,19 @@ namespace lf2d
 		}
 	}
 
+	void setTimeMultiplier(float value)
+	{
+		s_timeMultiplier = value;
+	}
+
 	float getDeltaTime()
 	{
-		return s_renderer.getDeltaTime();
+		return s_renderer.getDeltaTime() * s_timeMultiplier;
 	}
 
 	double getTime()
 	{
-		return glfwGetTime();
+		return glfwGetTime() * s_timeMultiplier;
 	}
 
 	bool isKeyPressed(int key)

@@ -69,6 +69,16 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 		if (lf2d::isKeyDown(lf2d::Key::S))
 			camera.position.y += 300.f * lf2d::getDeltaTime();
 
+		if (lf2d::isKeyPressed(lf2d::Key::R))
+		{
+			lf2d::setTimeMultiplier(0.f);
+		}
+
+		if (lf2d::isKeyPressed(lf2d::Key::Q))
+		{
+			lf2d::setTimeMultiplier(2.f);
+		}
+
 		// Begin rendering, draw objects between renderer::begin() and renderer::end()
 		lf2d::renderer::begin(camera);
 		{

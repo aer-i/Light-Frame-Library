@@ -85,9 +85,9 @@ void InputController::Update()
 	double currentTime = glfwGetTime();
 	frameCount++;
 
-	if (currentTime - previousTime >= 1.0)
+	if (currentTime - previousTime >= 0.5)
 	{
-		s_fpsCount = frameCount;
+		s_fpsCount = frameCount / (currentTime - previousTime);
 
 		frameCount = 0;
 		previousTime = currentTime;

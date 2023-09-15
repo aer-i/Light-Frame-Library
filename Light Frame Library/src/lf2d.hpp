@@ -106,6 +106,7 @@ namespace lf2d
 		inline glm::vec2 fromScreenToWorldPos(glm::vec2 const& v);
 	};
 
+	void setTimeMultiplier(float value);
 	float getDeltaTime();
 	double getTime();
 
