@@ -70,6 +70,8 @@ namespace lf2d
 		Texture(const Texture& other);
 		inline int32_t getIndex() const { return m_index; }
 
+		void free();
+
 	private:
 		static int32_t s_currentTextureIndex;
 		const int32_t m_index;
@@ -79,6 +81,7 @@ namespace lf2d
 	{
 	public:
 		explicit Font(std::string_view filepath, uint32_t textureResolution = 48);
+		void free();
 
 	public:
 		struct Character {

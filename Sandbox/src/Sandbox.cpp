@@ -20,7 +20,7 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	// Enabling v-sync for lower power usage and no visible screen tearing
 	lf2d::renderer::setVsync(false);
 	// You can clear color just once or every frame (or don't (black is default color))
-	lf2d::renderer::clearColor(lf2d::Color::Blue());
+	lf2d::renderer::clearColor(lf2d::Color::White());
 
 	// Main camera
 	lf2d::Camera camera;
@@ -37,7 +37,7 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	lf2d::Texture texture2("textures/pexels.jpg", false);
 	lf2d::Texture texture3("textures/nx.png", true);
 
-	// Same with textures
+	// Same with fonts
 	lf2d::Font fonts[] = {
 #ifdef _WIN32
 		lf2d::Font{"C:/Windows/Fonts/Arial.ttf"},
@@ -45,11 +45,18 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 #endif
 	};
 
+
+	// You should free textures when you are not using them anymore
+	// They have destructors so don't worry about freeing them at the end
+	//texture1.free();
+	//fonts[0].free();
+
 	// true is returned when window is closed
 	while (!lf2d::window::shouldClose()) // Main loop. Executing every frame
 	{
 		camera.zoom = std::max(0.25f, std::min(3.f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
-		
+
+		// Camera movement
 		if (lf2d::isKeyDown(lf2d::Key::D))
 			camera.position.x += 300.f * lf2d::getDeltaTime();
 
@@ -62,11 +69,18 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 		if (lf2d::isKeyDown(lf2d::Key::S))
 			camera.position.y += 300.f * lf2d::getDeltaTime();
 
+		// Begin rendering, draw objects between renderer::begin() and renderer::end()
 		lf2d::renderer::begin(camera);
 		{
-			lf2d::renderer::rect(camera.getViewRect(), texture3);
+			lf2d::Rect const viewRect = {
+				camera.getViewRect().x + 15.f / camera.zoom,
+				camera.getViewRect().y + 15.f / camera.zoom,
+				camera.getViewRect().z - 30.f / camera.zoom,
+				camera.getViewRect().w - 30.f / camera.zoom
+			};
+
+			lf2d::renderer::rect(viewRect, texture3);
 			
-			// Add quads to render queue
 			lf2d::renderer::rect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1);
 			
 			static constexpr lf2d::Rect rect = lf2d::Rect(-100, -100, 100, 100);

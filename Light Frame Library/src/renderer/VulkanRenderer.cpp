@@ -44,6 +44,12 @@ void lfRenderer::loadTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t w
 	m_texturePool.loadTexture(buffer, bufferSize, width, height);
 }
 
+void lfRenderer::unloadTexture(int textureID)
+{
+	if (m_texturePool.textures[textureID].getImageInfo().imageView)
+		m_texturePool.textures[textureID].teardown();
+}
+
 void lfRenderer::create(bool enableVL)
 {
 	vc::Create(enableVL);

@@ -32,6 +32,11 @@ namespace lf2d
 		: m_index{ other.m_index }
 	{}
 
+	void Texture::free()
+	{
+		s_renderer.unloadTexture(m_index);
+	}
+
 	Font::Font(std::string_view filepath, uint32_t textureResolution)
 	{
 		auto face = s_text.load(filepath, textureResolution);
@@ -56,6 +61,14 @@ namespace lf2d
 		}
 
 		FT_Done_Face(face);
+	}
+
+	void Font::free()
+	{
+		for (const auto& c : m_characters)
+		{
+			s_renderer.unloadTexture(c.second.texture.getIndex());
+		}
 	}
 
 	float getDeltaTime()

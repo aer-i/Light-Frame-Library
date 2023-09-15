@@ -139,9 +139,9 @@ VulkanTexture::VulkanTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t w
 
 void VulkanTexture::teardown()
 {
-	if (m_sampler)		vc::Get().device.destroy(m_sampler);
-	if (m_imageView)	vc::Get().device.destroy(m_imageView);
-	if (m_image)		vmaDestroyImage(vc::Get().allocator, m_image, m_allocation);
+	if (m_sampler){		vc::Get().device.destroy(m_sampler);   m_sampler = nullptr; }
+	if (m_imageView){	vc::Get().device.destroy(m_imageView); m_imageView = nullptr;}
+	if (m_image){		vmaDestroyImage(vc::Get().allocator, m_image, m_allocation); m_image = nullptr;}
 }
 
 void VulkanTexture::createDefaultTexture()

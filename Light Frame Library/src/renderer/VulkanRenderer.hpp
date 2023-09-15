@@ -20,6 +20,7 @@ public:
 	void setVsync(bool enabled);
 	void loadTexture(std::string_view filepath, bool pixelated);
 	void loadTexture(void* buffer, vk::DeviceSize bufferSize, uint32_t width, uint32_t height);
+	void unloadTexture(int textureID);
 
 	void create(bool);
 	void beginFrame(lf2d::Camera* camera);
