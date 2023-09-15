@@ -73,22 +73,22 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 		lf2d::renderer::begin(camera);
 		{
 			lf2d::Rect const viewRect = {
-				camera.getViewRect().x + 15.f / camera.zoom,
-				camera.getViewRect().y + 15.f / camera.zoom,
-				camera.getViewRect().z - 30.f / camera.zoom,
-				camera.getViewRect().w - 30.f / camera.zoom
+				15,
+				15,
+				lf2d::window::width() - 30,
+				lf2d::window::height() -30
 			};
 
 			lf2d::renderer::rect(viewRect, texture3);
 			
-			lf2d::renderer::rect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1);
+			camera.rect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1);
 			
 			static constexpr lf2d::Rect rect = lf2d::Rect(-100, -100, 100, 100);
-			lf2d::renderer::rectGradientV(rect, lf2d::Color::Black(), lf2d::Color::White());
+			camera.rectGradientV(rect, lf2d::Color::Black(), lf2d::Color::White());
 			
-			lf2d::renderer::rectGradient({ -100, 0, 100, 100 }, texture2, { 255, 0, 0, 255 }, { 255, 255, 255, 255 }, {0, 0, 255, 255}, {0, 255, 0, 255});
+			camera.rectGradient({ -100, 0, 100, 100 }, texture2, { 255, 0, 0, 255 }, { 255, 255, 255, 255 }, {0, 0, 255, 255}, {0, 255, 0, 255});
 			
-			lf2d::renderer::rectGradientH(lf2d::Rect{ 0, -100, 100, 100 }, lf2d::Color::Gold(), lf2d::Color::Transparent());
+			camera.rectGradientH(lf2d::Rect{ 0, -100, 100, 100 }, lf2d::Color::Gold(), lf2d::Color::Transparent());
 			
 			static std::vector<lf2d::Rect> cursorPosRects;
 			
@@ -109,13 +109,13 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 			
 			for (const auto& cursorRect : cursorPosRects)
 			{
-				lf2d::renderer::rectGradientV(cursorRect, {255, 0, 255, 25}, { 255, 0, 255, 25 });
+				camera.rectGradientV(cursorRect, {255, 0, 255, 25}, { 255, 0, 255, 25 });
 			}
 
 			char text[16];
 			sprintf_s(text, "FPS: %d", lf2d::getFPS());
 			lf2d::renderer::text(fonts[0], text, {100, 100}, 0.4f, lf2d::Color::Red());
-			lf2d::renderer::worldText(fonts[1], "Text 123~!@#$%^&*()_+?", {-120, 250}, 1.f);
+			camera.text(fonts[1], "Text 123~!@#$%^&*()_+?", {-120, 250}, 1.f);
 		}
 		lf2d::renderer::end();
 	}

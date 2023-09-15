@@ -16,6 +16,71 @@ namespace lf2d
 {
 	int32_t Texture::s_currentTextureIndex = 0;
 
+	Camera::Camera()
+	{
+		s_cameraPtr = this;
+	}
+
+	void Camera::rect(const Rect& rect, Color color, glm::vec2 const origin, float rotation)
+	{
+		s_mesh.addRect(rect, 0, rotation, color, color, color, color);
+	}
+
+	void Camera::rect(const Rect& rect, const Texture& texture, Color color, glm::vec2 const origin, float rotation)
+	{
+		s_mesh.addRect(rect, texture.getIndex(), rotation, color, color, color, color);
+	}
+
+	void Camera::rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
+	{
+		s_mesh.addRect(rect, 0, rotation, color1, color1, color2, color2);
+	}
+
+	void Camera::rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
+	{
+		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color1, color2, color2);
+	}
+
+	void Camera::rectGradientH(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
+	{
+		s_mesh.addRect(rect, 0, rotation, color1, color2, color1, color2);
+	}
+
+	void Camera::rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
+	{
+		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color2, color1, color2);
+	}
+
+	void Camera::rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
+	{
+		s_mesh.addRect(rect, 0, rotation, color1, color4, color2, color3);
+	}
+
+	void Camera::rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
+	{
+		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color4, color2, color3);
+	}
+
+	void Camera::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
+	{
+		std::string_view::const_iterator c;
+		for (c = text.begin(); c != text.end(); c++)
+		{
+			auto& ch = font.m_characters.at(*c);
+
+			s_mesh.addText(
+				{ position.x + ch.bearing.x * scale, position.y - (ch.bearing.y) * scale, ch.size.x * scale, ch.size.y * scale },
+				ch.texture.getIndex(),
+				color,
+				color,
+				color,
+				color
+			);
+
+			position.x += (ch.advance >> 6) * scale;
+		}
+	}
+
 	Texture::Texture(std::string_view filepath, bool pixelated)
 		: m_index{ s_currentTextureIndex++ }
 	{
@@ -146,13 +211,17 @@ namespace lf2d
 		return InputController::GetFPS();
 	}
 
+	Camera& currentCamera()
+	{
+		return *s_cameraPtr;
+	}
+
 	void window::create(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers)
 	{
-		if (!s_window.isCreated())
-		{
-			s_window.create(width, height, title, resizable);
-			s_renderer.create(enableValidationLayers);
-		}
+		assert(!s_window.isCreated());
+
+		s_window.create(width, height, title, resizable);
+		s_renderer.create(enableValidationLayers);
 	}
 
 	void window::waitEvents()
@@ -220,12 +289,6 @@ namespace lf2d
 
 	void renderer::begin(Camera& camera) noexcept
 	{
-		if (!s_window.isCreated())
-		{
-			printf("[error] You can't call 'beginRendering' function when window is not created\n");
-			return;
-		}
-
 		s_cameraPtr = &camera;
 
 		s_window.pollEvents();
@@ -235,57 +298,56 @@ namespace lf2d
 	}
 
 	void renderer::end() noexcept
-	{
-		if (!s_window.isCreated())
-		{
-			printf("[error] You can't call 'endRendering' function when window is not created\n");
-			return;
-		}
-
+	{	
 		s_renderer.endFrame(s_mesh);
 
 		if (s_shouldClose)
 			s_renderer.waitIdle();
 	}
 
+	static lf2d::Rect toScreenRect(lf2d::Rect const& rect)
+	{
+		return{ s_cameraPtr->fromScreenToWorldPos({rect.x, rect.y}), rect.z / s_cameraPtr->zoom, rect.w / s_cameraPtr->zoom };
+	}
+
 	void renderer::rect(const Rect& rect, Color color, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, rotation, color, color, color, color);
+		s_mesh.addRect(toScreenRect(rect), 0, rotation, color, color, color, color);
 	}
 
 	void renderer::rect(const Rect& rect, const Texture& texture, Color color, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), rotation, color, color, color, color);
+		s_mesh.addRect(toScreenRect(rect), texture.getIndex(), rotation, color, color, color, color);
 	}
 	
 	void renderer::rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, rotation, color1, color1, color2, color2);
+		s_mesh.addRect(toScreenRect(rect), 0, rotation, color1, color1, color2, color2);
 	}
 
 	void renderer::rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color1, color2, color2);
+		s_mesh.addRect(toScreenRect(rect), texture.getIndex(), rotation, color1, color1, color2, color2);
 	}
 
 	void renderer::rectGradientH(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, rotation, color1, color2, color1, color2);
+		s_mesh.addRect(toScreenRect(rect), 0, rotation, color1, color2, color1, color2);
 	}
 
 	void renderer::rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color2, color1, color2);
+		s_mesh.addRect(toScreenRect(rect), texture.getIndex(), rotation, color1, color2, color1, color2);
 	}
 
 	void renderer::rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, rotation, color1, color4, color2, color3);
+		s_mesh.addRect(toScreenRect(rect), 0, rotation, color1, color4, color2, color3);
 	}
 
 	void renderer::rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color4, color2, color3);
+		s_mesh.addRect(toScreenRect(rect), texture.getIndex(), rotation, color1, color4, color2, color3);
 	}
 
 	void renderer::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
@@ -307,26 +369,6 @@ namespace lf2d
 			);
 
 			position.x += (ch.advance >> 6) * scale / s_cameraPtr->zoom;
-		}
-	}
-
-	void renderer::worldText(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
-	{
-		std::string_view::const_iterator c;
-		for (c = text.begin(); c != text.end(); c++)
-		{
-			auto& ch = font.m_characters.at(*c);
-
-			s_mesh.addText(
-				{ position.x + ch.bearing.x * scale, position.y - (ch.bearing.y) * scale, ch.size.x * scale, ch.size.y * scale },
-				ch.texture.getIndex(),
-				color,
-				color,
-				color,
-				color
-			);
-
-			position.x += (ch.advance >> 6) * scale;
 		}
 	}
 

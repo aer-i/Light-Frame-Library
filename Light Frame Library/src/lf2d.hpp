@@ -51,17 +51,6 @@ namespace lf2d
 		static consteval Color DarkBrown()	 { return Color{  76,  63,  47, 255 }; }
 	};
 
-	struct Camera
-	{
-		glm::vec2 position{}, offset{};
-		float zoom{1.f};
-
-		inline glm::vec2 getPosWithOffset() { return position + offset; }
-		inline glm::vec2 fromWorldToScreenPos(glm::vec2 const& v);
-		inline glm::vec2 fromScreenToWorldPos(glm::vec2 const& v);
-		inline lf2d::Rect getViewRect();
-	};
-
 	struct Texture
 	{
 	public:
@@ -95,6 +84,28 @@ namespace lf2d
 		std::map<char, Character> m_characters;
 	};
 
+	struct Camera
+	{
+		Camera();
+		~Camera() = default;
+		glm::vec2 position{}, offset{};
+		float zoom{1.f};
+
+		void rect(const Rect& rect, Color color, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rect(const Rect& rect, const Texture& texture, Color color = Color::White(), glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradientH(const Rect& rect, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin = {}, float rotation = 0.f);
+		void rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin = {}, float rotation = 0.f);
+		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());
+
+		inline glm::vec2 getPosWithOffset() { return position + offset; }
+		inline glm::vec2 fromWorldToScreenPos(glm::vec2 const& v);
+		inline glm::vec2 fromScreenToWorldPos(glm::vec2 const& v);
+	};
+
 	float getDeltaTime();
 	double getTime();
 
@@ -114,6 +125,8 @@ namespace lf2d
 
 	double getMouseWheelOffset();
 	uint32_t getFPS();
+
+	Camera& currentCamera();
 
 	namespace window
 	{
@@ -136,7 +149,7 @@ namespace lf2d
 	{
 		void begin(Camera& camera) noexcept;
 		void end() noexcept;
-	
+
 		void rect(const Rect& rect, Color color, glm::vec2 const origin = {}, float rotation = 0.f);
 		void rect(const Rect& rect, const Texture& texture, Color color = Color::White(), glm::vec2 const origin = {}, float rotation = 0.f);
 		void rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
@@ -147,7 +160,6 @@ namespace lf2d
 		void rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin = {}, float rotation = 0.f);
 
 		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());
-		void worldText(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());
 
 		void clearColor(Color color);
 		void setVsync(bool enabled);
@@ -296,9 +308,4 @@ inline glm::vec2 lf2d::Camera::fromWorldToScreenPos(glm::vec2 const& v)
 inline glm::vec2 lf2d::Camera::fromScreenToWorldPos(glm::vec2 const& v)
 {
 	return (v - window::size() / 2.f) / zoom + this->getPosWithOffset();
-}
-
-inline lf2d::Rect lf2d::Camera::getViewRect()
-{
-	return { fromScreenToWorldPos(glm::vec2{ 0.f }), lf2d::window::size() / zoom };
 }
