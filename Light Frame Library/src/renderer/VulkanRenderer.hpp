@@ -15,6 +15,7 @@ public:
 
 	inline void waitIdle() { vc::Get().device.waitIdle(); }
 	inline float getDeltaTime() const { return m_deltaTime; }
+	inline VulkanTexturePool& getTexturePool() { return m_texturePool; }
 
 	void clearColor(lf2d::Color color);
 	void setVsync(bool enabled);

@@ -29,7 +29,9 @@ public:
 
 	void teardown();
 
-	vk::DescriptorImageInfo getImageInfo() { return { m_sampler, m_imageView, vk::ImageLayout::eShaderReadOnlyOptimal }; }
+	inline uint32_t getWidth() const { return m_width; }
+	inline uint32_t getHeight() const { return m_height; }
+	inline vk::DescriptorImageInfo getImageInfo() const { return { m_sampler, m_imageView, vk::ImageLayout::eShaderReadOnlyOptimal }; }
 
 private:
 	void createDefaultTexture();

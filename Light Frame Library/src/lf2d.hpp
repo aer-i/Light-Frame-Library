@@ -59,6 +59,9 @@ namespace lf2d
 		Texture(const Texture& other);
 		inline int32_t getIndex() const { return m_index; }
 
+		int getWidth() const;
+		int getHeight() const;
+
 		void free();
 
 	private:

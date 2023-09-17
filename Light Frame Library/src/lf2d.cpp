@@ -98,6 +98,16 @@ namespace lf2d
 		: m_index{ other.m_index }
 	{}
 
+	int Texture::getWidth() const
+	{
+		return s_renderer.getTexturePool().textures[m_index].getWidth();
+	}
+
+	int Texture::getHeight() const
+	{
+		return s_renderer.getTexturePool().textures[m_index].getHeight();
+	}
+
 	void Texture::free()
 	{
 		s_renderer.unloadTexture(m_index);
