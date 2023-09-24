@@ -27,8 +27,8 @@ public:
 	void renderText(VulkanFrame* frame);
 	void setCamera(lf2d::Camera* camera);
 	
-	void addRect(lf2d::Rect const& rect, int textureIndex, float rotation, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4);
-	void addText(lf2d::Rect const& rect, int textureIndex, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4);
+	void addRect(lf2d::Rect const& rect, glm::vec2 const& origin, int textureIndex, float rotation, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4);
+	void addText(lf2d::Rect const& rect, glm::vec2 const& origin, int textureIndex, float rotation, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4);
 
 private:
 	lf2d::Camera* m_currentCamera;

@@ -87,30 +87,59 @@ void Mesh::setCamera(lf2d::Camera* camera)
 	m_currentCamera = camera;
 }
 
-static lf2d::Rect rotateRect()
+static glm::vec2 rotateAroundPoint(glm::vec2 p, glm::vec2 o, const float d)
 {
-	return lf2d::Rect{};
+	const float r = glm::radians(d);
+	const float s = sinf(r);
+	const float c = cosf(r);
+	p.x -= o.x;
+	p.y -= o.y;
+
+	const float newx = p.x * c - p.y * s;
+	const float newy = p.x * s + p.y * c;
+
+	p.x = newx + o.x;
+	p.y = newy + o.y;
+	return p;
 }
 
-void Mesh::addRect(lf2d::Rect const& rect, int textureIndex, float rotation, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4)
+void Mesh::addRect(lf2d::Rect const& rect, glm::vec2 const& origin, int textureIndex, float rotation, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4)
 {
-	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
+	auto s = lf2d::window::size();
 
-	if (   rect.x + rect.z > (-(width / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
-		&& rect.x <			 ((width / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
-		&& rect.y + rect.w >(-(height / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
-		&& rect.y < ((height / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
+	if (rotation != 0.f)
+	{
+		const glm::vec2 xy   = rotateAroundPoint({ rect.x,			rect.y },		   origin, rotation);
+		const glm::vec2 xyz  = rotateAroundPoint({ rect.x + rect.z, rect.y },		   origin, rotation);
+		const glm::vec2 xyw  = rotateAroundPoint({ rect.x,			rect.y + rect.w }, origin, rotation);
+		const glm::vec2 xyzw = rotateAroundPoint({ rect.x + rect.z, rect.y + rect.w }, origin, rotation);
+
+		m_vertices.push_back({ xy   / s, color1.normalized(), {0, 0}, textureIndex });
+		m_vertices.push_back({ xyz  / s, color2.normalized(), {1, 0}, textureIndex });
+		m_vertices.push_back({ xyzw / s, color4.normalized(), {1, 1}, textureIndex });
+		m_vertices.push_back({ xyw  / s, color3.normalized(), {0, 1}, textureIndex });
+
+		m_indices.emplace_back(m_renderedObjectCount * 4);
+		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
+		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
+
+		m_indices.emplace_back(m_renderedObjectCount * 4 + 2);
+		m_indices.emplace_back(m_renderedObjectCount * 4 + 3);
+		m_indices.emplace_back(m_renderedObjectCount * 4);
+
+		m_renderedObjectCount++;
+
+	}
+	else if (rect.x + rect.z > (-(s.x / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		  && rect.x <			((s.x / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		  && rect.y + rect.w > (-(s.y / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
+		  && rect.y <           ((s.y / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
 	{
 
-		//if (rotation != 0.f)
-		{
-			
-		}
-
-		m_vertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color1.normalized(), {0, 0}, textureIndex });
-		m_vertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color2.normalized(), {1, 0}, textureIndex });
-		m_vertices.push_back({ {(rect.x + rect.z) / width, (rect.y + rect.w) / height}, color4.normalized(), {1, 1}, textureIndex });
-		m_vertices.push_back({ { rect.x			  / width, (rect.w + rect.y) / height},	color3.normalized(), {0, 1}, textureIndex });
+		m_vertices.push_back({ { rect.x			  / s.x,  rect.y		   / s.y}, color1.normalized(), {0, 0}, textureIndex });
+		m_vertices.push_back({ {(rect.x + rect.z) / s.x,  rect.y		   / s.y}, color2.normalized(), {1, 0}, textureIndex });
+		m_vertices.push_back({ {(rect.x + rect.z) / s.x, (rect.y + rect.w) / s.y}, color4.normalized(), {1, 1}, textureIndex });
+		m_vertices.push_back({ { rect.x			  / s.x, (rect.w + rect.y) / s.y}, color3.normalized(), {0, 1}, textureIndex });
 
 		m_indices.emplace_back(m_renderedObjectCount * 4	);
 		m_indices.emplace_back(m_renderedObjectCount * 4 + 1);
@@ -125,19 +154,41 @@ void Mesh::addRect(lf2d::Rect const& rect, int textureIndex, float rotation, lf2
 	m_totalObjectCount++;
 }
 
-void Mesh::addText(lf2d::Rect const& rect, int textureIndex, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4)
+void Mesh::addText(lf2d::Rect const& rect, glm::vec2 const& origin, int textureIndex, float rotation, lf2d::Color color1, lf2d::Color color2, lf2d::Color color3, lf2d::Color color4)
 {
-	float width = static_cast<float>(lf2d::window::width()), height = static_cast<float>(lf2d::window::height());
+	auto s = lf2d::window::size();
 
-	if (   rect.x + rect.z > (-(width / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
-		&& rect.x <			 ((width / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
-		&& rect.y + rect.w >(-(height / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
-		&& rect.y < ((height / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
+	if (rotation != 0.f)
 	{
-		m_textVertices.push_back({ { rect.x			  / width,  rect.y			 / height},	color1.normalized(), {0, 0}, textureIndex });
-		m_textVertices.push_back({ {(rect.x + rect.z) / width,	rect.y			 / height},	color2.normalized(), {1, 0}, textureIndex });
-		m_textVertices.push_back({ {(rect.x + rect.z) / width, (rect.y + rect.w) / height}, color4.normalized(), {1, 1}, textureIndex });
-		m_textVertices.push_back({ { rect.x			  / width, (rect.w + rect.y) / height},	color3.normalized(), {0, 1}, textureIndex });
+		const glm::vec2 xy   = rotateAroundPoint({ rect.x,			rect.y },		   origin, rotation);
+		const glm::vec2 xyz  = rotateAroundPoint({ rect.x + rect.z, rect.y },		   origin, rotation);
+		const glm::vec2 xyw  = rotateAroundPoint({ rect.x,			rect.y + rect.w }, origin, rotation);
+		const glm::vec2 xyzw = rotateAroundPoint({ rect.x + rect.z, rect.y + rect.w }, origin, rotation);
+
+		m_textVertices.push_back({ xy   / s, color1.normalized(), {0, 0}, textureIndex });
+		m_textVertices.push_back({ xyz  / s, color2.normalized(), {1, 0}, textureIndex });
+		m_textVertices.push_back({ xyzw / s, color4.normalized(), {1, 1}, textureIndex });
+		m_textVertices.push_back({ xyw  / s, color3.normalized(), {0, 1}, textureIndex });
+
+		m_textIndices.emplace_back(m_renderedTextCount * 4	);
+		m_textIndices.emplace_back(m_renderedTextCount * 4 + 1);
+		m_textIndices.emplace_back(m_renderedTextCount * 4 + 2);
+
+		m_textIndices.emplace_back(m_renderedTextCount * 4 + 2);
+		m_textIndices.emplace_back(m_renderedTextCount * 4 + 3);
+		m_textIndices.emplace_back(m_renderedTextCount * 4	);
+
+		m_renderedTextCount++;
+	}
+	else if (rect.x + rect.z > (-(s.x / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		  && rect.x <			((s.x / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().x
+		  && rect.y + rect.w > (-(s.y / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y
+		  && rect.y <           ((s.y / 2.f)) / m_currentCamera->zoom + m_currentCamera->getPosWithOffset().y)
+	{
+		m_textVertices.push_back({ { rect.x			  / s.x,  rect.y		   / s.y}, color1.normalized(), {0, 0}, textureIndex });
+		m_textVertices.push_back({ {(rect.x + rect.z) / s.x,  rect.y		   / s.y}, color2.normalized(), {1, 0}, textureIndex });
+		m_textVertices.push_back({ {(rect.x + rect.z) / s.x, (rect.y + rect.w) / s.y}, color4.normalized(), {1, 1}, textureIndex });
+		m_textVertices.push_back({ { rect.x			  / s.x, (rect.w + rect.y) / s.y}, color3.normalized(), {0, 1}, textureIndex });
 
 		m_textIndices.emplace_back(m_renderedTextCount * 4	);
 		m_textIndices.emplace_back(m_renderedTextCount * 4 + 1);

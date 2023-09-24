@@ -5,6 +5,18 @@
 #include "engine/InputController.hpp"
 #include "renderer/Text.hpp"
 
+namespace lf2d
+{
+	class FontAccessor
+	{
+	public:
+		std::map<char, Font::Character>& getCharacters(Font const& font) const
+		{
+			return font.m_characters;
+		}
+	};
+}
+
 static lfWindow s_window;
 static lfRenderer s_renderer;
 static Mesh s_mesh;
@@ -12,6 +24,7 @@ static Text s_text;
 static lf2d::Camera* s_cameraPtr;
 static float s_timeMultiplier = 1.f;
 static bool s_shouldClose = false;
+static lf2d::FontAccessor fontAccessor;
 
 namespace lf2d
 {
@@ -24,54 +37,57 @@ namespace lf2d
 
 	void Camera::rect(const Rect& rect, Color color, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, rotation, color, color, color, color);
+		s_mesh.addRect(rect, origin, 0, rotation, color, color, color, color);
 	}
 
 	void Camera::rect(const Rect& rect, const Texture& texture, Color color, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), rotation, color, color, color, color);
+		s_mesh.addRect(rect, origin, texture.getIndex(), rotation, color, color, color, color);
 	}
 
 	void Camera::rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, rotation, color1, color1, color2, color2);
+		s_mesh.addRect(rect, origin, 0, rotation, color1, color1, color2, color2);
 	}
 
 	void Camera::rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color1, color2, color2);
+		s_mesh.addRect(rect, origin, texture.getIndex(), rotation, color1, color1, color2, color2);
 	}
 
 	void Camera::rectGradientH(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, rotation, color1, color2, color1, color2);
+		s_mesh.addRect(rect, origin, 0, rotation, color1, color2, color1, color2);
 	}
 
 	void Camera::rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color2, color1, color2);
+		s_mesh.addRect(rect, origin, texture.getIndex(), rotation, color1, color2, color1, color2);
 	}
 
 	void Camera::rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, 0, rotation, color1, color4, color2, color3);
+		s_mesh.addRect(rect, origin, 0, rotation, color1, color4, color2, color3);
 	}
 
 	void Camera::rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(rect, texture.getIndex(), rotation, color1, color4, color2, color3);
+		s_mesh.addRect(rect, origin, texture.getIndex(), rotation, color1, color4, color2, color3);
 	}
 
-	void Camera::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
+
+	void Camera::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color, glm::vec2 const origin, float rotation)
 	{
 		std::string_view::const_iterator c;
 		for (c = text.begin(); c != text.end(); c++)
 		{
-			auto& ch = font.m_characters.at(*c);
+			auto& ch = fontAccessor.getCharacters(font).at(*c);
 
 			s_mesh.addText(
 				{ position.x + ch.bearing.x * scale, position.y - (ch.bearing.y) * scale, ch.size.x * scale, ch.size.y * scale },
+				origin,
 				ch.texture.getIndex(),
+				rotation,
 				color,
 				color,
 				color,
@@ -328,56 +344,58 @@ namespace lf2d
 
 	void renderer::rect(const Rect& rect, Color color, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(toScreenRect(rect), 0, rotation, color, color, color, color);
+		s_mesh.addRect(toScreenRect(rect), origin, 0, rotation, color, color, color, color);
 	}
 
 	void renderer::rect(const Rect& rect, const Texture& texture, Color color, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(toScreenRect(rect), texture.getIndex(), rotation, color, color, color, color);
+		s_mesh.addRect(toScreenRect(rect), origin, texture.getIndex(), rotation, color, color, color, color);
 	}
 	
 	void renderer::rectGradientV(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(toScreenRect(rect), 0, rotation, color1, color1, color2, color2);
+		s_mesh.addRect(toScreenRect(rect), origin, 0, rotation, color1, color1, color2, color2);
 	}
 
 	void renderer::rectGradientV(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(toScreenRect(rect), texture.getIndex(), rotation, color1, color1, color2, color2);
+		s_mesh.addRect(toScreenRect(rect), origin, texture.getIndex(), rotation, color1, color1, color2, color2);
 	}
 
 	void renderer::rectGradientH(const Rect& rect, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(toScreenRect(rect), 0, rotation, color1, color2, color1, color2);
+		s_mesh.addRect(toScreenRect(rect), origin, 0, rotation, color1, color2, color1, color2);
 	}
 
 	void renderer::rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(toScreenRect(rect), texture.getIndex(), rotation, color1, color2, color1, color2);
+		s_mesh.addRect(toScreenRect(rect), origin, texture.getIndex(), rotation, color1, color2, color1, color2);
 	}
 
 	void renderer::rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(toScreenRect(rect), 0, rotation, color1, color4, color2, color3);
+		s_mesh.addRect(toScreenRect(rect), origin, 0, rotation, color1, color4, color2, color3);
 	}
 
 	void renderer::rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin, float rotation)
 	{
-		s_mesh.addRect(toScreenRect(rect), texture.getIndex(), rotation, color1, color4, color2, color3);
+		s_mesh.addRect(toScreenRect(rect), origin, texture.getIndex(), rotation, color1, color4, color2, color3);
 	}
 
-	void renderer::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color)
+	void renderer::text(const Font& font, std::string_view text, glm::vec2 position, float scale, Color color, glm::vec2 const origin, float rotation)
 	{
 		position = (position - window::size() / 2.f) / s_cameraPtr->zoom + s_cameraPtr->position - s_cameraPtr->offset;
 
 		std::string_view::const_iterator c;
 		for (c = text.begin(); c != text.end(); c++)
 		{
-			auto& ch = font.m_characters.at(*c);
+			auto& ch = fontAccessor.getCharacters(font).at(*c);
 
 			s_mesh.addText(
 				{ position.x + ch.bearing.x * scale / s_cameraPtr->zoom, position.y - (ch.bearing.y) * scale / s_cameraPtr->zoom, ch.size.x * scale / s_cameraPtr->zoom, ch.size.y * scale / s_cameraPtr->zoom },
+				origin,
 				ch.texture.getIndex(),
+				rotation,
 				color,
 				color,
 				color,

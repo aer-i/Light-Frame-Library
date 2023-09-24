@@ -69,12 +69,12 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 		if (lf2d::isKeyDown(lf2d::Key::S))
 			camera.position.y += 300.f * lf2d::getDeltaTime();
 
-		if (lf2d::isKeyPressed(lf2d::Key::R))
+		if (lf2d::isKeyPressed(lf2d::Key::U))
 		{
 			lf2d::setTimeMultiplier(0.f);
 		}
 
-		if (lf2d::isKeyPressed(lf2d::Key::Q))
+		if (lf2d::isKeyPressed(lf2d::Key::I))
 		{
 			lf2d::setTimeMultiplier(2.f);
 		}
@@ -86,46 +86,36 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 				15,
 				15,
 				lf2d::window::width() - 30,
-				lf2d::window::height() -30
+				lf2d::window::height() - 30
 			};
 
 			lf2d::renderer::rect(viewRect, texture3);
-			
-			camera.rect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1);
-			
+
+			static float rotation = 0.f;
+
+			if (lf2d::isKeyDown(lf2d::Key::E))
+			{
+				rotation -= 0.1f;
+			}
+
+			if (lf2d::isKeyDown(lf2d::Key::Q))
+			{
+				rotation += 0.1f;
+			}
+
+			camera.rect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1, lf2d::Color::White(), { 50, 50 }, rotation);
+
 			static constexpr lf2d::Rect rect = lf2d::Rect(-100, -100, 100, 100);
 			camera.rectGradientV(rect, lf2d::Color::Black(), lf2d::Color::White());
-			
-			camera.rectGradient({ -100, 0, 100, 100 }, texture2, { 255, 0, 0, 255 }, { 255, 255, 255, 255 }, {0, 0, 255, 255}, {0, 255, 0, 255});
-			
+
+			camera.rectGradient({ -100, 0, 100, 100 }, texture2, { 255, 0, 0, 255 }, { 255, 255, 255, 255 }, { 0, 0, 255, 255 }, { 0, 255, 0, 255 });
+
 			camera.rectGradientH(lf2d::Rect{ 0, -100, 100, 100 }, lf2d::Color::Gold(), lf2d::Color::Transparent());
-			
-			static std::vector<lf2d::Rect> cursorPosRects;
-			
-			if (lf2d::isButtonPressed(lf2d::Button::Left))
-			{
-				static auto lastCursorPos = lf2d::getCursorPos();
-				auto cursorPos = camera.fromScreenToWorldPos(lf2d::getCursorPos());
-			
-				float distance = glm::distance(lastCursorPos, cursorPos);
-			
-				for (int i = 0; i <= distance; i += 20)
-				{
-					cursorPosRects.emplace_back(glm::lerp(lastCursorPos - 5.f, cursorPos - 5.f, i / distance), 10, 10);
-				}
-			
-				lastCursorPos = cursorPos;
-			}
-			
-			for (const auto& cursorRect : cursorPosRects)
-			{
-				camera.rectGradientV(cursorRect, {255, 0, 255, 25}, { 255, 0, 255, 25 });
-			}
 
 			char text[16];
 			sprintf_s(text, "FPS: %d", lf2d::getFPS());
-			lf2d::renderer::text(fonts[0], text, {100, 100}, 0.4f, lf2d::Color::Red());
-			camera.text(fonts[1], "Text 123~!@#$%^&*()_+?", {-120, 250}, 1.f);
+			lf2d::renderer::text(fonts[0], text, { 100, 100 }, 0.4f, lf2d::Color::Red());
+			camera.text(fonts[1], "Text 123~!@#$%^&*()_+?", { -120, 250 }, 1.f, lf2d::Color::White(), glm::vec2{50.f}, 10.f);
 		}
 		lf2d::renderer::end();
 	}

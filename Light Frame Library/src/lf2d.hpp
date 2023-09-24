@@ -19,9 +19,9 @@ namespace lf2d
 
 		glm::vec4 normalized() { return { r / 255.f, g / 255.f, b / 255.f, a / 255.f }; }
 		
-		static consteval Color Transparent() { return Color{   0,   0,   0,   0 }; }
-		static consteval Color Black()		 { return Color{   0,   0,   0, 255 }; }
 		static consteval Color White()		 { return Color{ 255, 255, 255, 255 }; }
+		static consteval Color Black()		 { return Color{   0,   0,   0, 255 }; }
+		static consteval Color Transparent() { return Color{   0,   0,   0,   0 }; }
 		static consteval Color Lime()		 { return Color{   0, 255,   0, 255 }; }
 		static consteval Color Yellow()		 { return Color{ 255, 255,   0, 255 }; }
 		static consteval Color Aqua()		 { return Color{   0, 255, 255, 255 }; }
@@ -75,7 +75,7 @@ namespace lf2d
 		explicit Font(std::string_view filepath, uint32_t textureResolution = 48);
 		void free();
 
-	public:
+	private:
 		struct Character {
 			Texture		 texture;
 			glm::ivec2   size;
@@ -83,8 +83,9 @@ namespace lf2d
 			uint32_t	 advance;
 		};
 
-	public:
-		std::map<char, Character> m_characters;
+	private:
+		friend class FontAccessor;
+		mutable std::map<char, Character> m_characters;
 	};
 
 	struct Camera
@@ -102,7 +103,7 @@ namespace lf2d
 		void rectGradientH(const Rect& rect, const Texture& texture, Color color1, Color color2, glm::vec2 const origin = {}, float rotation = 0.f);
 		void rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin = {}, float rotation = 0.f);
 		void rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin = {}, float rotation = 0.f);
-		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());
+		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White(), glm::vec2 const origin = {}, float rotation = 0.f);
 
 		inline glm::vec2 getPosWithOffset() { return position + offset; }
 		inline glm::vec2 fromWorldToScreenPos(glm::vec2 const& v);
@@ -163,7 +164,7 @@ namespace lf2d
 		void rectGradient(const Rect& rect, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin = {}, float rotation = 0.f);
 		void rectGradient(const Rect& rect, const Texture& texture, Color color1, Color color2, Color color3, Color color4, glm::vec2 const origin = {}, float rotation = 0.f);
 
-		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White());
+		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White(), glm::vec2 const origin = {}, float rotation = 0.f);
 
 		void clearColor(Color color);
 		void setVsync(bool enabled);
