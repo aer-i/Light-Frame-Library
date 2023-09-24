@@ -170,7 +170,7 @@ namespace lf2d
 
 	float getDeltaTime()
 	{
-		return s_renderer.getDeltaTime() * s_timeMultiplier;
+		return InputController::GetDeltaTime() * s_timeMultiplier;
 	}
 
 	double getTime()

@@ -75,10 +75,7 @@ void lfRenderer::beginFrame(lf2d::Camera* camera)
 
 	frame = &m_frames[m_currentFrame];
 
-	static double lastTime = glfwGetTime();
-
-	m_deltaTime = static_cast<float>(glfwGetTime() - lastTime);
-	lastTime = glfwGetTime();
+	
 
 	if (vc::Get().device.getFenceStatus(frame->fence) != vk::Result::eSuccess)
 	{

@@ -18,6 +18,7 @@ public:
 	static inline double GetMouseWheelOffset() { return s_scrollOffsetY; }
 
 	static inline uint32_t GetFPS() { return s_fpsCount; }
+	static inline float GetDeltaTime() { return s_deltaTime; }
 
 	static void Update();
 
@@ -42,6 +43,7 @@ private:
 	static double s_scrollOffsetY;
 
 	static uint32_t s_fpsCount;
+	static float s_deltaTime;
 
 private:
 	static void framebufferResizeCallback(GLFWwindow* window, int width, int height);

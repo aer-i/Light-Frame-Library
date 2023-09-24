@@ -14,6 +14,7 @@ double InputController::s_mouseX = 0.0, InputController::s_mouseY = 0.0;
 double InputController::s_scrollOffsetY = 0.0;
 
 uint32_t InputController::s_fpsCount = 0;
+float InputController::s_deltaTime = 0.f;
 
 bool InputController::IsKeyPressed(int key)
 {
@@ -79,18 +80,26 @@ void InputController::Update()
 		s_buttonsReleased[i] = false;
 	}
 
-	static double previousTime = glfwGetTime();
-	static uint32_t frameCount = 0;
-
-	double currentTime = glfwGetTime();
-	frameCount++;
-
-	if (currentTime - previousTime >= 0.5)
 	{
-		s_fpsCount = frameCount / (currentTime - previousTime);
+		static double previousTime = glfwGetTime();
+		static uint32_t frameCount = 0;
 
-		frameCount = 0;
-		previousTime = currentTime;
+		double currentTime = glfwGetTime();
+		frameCount++;
+
+		if (currentTime - previousTime >= 0.5)
+		{
+			s_fpsCount = frameCount / (currentTime - previousTime);
+
+			frameCount = 0;
+			previousTime = currentTime;
+		}
+	}
+	{
+		static double lastTime = glfwGetTime();
+
+		s_deltaTime = static_cast<float>(glfwGetTime() - lastTime);
+		lastTime = glfwGetTime();
 	}
 }
 
