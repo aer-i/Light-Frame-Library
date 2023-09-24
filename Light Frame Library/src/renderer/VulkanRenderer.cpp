@@ -3,11 +3,6 @@
 #include "window/Window.hpp"
 #include "lf2d.hpp"
 
-struct CameraPushConstant
-{
-	glm::mat4 projView;
-};
-
 lfRenderer::~lfRenderer()
 {
 	this->teardown();
@@ -65,7 +60,6 @@ void lfRenderer::create(bool enableVL)
 	m_texturePool.create();
 
 	m_defaultPipelineLayout = PipelineLayout::Builder()
-		.addPushConstantRange({ .stageFlags = vk::ShaderStageFlagBits::eVertex, .size = sizeof(CameraPushConstant) })
 		.addDescriptorSetLayout(m_texturePool.descriptorSetLayout)
 		.build();
 
@@ -78,8 +72,6 @@ static VulkanFrame* frame = nullptr;
 void lfRenderer::beginFrame(lf2d::Camera* camera)
 {
 	m_currentCamera = camera;
-	auto width = lfWindow::GetWidth();
-	auto height = lfWindow::GetHeight();
 
 	frame = &m_frames[m_currentFrame];
 
@@ -146,20 +138,6 @@ void lfRenderer::beginFrame(lf2d::Camera* camera)
 
 void lfRenderer::endFrame(Mesh& mesh)
 {
-	float	  const halfZoom   = 0.5f / m_currentCamera->zoom;
-	glm::mat4 const projection = glm::ortho(-halfZoom, halfZoom, -halfZoom, halfZoom, -1.f, 1.f);
-
-	CameraPushConstant const cameraConstant {
-		.projView = projection * glm::inverse(
-			glm::translate(
-				glm::mat4(1.f),
-				{ m_currentCamera->getPosWithOffset() / lf2d::window::size(), 0.f }
-			)
-		)
-	};
-		
-	frame->commandBuffer.pushConstants(m_defaultPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(CameraPushConstant), &cameraConstant);
-
 	mesh.render(frame);
 
 	frame->commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_textPipeline);

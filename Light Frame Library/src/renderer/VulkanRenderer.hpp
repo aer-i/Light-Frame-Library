@@ -5,7 +5,6 @@
 #include "VulkanTexturePool.hpp"
 #include "VulkanFrame.hpp"
 #include "Mesh.hpp"
-#include "Text.hpp"
 
 class lfRenderer
 {

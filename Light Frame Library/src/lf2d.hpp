@@ -93,7 +93,7 @@ namespace lf2d
 		Camera();
 		~Camera() = default;
 		glm::vec2 position{}, offset{};
-		float zoom{1.f};
+		float rotation{}, zoom{1.f};
 
 		void rect(const Rect& rect, Color color, glm::vec2 const origin = {}, float rotation = 0.f);
 		void rect(const Rect& rect, const Texture& texture, Color color = Color::White(), glm::vec2 const origin = {}, float rotation = 0.f);
@@ -106,8 +106,7 @@ namespace lf2d
 		void text(const Font& font, std::string_view text, glm::vec2 position, float scale = 1.f, Color color = Color::White(), glm::vec2 const origin = {}, float rotation = 0.f);
 
 		inline glm::vec2 getPosWithOffset() { return position + offset; }
-		inline glm::vec2 fromWorldToScreenPos(glm::vec2 const& v);
-		inline glm::vec2 fromScreenToWorldPos(glm::vec2 const& v);
+		inline glm::vec2 fromScreenToWorldPos(glm::vec2 const& v) { return v / zoom + this->getPosWithOffset(); }
 	};
 
 	void setTimeMultiplier(float value);
@@ -136,6 +135,7 @@ namespace lf2d
 	namespace window
 	{
 		void create(int width, int height, std::string const& title, bool resizable, bool enableValidationLayers = false);
+		void events();
 		void waitEvents();
 		bool shouldClose() noexcept;
 		void close();
@@ -303,14 +303,4 @@ namespace lf2d
 		constexpr int Back			 = 3;
 		constexpr int Forward		 = 4;
 	}
-}
-
-inline glm::vec2 lf2d::Camera::fromWorldToScreenPos(glm::vec2 const& v)
-{
-	return (v - this->getPosWithOffset()) * zoom + window::size() / 2.f;
-}
-
-inline glm::vec2 lf2d::Camera::fromScreenToWorldPos(glm::vec2 const& v)
-{
-	return (v - window::size() / 2.f) / zoom + this->getPosWithOffset();
 }

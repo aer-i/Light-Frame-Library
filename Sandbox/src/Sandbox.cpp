@@ -20,7 +20,7 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	// Enabling v-sync for lower power usage and no visible screen tearing
 	lf2d::renderer::setVsync(false);
 	// You can clear color just once or every frame (or don't (black is default color))
-	lf2d::renderer::clearColor(lf2d::Color::White());
+	lf2d::renderer::clearColor(lf2d::Color::Black());
 
 	// Main camera
 	lf2d::Camera camera;
@@ -28,7 +28,8 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	camera.position = glm::vec2{ 0.f, 0.f };
 	// For example, if you want camera position to be in top left corner set offset to window::size() / 2.0f
 	// Normally it should be the other way around, but I'll change it
-	camera.offset = glm::vec2{ 0.f };
+	camera.offset = glm::vec2{ 0 };
+	camera.rotation = 0.f;
 	// Default zoom should be equal to 1.
 	camera.zoom = 1.0f;
 
@@ -54,6 +55,8 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 	// true is returned when window is closed
 	while (!lf2d::window::shouldClose()) // Main loop. Executing every frame
 	{
+		lf2d::window::events();
+
 		camera.zoom = std::max(0.25f, std::min(3.f, camera.zoom + 0.05f * (float)lf2d::getMouseWheelOffset()));
 
 		// Camera movement
@@ -82,6 +85,7 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 		// Begin rendering, draw objects between renderer::begin() and renderer::end()
 		lf2d::renderer::begin(camera);
 		{
+
 			lf2d::Rect const viewRect = {
 				15,
 				15,
@@ -95,14 +99,20 @@ auto main([[maybe_unused]]int argc, [[maybe_unused]]char* const argv[]) -> int
 
 			if (lf2d::isKeyDown(lf2d::Key::E))
 			{
-				rotation -= 0.1f;
+				camera.rotation -= 10.f * lf2d::getDeltaTime();
 			}
 
 			if (lf2d::isKeyDown(lf2d::Key::Q))
 			{
-				rotation += 0.1f;
+				camera.rotation += 10.f * lf2d::getDeltaTime();
 			}
 
+			if (lf2d::isButtonDown(lf2d::Button::Left))
+			{
+				// TO FIX
+				lf2d::currentCamera().rect({lf2d::getCursorPos() - 15.f, 30, 30}, lf2d::Color::Lime());
+			}
+			
 			camera.rect({ 0 /*pos X in px*/, 0 /*pos Y in px*/, 100 /*width in px*/, 100 /*height in px*/ }, texture1, lf2d::Color::White(), { 50, 50 }, rotation);
 
 			static constexpr lf2d::Rect rect = lf2d::Rect(-100, -100, 100, 100);
